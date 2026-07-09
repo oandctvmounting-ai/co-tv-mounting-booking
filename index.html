@@ -253,11 +253,14 @@ const SERVICES = {
 
 const TV = {
     mount:   { fixed: 30, tilt: 40, full: 60 },
-    size:    { '55" & below': 90, '56"–65"': 95, '66"–75"': 100, '76"–85"': 115, '86"–95"': 135, '96"–110"': 170 },
-    surface: { 'Drywall': 0, 'Brick / Stone / Stucco': 85, 'Tile': 50 },
+    size:    { s55: 90, s56: 95, s66: 100, s76: 115, s86: 135, s96: 170 },
+    sizeLabel: { s55: '55" & below', s56: '56"–65"', s66: '66"–75"', s76: '76"–85"', s86: '86"–95"', s96: '96"–110"' },
+    surface: { drywall: 0, brick: 85, tile: 50 },
+    surfaceLabel: { drywall: 'Drywall', brick: 'Brick / Stone / Stucco', tile: 'Tile' },
     fireplaceSurcharge: 30,
     largeTvSurcharge: 50,   // 85" and up
-    wire:    { 'Internal (in-wall)': 60, 'External (raceway)': 35 }
+    wire:    { internal: 60, external: 35 },
+    wireLabel: { internal: 'Internal (in-wall)', external: 'External (raceway)' }
 };
 const BLINDS  = { small: 55, medium: 70, large: 85 };   // per window
 const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
@@ -280,9 +283,12 @@ const PROMOS = [
 ];
 
 /* ---------- State ---------- */
+function newTv() {
+    return { mount:null, size:null, surface:null, overFireplace:false, wire:null };
+}
 let state = {
     primary: null,
-    tv:      { mount:null, size:null, surface:null, overFireplace:false, wire:null },
+    tvs:     [ newTv() ],          // array of TV units (multi-TV support)
     blinds:  { size:null, qty:1 },
     mirrors: { size:null, qty:1 },
     soundbar:{ qty:1 },
@@ -337,27 +343,17 @@ function renderStep2() {
         </div>`;
     }
     c.innerHTML = html;
+    if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
+    // addon TV blocks (if tv was added as an add-on)
+    state.addons.forEach(k => { if (k === 'tv') renderTvs('a'); });
     calculateTotal();
 }
 
 /* Build config UI for a service. prefix 'p' = primary, 'a' = addon (unique IDs) */
 function configHtml(key, prefix) {
     if (key === 'tv') {
-        let h = `<div class="options-grid">`;
-        h += optCard('p_mount', 'Mount Type', Object.entries(TV.mount).map(([k,v]) => [k, '$'+v+' base']));
-        h += `</div>`;
-        h += `<label>TV Size</label><select id="${prefix}_tvsize" onchange="setTv('size', this.value)">
-            <option value="">Select size…</option>` +
-            Object.entries(TV.size).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
-            `</select>`;
-        h += `<div class="options-grid" style="margin-top:14px">`;
-        h += optCard('p_surface', 'Wall Surface', Object.entries(TV.surface).map(([k,v]) => [k, v?('+$'+v):'+$0']));
-        h += `</div>`;
-        h += `<div class="options-grid" style="margin-top:14px">`;
-        h += toggleCard('p_fw', 'Over Fireplace', '+$'+TV.fireplaceSurcharge);
-        h += `<div class="option-card" id="${prefix}_wire_internal" onclick="setTv('wire','Internal (in-wall)')"><span>Internal Wire Concealment</span><span class="price-tag">+$${TV.wire['Internal (in-wall)']}</span></div>`;
-        h += `<div class="option-card" id="${prefix}_wire_external" onclick="setTv('wire','External (raceway)')"><span>External Wire Concealment</span><span class="price-tag">+$${TV.wire['External (raceway)']}</span></div>`;
-        h += `</div>`;
+        let h = `<div id="${prefix}_tvs"></div>`;
+        h += `<button type="button" class="btn-next" style="margin-top:8px; background:var(--gold); color:var(--royal-blue)" onclick="addTv('${prefix}')">+ Add another TV</button>`;
         return h;
     }
     if (key === 'blinds') {
@@ -401,26 +397,91 @@ function toggleCard(id, label, disp) {
     return `<div class="option-card" id="${id}" onclick="toggleFireplace()"><span>${label}</span><span class="price-tag">${disp}</span></div>`;
 }
 
+/* ---------- Multi-TV UI ---------- */
+function renderTvs(prefix) {
+    const wrap = document.getElementById(prefix + '_tvs');
+    if (!wrap) return;
+    wrap.innerHTML = state.tvs.map((tv, i) => {
+        const isAddon = prefix !== 'p';
+        const label = `TV #${i + 1}`;
+        const removeBtn = state.tvs.length > 1
+            ? `<button type="button" class="btn-back" style="flex:0 0 auto; padding:8px 14px; margin-left:auto" onclick="removeTv('${prefix}', ${i})">Remove</button>` : '';
+        return `<div class="addon-block open" style="margin-bottom:14px">
+            <div class="addon-head" style="cursor:default; margin-bottom:8px">
+                <span style="font-weight:600; color:var(--royal-blue)">${label}</span>
+                ${removeBtn}
+            </div>
+            <div class="options-grid">
+                ${optCard(prefix + '_mount_' + i, 'Mount Type', Object.entries(TV.mount).map(([k,v]) => [k, '$'+v+' base']))}
+            </div>
+            <label>TV Size</label>
+            <select onchange="setTv('${prefix}', ${i}, 'size', this.value)">
+                <option value="">Select size…</option>
+                ${Object.entries(TV.size).map(([k,v]) => `<option value="${k}" ${tv.size===k?'selected':''}>${TV.sizeLabel[k]} (+$${v})</option>`).join('')}
+            </select>
+            <div class="options-grid" style="margin-top:12px">
+                ${optCard(prefix + '_surface_' + i, 'Wall Surface', Object.entries(TV.surface).map(([k,v]) => [k, v?('+$'+v):'+$0']))}
+            </div>
+            <div class="options-grid" style="margin-top:12px">
+                <div class="option-card" id="${prefix}_fw_${i}" onclick="toggleFireplace('${prefix}', ${i})"><span>Over Fireplace</span><span class="price-tag">+$${TV.fireplaceSurcharge}</span></div>
+                <div class="option-card" id="${prefix}_wire_internal_${i}" onclick="setTv('${prefix}', ${i}, 'wire', 'internal')"><span>Internal Wire Concealment</span><span class="price-tag">+$${TV.wire.internal}</span></div>
+                <div class="option-card" id="${prefix}_wire_external_${i}" onclick="setTv('${prefix}', ${i}, 'wire', 'external')"><span>External Wire Concealment</span><span class="price-tag">+$${TV.wire.external}</span></div>
+            </div>
+        </div>`;
+    }).join('');
+    // restore selected highlight states
+    state.tvs.forEach((tv, i) => {
+        if (tv.mount)   markSelected(prefix + '_mount_' + i, tv.mount);
+        if (tv.surface) markSelected(prefix + '_surface_' + i, tv.surface);
+        const fw = document.getElementById(prefix + '_fw_' + i); if (fw) fw.classList.toggle('selected', tv.overFireplace);
+        const wi = document.getElementById(prefix + '_wire_internal_' + i); if (wi) wi.classList.toggle('selected', tv.wire === 'internal');
+        const we = document.getElementById(prefix + '_wire_external_' + i); if (we) we.classList.toggle('selected', tv.wire === 'external');
+    });
+}
+function markSelected(group, val) {
+    document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => {
+        // find the card whose onclick contains this value
+        const m = /pickOption\('[^']+','([^']+)'/.exec(c.getAttribute('onclick') || '');
+        c.classList.toggle('selected', m && m[1] === val);
+    });
+}
+function addTv(prefix) {
+    state.tvs.push(newTv());
+    renderTvs(prefix);
+    calculateTotal();
+}
+function removeTv(prefix, i) {
+    if (state.tvs.length <= 1) return;
+    state.tvs.splice(i, 1);
+    renderTvs(prefix);
+    calculateTotal();
+}
+
 /* ---------- Setters ---------- */
 function pickOption(group, val, el) {
-    if (group === 'p_mount')   { state.tv.mount = val; }
-    if (group === 'p_surface') { state.tv.surface = val; }
-    // clear selection within same group, mark this one
+    // group format: prefix + '_mount_' + i  OR  prefix + '_surface_' + i
+    const parts = group.split('_');
+    const field = parts[parts.length - 2]; // 'mount' or 'surface'
+    const i = parseInt(parts[parts.length - 1], 10);
+    const tv = state.tvs[i];
+    if (tv) tv[field] = val;
     document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
     calculateTotal();
 }
-function toggleFireplace() {
-    state.tv.overFireplace = !state.tv.overFireplace;
-    document.getElementById('p_fw').classList.toggle('selected', state.tv.overFireplace);
+function toggleFireplace(prefix, i) {
+    const tv = state.tvs[i]; if (!tv) return;
+    tv.overFireplace = !tv.overFireplace;
+    document.getElementById(prefix + '_fw_' + i).classList.toggle('selected', tv.overFireplace);
     calculateTotal();
 }
-function setTv(field, val) {
-    if (field === 'size')   state.tv.size = val;
-    if (field === 'wire')   state.tv.wire = (state.tv.wire === val) ? null : val;
+function setTv(prefix, i, field, val) {
+    const tv = state.tvs[i]; if (!tv) return;
+    if (field === 'size') tv.size = val;
+    if (field === 'wire') tv.wire = (tv.wire === val) ? null : val;
     if (field === 'wire') {
-        document.getElementById('p_wire_internal').classList.toggle('selected', state.tv.wire === 'Internal (in-wall)');
-        document.getElementById('p_wire_external').classList.toggle('selected', state.tv.wire === 'External (raceway)');
+        document.getElementById(prefix + '_wire_internal_' + i).classList.toggle('selected', tv.wire === 'internal');
+        document.getElementById(prefix + '_wire_external_' + i).classList.toggle('selected', tv.wire === 'external');
     }
     calculateTotal();
 }
@@ -441,16 +502,19 @@ function toggleAddon(key) {
 }
 
 /* ---------- Pricing engine ---------- */
-function tvTotal() {
+function tvUnitTotal(tv) {
     let t = 0;
-    if (state.tv.mount)   t += TV.mount[state.tv.mount];
-    if (state.tv.size)    t += TV.size[state.tv.size];
-    if (state.tv.surface) t += TV.surface[state.tv.surface];
-    if (state.tv.overFireplace) t += TV.fireplaceSurcharge;
-    // Large-TV surcharge applies to 85" and up → size keys '86"–95"' and '96"–110"'
-    if (state.tv.size && (state.tv.size.startsWith('86') || state.tv.size.startsWith('96'))) t += TV.largeTvSurcharge;
-    if (state.tv.wire)    t += TV.wire[state.tv.wire];
+    if (tv.mount)   t += TV.mount[tv.mount] || 0;
+    if (tv.size)    t += TV.size[tv.size] || 0;
+    if (tv.surface) t += TV.surface[tv.surface] || 0;
+    if (tv.overFireplace) t += TV.fireplaceSurcharge;
+    // Large-TV surcharge applies to 85" and up → size keys s86 and s96
+    if (tv.size && (tv.size === 's86' || tv.size === 's96')) t += TV.largeTvSurcharge;
+    if (tv.wire)    t += TV.wire[tv.wire] || 0;
     return t;
+}
+function tvTotal() {
+    return state.tvs.reduce((sum, tv) => sum + tvUnitTotal(tv), 0);
 }
 function calculateTotal() {
     let total = TRAVEL_FEE;
