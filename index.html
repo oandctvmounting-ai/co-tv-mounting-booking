@@ -79,29 +79,48 @@
         .step-sub { text-align:center; color: var(--text-muted); font-size:0.85rem; margin-bottom:22px; }
         .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
         .option-card {
-            padding: 15px 20px;
-            border: 2px solid #eee;
+            padding: 16px 20px;
+            border: 2px solid #d9d9d9;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 500;
+            font-weight: 700;
+            font-size: 1.05rem;
             background: var(--white);
+            color: var(--text-dark);
         }
-        .option-card:hover { border-color: var(--gold); background: var(--gold-light); }
+        .option-card:hover { border-color: var(--gold); background: var(--gold-light); transform: translateY(-1px); }
         .option-card.selected {
             border-color: var(--royal-blue);
-            background: rgba(0,35,102,0.05);
-            color: var(--royal-blue);
-            box-shadow: 0 4px 12px rgba(0,35,102,0.1);
+            background: var(--royal-blue);
+            color: var(--white);
+            box-shadow: 0 6px 16px rgba(0,35,102,0.25);
+            font-weight: 800;
         }
-        .price-tag { font-weight: 600; color: var(--text-muted); font-size:0.9rem; }
+        .option-card.selected .price-tag { color: var(--gold); }
+        .price-tag { font-weight: 700; color: var(--royal-blue); font-size:0.95rem; }
         .section-label {
-            display:block; font-size:0.8rem; font-weight:600; color:var(--royal-blue);
-            text-transform:uppercase; letter-spacing:0.5px; margin:22px 0 10px;
-            border-bottom:1px solid rgba(212,175,55,0.4); padding-bottom:4px;
+            display:block; font-size:0.95rem; font-weight:800; color:var(--royal-blue);
+            text-transform:uppercase; letter-spacing:0.5px; margin:24px 0 12px;
+            border-bottom:2px solid rgba(212,175,55,0.6); padding-bottom:6px;
+        }
+        .section-label.required {
+            background: var(--gold-light);
+            border: 2px solid var(--gold);
+            border-bottom: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--royal-blue);
+            box-shadow: 0 2px 8px rgba(212,175,55,0.25);
+        }
+        .section-label .req-badge {
+            float: right;
+            background: var(--royal-blue); color: var(--white);
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
+            padding: 3px 8px; border-radius: 20px; text-transform: uppercase;
         }
         label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; }
         input, select {
@@ -390,11 +409,14 @@ function configHtml(key, prefix) {
 
 /* helper: radio-style option cards */
 function optCard(group, label, options) {
-    // options: [[value, display], ...]
+    // options: [[value, display], ...]  — value is the stored key, display is shown text
     return `<label>${label}</label>` +
-        options.map(([val, disp]) =>
-            `<div class="option-card" data-group="${group}" onclick="pickOption('${group}','${val}', this)"><span>${val}</span><span class="price-tag">${disp}</span></div>`
-        ).join('');
+        options.map(([val, disp]) => {
+            const show = disp || val;
+            const tag = (typeof disp === 'string' && disp.includes('$')) ? show : '';
+            const text = (typeof disp === 'string' && disp.includes('$')) ? show.replace(/\s*\(\+\$\d+\)/, '') : show;
+            return `<div class="option-card" data-group="${group}" onclick="pickOption('${group}','${val}', this)"><span>${text}</span><span class="price-tag">${tag}</span></div>`;
+        }).join('');
 }
 function toggleCard(id, label, disp) {
     return `<div class="option-card" id="${id}" onclick="toggleFireplace()"><span>${label}</span><span class="price-tag">${disp}</span></div>`;
@@ -417,11 +439,10 @@ function renderTvs(prefix) {
             <div class="options-grid">
                 ${optCard(prefix + '_mount_' + i, 'Mount Type', Object.entries(TV.mount).map(([k,v]) => [k, '$'+v+' base']))}
             </div>
-            <label>TV Size</label>
-            <select onchange="setTv('${prefix}', ${i}, 'size', this.value)">
-                <option value="">Select size…</option>
-                ${Object.entries(TV.size).map(([k,v]) => `<option value="${k}" ${tv.size===k?'selected':''}>${TV.sizeLabel[k]} (+$${v})</option>`).join('')}
-            </select>
+            <div class="section-label required" style="margin-top:18px">TV Size <span class="req-badge">Required</span></div>
+            <div class="options-grid" style="margin-top:10px">
+                ${optCard(prefix + '_size_' + i, 'TV Size', Object.entries(TV.size).map(([k,v]) => [k, TV.sizeLabel[k] + ' (+$' + v + ')']))}
+            </div>
             <div class="options-grid" style="margin-top:12px">
                 ${optCard(prefix + '_surface_' + i, 'Wall Surface', Object.entries(TV.surface).map(([k,v]) => [k, v?('+$'+v):'+$0']))}
             </div>
@@ -435,6 +456,7 @@ function renderTvs(prefix) {
     // restore selected highlight states
     state.tvs.forEach((tv, i) => {
         if (tv.mount)   markSelected(prefix + '_mount_' + i, tv.mount);
+        if (tv.size)    markSelected(prefix + '_size_' + i, tv.size);
         if (tv.surface) markSelected(prefix + '_surface_' + i, tv.surface);
         const fw = document.getElementById(prefix + '_fw_' + i); if (fw) fw.classList.toggle('selected', tv.overFireplace);
         const wi = document.getElementById(prefix + '_wire_internal_' + i); if (wi) wi.classList.toggle('selected', tv.wire === 'internal');
