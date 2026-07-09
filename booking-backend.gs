@@ -77,11 +77,19 @@ function doPost(e) {
     ]);
 
     // Fire Telegram alerts (best-effort — never block the booking on failure)
+    let tgStatus = 'New';
     try {
       sendTelegramAlert(data, tvDetails);
     } catch (te) {
+      tgStatus = 'New | TG-ERR: ' + String(te).slice(0, 200);
       Logger.log('Telegram alert failed: ' + te);
     }
+    // write tgStatus into the last cell of the row we just added
+    try {
+      const sh = getSheet();
+      const lastRow = sh.getLastRow();
+      sh.getRange(lastRow, 13).setValue(tgStatus);
+    } catch (e2) { /* ignore */ }
 
     return ContentService.createTextOutput(JSON.stringify({ ok: true }))
       .setMimeType(ContentService.MimeType.JSON);
