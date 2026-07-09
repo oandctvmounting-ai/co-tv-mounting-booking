@@ -102,6 +102,19 @@
         }
         .option-card.selected .price-tag { color: var(--gold); }
         .price-tag { font-weight: 700; color: var(--royal-blue); font-size:0.95rem; }
+        /* ---- Mount type cards (example illustration + title + price) ---- */
+        .mount-grid { grid-template-columns: repeat(3, 1fr); }
+        .mount-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            padding: 12px 10px;
+        }
+        .mount-card svg { width: 100%; height: auto; display: block; border-radius: 8px; background: var(--gold-light); }
+        .mount-name { font-weight: 800; font-size: 0.9rem; line-height: 1.2; }
+        .mount-card .price-tag { font-size: 0.82rem; }
+        .mount-card.selected .mount-name { color: var(--gold); }
         .section-label {
             display:block; font-size:0.95rem; font-weight:800; color:var(--royal-blue);
             text-transform:uppercase; letter-spacing:0.5px; margin:24px 0 12px;
@@ -289,6 +302,39 @@ const TV = {
     wire:    { internal: 60, external: 35 },
     wireLabel: { internal: 'Internal (in-wall)', external: 'External (raceway)' }
 };
+
+/* Mount type display titles + example illustrations (inline SVG, on-brand).
+   To use real photos instead, set MOUNT_PHOTO[k] = 'https://...jpg' and
+   change the .mount-card markup in mountCards() to <img src="${MOUNT_PHOTO[k]}">. */
+const MOUNT_TITLE = { fixed: 'Fixed Mount', tilt: 'Tilt Mount', full: 'Full Motion Mount' };
+const MOUNT_SVG = {
+    fixed: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Fixed mount">
+        <rect width="200" height="150" fill="#F9F4E8"/>
+        <rect x="16" y="22" width="12" height="106" rx="2" fill="#002366"/>
+        <rect x="30" y="44" width="140" height="72" rx="6" fill="#1A1A1A" stroke="#D4AF37" stroke-width="2"/>
+        <rect x="46" y="58" width="108" height="44" rx="3" fill="#0d274d"/>
+        <rect x="28" y="78" width="6" height="6" fill="#D4AF37"/>
+    </svg>`,
+    tilt: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Tilt mount">
+        <rect width="200" height="150" fill="#F9F4E8"/>
+        <rect x="16" y="22" width="12" height="106" rx="2" fill="#002366"/>
+        <g transform="rotate(12 100 80)">
+            <rect x="30" y="44" width="140" height="72" rx="6" fill="#1A1A1A" stroke="#D4AF37" stroke-width="2"/>
+            <rect x="46" y="58" width="108" height="44" rx="3" fill="#0d274d"/>
+        </g>
+        <rect x="28" y="104" width="6" height="6" fill="#D4AF37"/>
+    </svg>`,
+    full: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Full motion mount">
+        <rect width="200" height="150" fill="#F9F4E8"/>
+        <rect x="16" y="22" width="12" height="106" rx="2" fill="#002366"/>
+        <line x1="28" y1="80" x2="64" y2="80" stroke="#D4AF37" stroke-width="6" stroke-linecap="round"/>
+        <line x1="64" y1="80" x2="64" y2="58" stroke="#D4AF37" stroke-width="6" stroke-linecap="round"/>
+        <g transform="rotate(-10 124 75)">
+            <rect x="64" y="40" width="120" height="70" rx="6" fill="#1A1A1A" stroke="#D4AF37" stroke-width="2"/>
+            <rect x="80" y="54" width="92" height="42" rx="3" fill="#0d274d"/>
+        </g>
+    </svg>`
+};
 const BLINDS  = { small: 55, medium: 70, large: 85 };   // per window
 const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
 const SOUNDBAR = 45;                                    // each
@@ -430,6 +476,20 @@ function toggleCard(id, label, disp) {
     return `<div class="option-card" id="${id}" onclick="toggleFireplace()"><span>${label}</span><span class="price-tag">${disp}</span></div>`;
 }
 
+/* Mount type cards: example illustration + title + base price */
+function mountCards(group) {
+    return `<label>Mount Type</label><div class="options-grid mount-grid">` +
+        Object.entries(TV.mount).map(([k, v]) => {
+            const title = MOUNT_TITLE[k] || k;
+            return `<div class="option-card mount-card" data-group="${group}" onclick="pickOption('${group}','${k}', this)">
+                ${MOUNT_SVG[k] || ''}
+                <span class="mount-name">${title}</span>
+                <span class="price-tag">$${v} base</span>
+            </div>`;
+        }).join('') +
+        `</div>`;
+}
+
 /* ---------- Multi-TV UI ---------- */
 function renderTvs(prefix) {
     const wrap = document.getElementById(prefix + '_tvs');
@@ -445,7 +505,7 @@ function renderTvs(prefix) {
                 ${removeBtn}
             </div>
             <div class="options-grid">
-                ${optCard(prefix + '_mount_' + i, 'Mount Type', Object.entries(TV.mount).map(([k,v]) => [k, '$'+v+' base']))}
+                ${mountCards(prefix + '_mount_' + i)}
             </div>
             <div class="section-label required" style="margin-top:18px">TV Size <span class="req-badge">Required</span></div>
             <div class="options-grid" style="margin-top:10px">
