@@ -15,12 +15,20 @@
  * The page POSTs JSON:
  *   { name, phone, address, datetime, primary, addons[], tvDetails[],
  *     total, deposit, promo, source }
- * and this appends one row to the "Bookings" tab of the sheet below.
+ * and this appends one row to the "Bookings" tab of the sheet below,
+ * then sends a Telegram alert to the owner DM + the team group.
  *
  * SHEET: C&O TV Mounting  (ID below)
  */
 
 const BOOKINGS_SHEET_ID = '1sOEzOQF0vFpx4l1tAxGSDS6vnLZ8j2AVUeifdcKxE5w';
+
+// ===== Telegram alert config =====
+// Get a bot token from @BotFather on Telegram, then paste it below.
+// Chat IDs: owner DM = 6217602404, team group = -5510113560
+const TELEGRAM_BOT_TOKEN = '8944456012:AAHYhDboqhLCzYysFGRZQ-xDT61X7aoQEKU';
+const TELEGRAM_OWNER_CHAT = '6217602404';
+const TELEGRAM_GROUP_CHAT = '-5510113560';
 
 function getSheet() {
   const ss = SpreadsheetApp.openById(BOOKINGS_SHEET_ID);
@@ -32,7 +40,6 @@ function getSheet() {
       'Primary Service', 'Add-on Services', 'TV Details',
       'Estimated Total', 'Deposit', 'Promo', 'Source', 'Status'
     ]);
-    // freeze header + format total column as currency-ish
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, 13).setFontWeight('bold');
   }
@@ -69,6 +76,13 @@ function doPost(e) {
       'New'
     ]);
 
+    // Fire Telegram alerts (best-effort — never block the booking on failure)
+    try {
+      sendTelegramAlert(data, tvDetails);
+    } catch (te) {
+      Logger.log('Telegram alert failed: ' + te);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ ok: true }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
@@ -80,4 +94,29 @@ function doPost(e) {
 function doGet() {
   return ContentService.createTextOutput(JSON.stringify({ status: 'C&O booking endpoint live' }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function sendTelegramAlert(data, tvDetails) {
+  if (!TELEGRAM_BOT_TOKEN) return; // not configured yet
+  const total = (data.total != null ? '$' + data.total : '');
+  const deposit = data.deposit ? ('\n💳 Deposit: $' + data.deposit) : '';
+  const promo = data.promo ? ('\n🏷 Promo: ' + data.promo) : '';
+  const msg =
+    '🔔 NEW BOOKING — C&O TV Mounting\n' +
+    '👤 ' + (data.name || '?') + '  📞 ' + (data.phone || '?') + '\n' +
+    '📍 ' + (data.address || '?') + '\n' +
+    '🗓 ' + (data.datetime || '?') + '\n' +
+    '🔧 ' + (data.primary || '?') +
+    ((data.addons && data.addons.length) ? ' + ' + data.addons.join(', ') : '') + '\n' +
+    (tvDetails ? '📺 ' + tvDetails + '\n' : '') +
+    '💰 Est. Total: ' + total + deposit + promo + '\n' +
+    '— lands in C&O Sheet (Bookings tab)';
+
+  const url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
+  const ownerPayload = { chat_id: TELEGRAM_OWNER_CHAT, text: msg };
+  const groupPayload = { chat_id: TELEGRAM_GROUP_CHAT, text: msg };
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+    payload: JSON.stringify(ownerPayload) });
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+    payload: JSON.stringify(groupPayload) });
 }
