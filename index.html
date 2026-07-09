@@ -270,6 +270,10 @@ const TRAVEL_FEE = 25;
 const DEPOSIT_REQUIRED_MILES = 25;
 const IRVING = { lat: 32.8140, lon: -96.9489 };
 
+// ===== Backend endpoint (Google Apps Script Web App URL) =====
+// Paste the deployed Web App URL here after deploying booking-backend.gs
+const APP_SCRIPT_URL = '';
+
 /* ============================================================
    PROMO CODES  — managed by Orion / Jarvis
    To activate a code: set active:true.  To deactivate: active:false.
@@ -636,13 +640,68 @@ function unknownDeposit(area) {
 function submitBooking() {
     const total = calculateTotal();
     const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
-    let msg = `Booking request sent!\nEstimate: $${total}\n` +
-              `Name: ${document.getElementById('cust-name').value}\n` +
-              `Address: ${document.getElementById('cust-address').value}\n` +
-              `Service: ${SERVICES[state.primary].name}` +
-              (state.addons.size ? ' + ' + [...state.addons].map(k => SERVICES[k].name).join(', ') : '');
-    if (needsDeposit) msg += `\nDeposit: $50 (would redirect to Stripe)`;
-    alert(msg + `\n\n[Backend hook: this is where we push to Google Sheets + Stripe.]`);
+    const primary = state.primary ? SERVICES[state.primary].name : '';
+    const addons = [...state.addons].map(k => SERVICES[k].name);
+    const tvDetails = state.tvs.map(tv => ({
+        mount: tv.mount, sizeLabel: tv.size ? TV.sizeLabel[tv.size] : '',
+        surfaceLabel: tv.surface ? TV.surfaceLabel[tv.surface] : '',
+        overFireplace: tv.overFireplace, wireLabel: tv.wire ? TV.wireLabel[tv.wire] : ''
+    }));
+    const payload = {
+        name: document.getElementById('cust-name').value,
+        phone: document.getElementById('cust-phone').value,
+        address: document.getElementById('cust-address').value,
+        datetime: document.getElementById('booking-time').value,
+        primary: primary,
+        addons: addons,
+        tvDetails: tvDetails,
+        total: total,
+        deposit: needsDeposit ? 50 : 0,
+        promo: state.appliedPromo ? state.appliedPromo.code : '',
+        source: 'booking-page'
+    };
+
+    if (!APP_SCRIPT_URL) {
+        // No backend configured yet — show what would be sent and queue locally
+        queueLocal(payload);
+        alert('Booking captured locally (backend not connected yet).\n\n' + summarize(payload));
+        return;
+    }
+
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.ok) {
+            alert('✓ Booking sent! We\'ll confirm shortly.\n\n' + summarize(payload));
+        } else {
+            throw new Error(res.error || 'submit failed');
+        }
+    })
+    .catch(err => {
+        // Network/endpoint down → queue locally so no lead is lost
+        queueLocal(payload);
+        alert('Saved locally (couldn\'t reach server). We\'ll retry sync.\n\n' + summarize(payload));
+    });
+}
+
+function summarize(p) {
+    let s = `Estimate: $${p.total}\nName: ${p.name}\nAddress: ${p.address}\nService: ${p.primary}`;
+    if (p.addons.length) s += ' + ' + p.addons.join(', ');
+    if (p.deposit) s += `\nDeposit: $${p.deposit}`;
+    return s;
+}
+
+function queueLocal(payload) {
+    try {
+        const q = JSON.parse(localStorage.getItem('co_pending_bookings') || '[]');
+        q.push(Object.assign({ queuedAt: new Date().toISOString() }, payload));
+        localStorage.setItem('co_pending_bookings', JSON.stringify(q));
+    } catch (e) { /* localStorage unavailable — nothing we can do */ }
 }
 
 /* file upload label */
