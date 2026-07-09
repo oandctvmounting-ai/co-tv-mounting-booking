@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Installation | C&O TV Mounting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-blue: #002366;
+            --gold: #D4AF37;
+            --gold-light: #F9F4E8;
+            --white: #FFFFFF;
+            --off-white: #F8F9FA;
+            --text-dark: #1A1A1A;
+            --text-muted: #666666;
+            --shadow: 0 10px 30px rgba(0,35,102,0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--off-white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        header {
+            background: var(--royal-blue);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+        }
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        header p { font-weight: 300; opacity: 0.9; font-size: 0.95rem; }
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 50px;
+            background: var(--gold-light);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .step-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: #ccc; transition: all 0.3s ease;
+        }
+        .step-dot.active {
+            background: var(--royal-blue);
+            box-shadow: 0 0 0 4px rgba(0,35,102,0.2);
+            transform: scale(1.2);
+        }
+        .form-step { display: none; padding: 30px; animation: fadeIn 0.4s ease-out; }
+        .form-step.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--royal-blue);
+            margin-bottom: 6px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .step-sub { text-align:center; color: var(--text-muted); font-size:0.85rem; margin-bottom:22px; }
+        .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
+        .option-card {
+            padding: 15px 20px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            background: var(--white);
+        }
+        .option-card:hover { border-color: var(--gold); background: var(--gold-light); }
+        .option-card.selected {
+            border-color: var(--royal-blue);
+            background: rgba(0,35,102,0.05);
+            color: var(--royal-blue);
+            box-shadow: 0 4px 12px rgba(0,35,102,0.1);
+        }
+        .price-tag { font-weight: 600; color: var(--text-muted); font-size:0.9rem; }
+        .section-label {
+            display:block; font-size:0.8rem; font-weight:600; color:var(--royal-blue);
+            text-transform:uppercase; letter-spacing:0.5px; margin:22px 0 10px;
+            border-bottom:1px solid rgba(212,175,55,0.4); padding-bottom:4px;
+        }
+        label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; }
+        input, select {
+            width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;
+            font-family:'Inter', sans-serif; font-size:1rem; transition:border 0.2s;
+        }
+        input:focus, select:focus { outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 3px rgba(0,35,102,0.1); }
+        .total-box {
+            margin-top: 18px; padding: 18px; background: var(--royal-blue); color: var(--white);
+            border-radius: 12px; text-align:center; border: 2px solid var(--gold);
+        }
+        .total-label { font-size:0.85rem; opacity:0.85; text-transform:uppercase; letter-spacing:1px; }
+        .total-amount { font-family:'Playfair Display', serif; font-size:2.4rem; color:var(--gold); display:block; }
+        .total-note { font-size:0.75rem; opacity:0.7; margin-top:4px; }
+        .nav-buttons { display:flex; gap:15px; margin-top:26px; }
+        button {
+            flex:1; padding:15px; border-radius:12px; font-weight:600; cursor:pointer;
+            transition: all 0.2s; font-family:'Inter', sans-serif; font-size:1rem;
+        }
+        .btn-next { background: var(--royal-blue); color: var(--white); border:none; }
+        .btn-next:hover { background:#001a4d; transform:translateY(-2px); }
+        .btn-back { background:transparent; color:var(--text-muted); border:1px solid #ddd; }
+        .btn-back:hover { background:#eee; }
+        .btn-submit { background:var(--gold); color:var(--royal-blue); border:none; }
+        .btn-submit:hover { background:#c4a030; transform:translateY(-2px); }
+        .file-upload {
+            border:2px dashed var(--gold); padding:18px; text-align:center; border-radius:12px;
+            background:var(--gold-light); cursor:pointer; color:var(--royal-blue); font-size:0.9rem;
+        }
+        .addon-block { padding:14px 16px; border:1px solid #eee; border-radius:12px; margin-bottom:12px; background:var(--off-white); }
+        .addon-head { display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:500; }
+        .addon-body { display:none; margin-top:12px; }
+        .addon-block.open .addon-body { display:block; }
+        .spinner {
+            width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:var(--gold);
+            border-radius:50%; display:inline-block; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .deposit-info { font-size:0.85rem; margin-top:8px; }
+        .pill { display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; }
+        .pill-ok { background:#e6f4ea; color:#1e7e34; }
+        .pill-no { background:#fdecea; color:#b71c1c; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>C&O TV Mounting</h1>
+        <p>Premium Installations. Flawless Execution.</p>
+    </header>
+
+    <div class="progress-bar">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+    </div>
+
+    <!-- STEP 1: Primary service -->
+    <div class="form-step active" id="step-1">
+        <h2>What can we install for you?</h2>
+        <p class="step-sub">Pick your main service — you can add more on the next screen.</p>
+        <div class="options-grid" id="service-options"></div>
+        <div class="nav-buttons">
+            <button class="btn-next" onclick="nextStep(2)">Continue</button>
+        </div>
+    </div>
+
+    <!-- STEP 2: Configure + add-ons -->
+    <div class="form-step" id="step-2">
+        <h2 id="step2-title">Configure Your Project</h2>
+        <p class="step-sub">Set up your main service, then add any others you'd like done.</p>
+        <div id="step2-content"></div>
+        <div class="total-box">
+            <span class="total-label">Estimated Total</span>
+            <span class="total-amount" id="display-total">$25</span>
+            <span class="total-note">Travel fee included · Final price confirmed before work</span>
+            <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
+        </div>
+        <div class="input-group" style="margin-top:18px">
+            <label>Promo Code (optional)</label>
+            <div style="display:flex; gap:10px">
+                <input type="text" id="promo-input" placeholder="e.g. WELCOME10" style="text-transform:uppercase" oninput="state.promoInput=this.value.trim()">
+                <button type="button" class="btn-next" style="flex:0 0 110px" onclick="applyPromo()">Apply</button>
+            </div>
+            <div id="promo-msg" style="font-size:0.8rem; margin-top:6px"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="prevStep(1)">Back</button>
+            <button class="btn-next" onclick="nextStep(3)">Continue</button>
+        </div>
+    </div>
+
+    <!-- STEP 3: Details -->
+    <div class="form-step" id="step-3">
+        <h2>Your Details</h2>
+        <p class="step-sub">So we can confirm the appointment and prepare.</p>
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="cust-name" placeholder="Enter your name">
+        </div>
+        <div class="input-group">
+            <label>Service Address</label>
+            <input type="text" id="cust-address" placeholder="Street, City, TX (e.g. 123 Main St, Irving, TX 75061)">
+        </div>
+        <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" id="cust-phone" placeholder="(555) 000-0000">
+        </div>
+        <div class="input-group">
+            <label>Wall / Space Photo (helps us prepare)</label>
+            <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                <span id="file-label">Click to upload a photo</span>
+                <input type="file" id="file-input" style="display:none" accept="image/*">
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="prevStep(2)">Back</button>
+            <button class="btn-next" onclick="goToStep4()">Continue</button>
+        </div>
+    </div>
+
+    <!-- STEP 4: Schedule + deposit -->
+    <div class="form-step" id="step-4">
+        <h2>Finalize Booking</h2>
+        <p class="step-sub">Pick a time and we'll lock it in.</p>
+        <div class="input-group">
+            <label>Preferred Date & Time</label>
+            <input type="datetime-local" id="booking-time">
+        </div>
+        <div id="deposit-area"></div>
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="prevStep(3)">Back</button>
+            <button class="btn-submit" id="submit-btn" onclick="submitBooking()">Book Now</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ---------- Pricing model (from C&O TV Mounting Pricing.md) ---------- */
+const SERVICES = {
+    tv:       { name: 'TV Mounting',          icon: '📺' },
+    fireplace:{ name: 'Fireplace Installation', icon: '🔥' },
+    blinds:   { name: 'Blinds & Shades',      icon: '🪟' },
+    mirrors:  { name: 'Mirrors & Portraits',  icon: '🖼️' },
+    led:      { name: 'LED Lighting',         icon: '💡' },
+    soundbar: { name: 'Soundbar Mounting',    icon: '🔊' }
+};
+
+const TV = {
+    mount:   { fixed: 30, tilt: 40, full: 60 },
+    size:    { '55" & below': 90, '56"–65"': 95, '66"–75"': 100, '76"–85"': 115, '86"–95"': 135, '96"–110"': 170 },
+    surface: { 'Drywall': 0, 'Brick / Stone / Stucco': 85, 'Tile': 50 },
+    fireplaceSurcharge: 30,
+    largeTvSurcharge: 50,   // 85" and up
+    wire:    { 'Internal (in-wall)': 60, 'External (raceway)': 35 }
+};
+const BLINDS  = { small: 55, medium: 70, large: 85 };   // per window
+const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
+const SOUNDBAR = 45;                                    // each
+
+const TRAVEL_FEE = 25;
+const DEPOSIT_REQUIRED_MILES = 25;
+const IRVING = { lat: 32.8140, lon: -96.9489 };
+
+/* ============================================================
+   PROMO CODES  — managed by Orion / Jarvis
+   To activate a code: set active:true.  To deactivate: active:false.
+   type: 'percent' (value = %)  or  'flat' (value = $ off)
+   expires: 'YYYY-MM-DD' or null.  Codes are case-insensitive.
+   ============================================================ */
+const PROMOS = [
+    { code: 'WELCOME10', type: 'percent', value: 10, active: true,  expires: null },
+    { code: 'FATHERS25', type: 'flat',    value: 25, active: false, expires: null },
+    { code: 'SUMMER15',  type: 'percent', value: 15, active: false, expires: '2026-09-01' }
+];
+
+/* ---------- State ---------- */
+let state = {
+    primary: null,
+    tv:      { mount:null, size:null, surface:null, overFireplace:false, wire:null },
+    blinds:  { size:null, qty:1 },
+    mirrors: { size:null, qty:1 },
+    soundbar:{ qty:1 },
+    led:      false,
+    fireplaceStandalone: false,
+    addons:  new Set(),
+    promoInput: '',
+    appliedPromo: null
+};
+
+/* ---------- Step 1 render ---------- */
+function renderStep1() {
+    const wrap = document.getElementById('service-options');
+    wrap.innerHTML = '';
+    for (const key in SERVICES) {
+        const s = SERVICES[key];
+        const div = document.createElement('div');
+        div.className = 'option-card';
+        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class="price-tag">Select</span>`;
+        div.onclick = () => {
+            state.primary = key;
+            document.querySelectorAll('#service-options .option-card').forEach(c => c.classList.remove('selected'));
+            div.classList.add('selected');
+        };
+        wrap.appendChild(div);
+    }
+}
+
+/* ---------- Step 2 render ---------- */
+function renderStep2() {
+    const title = document.getElementById('step2-title');
+    title.innerText = `Configure: ${SERVICES[state.primary].name}`;
+    const c = document.getElementById('step2-content');
+    let html = '';
+
+    // Primary service config
+    html += `<span class="section-label">Your Main Service</span>`;
+    html += configHtml(state.primary, 'p');
+
+    // Add-on services
+    html += `<span class="section-label">Add More Services (optional)</span>`;
+    for (const key in SERVICES) {
+        if (key === state.primary) continue;
+        const s = SERVICES[key];
+        const open = state.addons.has(key) ? ' open' : '';
+        html += `<div class="addon-block${open}" data-svc="${key}">
+            <div class="addon-head" onclick="toggleAddon('${key}')">
+                <span>${s.icon} ${s.name}</span>
+                <span class="price-tag">${state.addons.has(key) ? '✓ Added' : '+ Add'}</span>
+            </div>
+            <div class="addon-body">${configHtml(key, 'a')}</div>
+        </div>`;
+    }
+    c.innerHTML = html;
+    calculateTotal();
+}
+
+/* Build config UI for a service. prefix 'p' = primary, 'a' = addon (unique IDs) */
+function configHtml(key, prefix) {
+    if (key === 'tv') {
+        let h = `<div class="options-grid">`;
+        h += optCard('p_mount', 'Mount Type', Object.entries(TV.mount).map(([k,v]) => [k, '$'+v+' base']));
+        h += `</div>`;
+        h += `<label>TV Size</label><select id="${prefix}_tvsize" onchange="setTv('size', this.value)">
+            <option value="">Select size…</option>` +
+            Object.entries(TV.size).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
+            `</select>`;
+        h += `<div class="options-grid" style="margin-top:14px">`;
+        h += optCard('p_surface', 'Wall Surface', Object.entries(TV.surface).map(([k,v]) => [k, v?('+$'+v):'+$0']));
+        h += `</div>`;
+        h += `<div class="options-grid" style="margin-top:14px">`;
+        h += toggleCard('p_fw', 'Over Fireplace', '+$'+TV.fireplaceSurcharge);
+        h += `<div class="option-card" id="${prefix}_wire_internal" onclick="setTv('wire','Internal (in-wall)')"><span>Internal Wire Concealment</span><span class="price-tag">+$${TV.wire['Internal (in-wall)']}</span></div>`;
+        h += `<div class="option-card" id="${prefix}_wire_external" onclick="setTv('wire','External (raceway)')"><span>External Wire Concealment</span><span class="price-tag">+$${TV.wire['External (raceway)']}</span></div>`;
+        h += `</div>`;
+        return h;
+    }
+    if (key === 'blinds') {
+        return `<label>Window Size</label><select id="${prefix}_blindsize" onchange="setBlinds('size', this.value)">
+            <option value="">Select size…</option>` +
+            Object.entries(BLINDS).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
+            `</select>
+            <label style="margin-top:12px">How many windows?</label>
+            <input type="number" min="1" value="1" id="${prefix}_blindqty" onchange="setBlinds('qty', this.value)">`;
+    }
+    if (key === 'mirrors') {
+        return `<label>Item Size</label><select id="${prefix}_mirrorsize" onchange="setMirrors('size', this.value)">
+            <option value="">Select size…</option>` +
+            Object.entries(MIRRORS).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
+            `</select>
+            <label style="margin-top:12px">How many pieces?</label>
+            <input type="number" min="1" value="1" id="${prefix}_mirrorqty" onchange="setMirrors('qty', this.value)">`;
+    }
+    if (key === 'soundbar') {
+        return `<label>How many soundbars?</label>
+            <input type="number" min="1" value="1" id="${prefix}_sbqty" onchange="state.soundbar.qty = parseInt(this.value)||1; calculateTotal();">`;
+    }
+    if (key === 'led') {
+        return `<p style="color:var(--text-muted); font-size:0.9rem">LED lighting is custom-quoted based on scope. We'll confirm the exact price by text after reviewing your space.</p>`;
+    }
+    if (key === 'fireplace') {
+        return `<p style="color:var(--text-muted); font-size:0.9rem">Electric fireplace installation is custom-quoted based on the unit and wall type. We'll confirm the exact price by text.</p>`;
+    }
+    return '';
+}
+
+/* helper: radio-style option cards */
+function optCard(group, label, options) {
+    // options: [[value, display], ...]
+    return `<label>${label}</label>` +
+        options.map(([val, disp]) =>
+            `<div class="option-card" data-group="${group}" onclick="pickOption('${group}','${val}', this)"><span>${val}</span><span class="price-tag">${disp}</span></div>`
+        ).join('');
+}
+function toggleCard(id, label, disp) {
+    return `<div class="option-card" id="${id}" onclick="toggleFireplace()"><span>${label}</span><span class="price-tag">${disp}</span></div>`;
+}
+
+/* ---------- Setters ---------- */
+function pickOption(group, val, el) {
+    if (group === 'p_mount')   { state.tv.mount = val; }
+    if (group === 'p_surface') { state.tv.surface = val; }
+    // clear selection within same group, mark this one
+    document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    calculateTotal();
+}
+function toggleFireplace() {
+    state.tv.overFireplace = !state.tv.overFireplace;
+    document.getElementById('p_fw').classList.toggle('selected', state.tv.overFireplace);
+    calculateTotal();
+}
+function setTv(field, val) {
+    if (field === 'size')   state.tv.size = val;
+    if (field === 'wire')   state.tv.wire = (state.tv.wire === val) ? null : val;
+    if (field === 'wire') {
+        document.getElementById('p_wire_internal').classList.toggle('selected', state.tv.wire === 'Internal (in-wall)');
+        document.getElementById('p_wire_external').classList.toggle('selected', state.tv.wire === 'External (raceway)');
+    }
+    calculateTotal();
+}
+function setBlinds(field, val) {
+    if (field === 'size') state.blinds.size = val;
+    if (field === 'qty')  state.blinds.qty = parseInt(val) || 1;
+    calculateTotal();
+}
+function setMirrors(field, val) {
+    if (field === 'size') state.mirrors.size = val;
+    if (field === 'qty')  state.mirrors.qty = parseInt(val) || 1;
+    calculateTotal();
+}
+function toggleAddon(key) {
+    if (state.addons.has(key)) state.addons.delete(key);
+    else state.addons.add(key);
+    renderStep2();
+}
+
+/* ---------- Pricing engine ---------- */
+function tvTotal() {
+    let t = 0;
+    if (state.tv.mount)   t += TV.mount[state.tv.mount];
+    if (state.tv.size)    t += TV.size[state.tv.size];
+    if (state.tv.surface) t += TV.surface[state.tv.surface];
+    if (state.tv.overFireplace) t += TV.fireplaceSurcharge;
+    // Large-TV surcharge applies to 85" and up → size keys '86"–95"' and '96"–110"'
+    if (state.tv.size && (state.tv.size.startsWith('86') || state.tv.size.startsWith('96'))) t += TV.largeTvSurcharge;
+    if (state.tv.wire)    t += TV.wire[state.tv.wire];
+    return t;
+}
+function calculateTotal() {
+    let total = TRAVEL_FEE;
+    const active = new Set([state.primary, ...state.addons]);
+
+    if (active.has('tv'))       total += tvTotal();
+    if (active.has('blinds') && state.blinds.size)   total += BLINDS[state.blinds.size] * (state.blinds.qty || 1);
+    if (active.has('mirrors') && state.mirrors.size) total += MIRRORS[state.mirrors.size] * (state.mirrors.qty || 1);
+    if (active.has('soundbar')) total += SOUNDBAR * (state.soundbar.qty || 1);
+    // led & fireplace standalone = custom quote (no auto number)
+
+    // Apply promo discount
+    let discount = 0;
+    const p = state.appliedPromo;
+    if (p) {
+        discount = (p.type === 'percent') ? Math.round(total * p.value / 100) : Math.min(p.value, total);
+        total = Math.max(0, total - discount);
+    }
+
+    const disp = document.getElementById('display-total');
+    if (disp) {
+        disp.innerText = '$' + total;
+        const pa = document.getElementById('promo-applied');
+        if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
+    }
+    return total;
+}
+
+function applyPromo() {
+    const raw = (state.promoInput || '').toUpperCase().trim();
+    const msg = document.getElementById('promo-msg');
+    if (!raw) { msg.style.color = 'var(--text-muted)'; msg.innerText = 'Enter a code first.'; return; }
+    const now = new Date();
+    const found = PROMOS.find(x => x.code.toUpperCase() === raw);
+    if (!found) {
+        state.appliedPromo = null;
+        msg.style.color = '#b71c1c'; msg.innerText = 'Invalid promo code.';
+    } else if (!found.active) {
+        state.appliedPromo = null;
+        msg.style.color = '#b71c1c'; msg.innerText = `Code "${found.code}" is not active right now.`;
+    } else if (found.expires && now > new Date(found.expires + 'T23:59:59')) {
+        state.appliedPromo = null;
+        msg.style.color = '#b71c1c'; msg.innerText = `Code "${found.code}" has expired.`;
+    } else {
+        state.appliedPromo = found;
+        msg.style.color = '#1e7e34';
+        msg.innerText = `✓ ${found.code} applied — ${found.type === 'percent' ? found.value + '% off' : '$' + found.value + ' off'}!`;
+    }
+    calculateTotal();
+}
+
+/* ---------- Navigation ---------- */
+function showStep(n) {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    document.querySelectorAll('.step-dot').forEach((d, i) => d.classList.toggle('active', i < n));
+}
+function nextStep(n) {
+    if (n === 2 && !state.primary) { alert('Please select a service first.'); return; }
+    if (n === 2) renderStep2();
+    showStep(n);
+}
+function prevStep(n) { showStep(n); }
+function goToStep4() {
+    if (!document.getElementById('cust-name').value || !document.getElementById('cust-address').value) {
+        alert('Please enter your name and service address.'); return;
+    }
+    showStep(4);
+    evaluateDeposit();
+}
+
+/* ---------- Deposit logic (distance from Irving, TX) ---------- */
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 3958.8; // miles
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+async function evaluateDeposit() {
+    const area = document.getElementById('deposit-area');
+    const addr = document.getElementById('cust-address').value;
+    area.innerHTML = `<div class="total-box" style="background:var(--royal-blue)">
+        <span class="total-label"><span class="spinner"></span>Checking distance from Irving…</span></div>`;
+    document.getElementById('submit-btn').innerText = 'Book Now';
+
+    try {
+        const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(addr);
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const data = await res.json();
+        if (!data || !data[0]) { unknownDeposit(area); return; }
+        const d = haversine(IRVING.lat, IRVING.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
+        if (d > DEPOSIT_REQUIRED_MILES) {
+            area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
+                <span class="total-label" style="color:var(--royal-blue)">Deposit Required (${d.toFixed(0)} mi from Irving)</span>
+                <span class="total-amount" style="color:var(--royal-blue)">$50.00</span>
+                <span class="total-note" style="color:var(--royal-blue)">Secures your slot for jobs beyond 25 miles</span></div>`;
+            document.getElementById('submit-btn').innerText = 'Book & Pay $50 Deposit';
+        } else {
+            area.innerHTML = `<div class="total-box" style="background:#e6f4ea; color:#1e7e34; border-color:#1e7e34">
+                <span class="total-label" style="color:#1e7e34">No Deposit Required</span>
+                <span class="total-amount" style="color:#1e7e34; font-size:1.4rem">Within 25 miles</span>
+                <span class="total-note" style="color:#1e7e34">Just pay on completion — ${d.toFixed(0)} mi from Irving</span></div>`;
+            document.getElementById('submit-btn').innerText = 'Book Now';
+        }
+    } catch (e) {
+        unknownDeposit(area);
+    }
+}
+function unknownDeposit(area) {
+    area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
+        <span class="total-label" style="color:var(--royal-blue)">Deposit</span>
+        <span class="total-amount" style="color:var(--royal-blue); font-size:1.3rem">Confirmed by text</span>
+        <span class="total-note" style="color:var(--royal-blue)">We'll verify distance & deposit when we confirm</span></div>`;
+    document.getElementById('submit-btn').innerText = 'Book Now';
+}
+
+/* ---------- Submit ---------- */
+function submitBooking() {
+    const total = calculateTotal();
+    const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
+    let msg = `Booking request sent!\nEstimate: $${total}\n` +
+              `Name: ${document.getElementById('cust-name').value}\n` +
+              `Address: ${document.getElementById('cust-address').value}\n` +
+              `Service: ${SERVICES[state.primary].name}` +
+              (state.addons.size ? ' + ' + [...state.addons].map(k => SERVICES[k].name).join(', ') : '');
+    if (needsDeposit) msg += `\nDeposit: $50 (would redirect to Stripe)`;
+    alert(msg + `\n\n[Backend hook: this is where we push to Google Sheets + Stripe.]`);
+}
+
+/* file upload label */
+document.getElementById('file-input').addEventListener('change', function() {
+    document.getElementById('file-label').innerText = this.files[0] ? '✓ ' + this.files[0].name : 'Click to upload a photo';
+});
+
+/* init */
+renderStep1();
+calculateTotal();
+</script>
+</body>
+</html>
