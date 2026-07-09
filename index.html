@@ -122,7 +122,14 @@
             font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
             padding: 3px 8px; border-radius: 20px; text-transform: uppercase;
         }
-        label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; }
+        .service-area-note {
+            display:block; font-weight:800; color:var(--royal-blue);
+            background:var(--gold-light); border:2px solid var(--gold);
+            border-radius:8px; padding:10px 14px; margin-bottom:14px;
+            font-size:0.95rem; text-align:center; letter-spacing:0.3px;
+            box-shadow:0 2px 8px rgba(212,175,55,0.2);
+        }
+        .service-area-note strong { color:var(--royal-blue); }
         input, select {
             width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;
             font-family:'Inter', sans-serif; font-size:1rem; transition:border 0.2s;
@@ -224,6 +231,7 @@
         </div>
         <div class="input-group">
             <label>Service Address</label>
+            <div class="service-area-note">📍 We proudly serve the entire <strong>DFW metroplex &amp; all surrounding areas!</strong></div>
             <input type="text" id="cust-address" placeholder="Street, City, TX (e.g. 123 Main St, Irving, TX 75061)">
         </div>
         <div class="input-group">
