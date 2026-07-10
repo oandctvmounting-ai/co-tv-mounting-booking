@@ -284,7 +284,7 @@
 /* ---------- Pricing model (from C&O TV Mounting Pricing.md) ---------- */
 const SERVICES = {
     tv:       { name: 'TV Mounting',          icon: '📺' },
-    fireplace:{ name: 'Fireplace Installation', icon: '🔥' },
+    fireplace:{ name: 'Electronic Fireplace Mount/Install', icon: '🔥' },
     blinds:   { name: 'Blinds & Shades',      icon: '🪟' },
     mirrors:  { name: 'Mirrors & Portraits',  icon: '🖼️' },
     led:      { name: 'LED Lighting',         icon: '💡' },
@@ -338,6 +338,8 @@ const MOUNT_SVG = {
 const BLINDS  = { small: 55, medium: 70, large: 85 };   // per window
 const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
 const SOUNDBAR = 45;                                    // each
+const FIREPLACE = 150;                                  // electronic fireplace mounting/installation (standalone base)
+const LED = { tv: 55, house: 100 };                   // tv lights | inside-house LEDs (we provide lights)
 
 const TRAVEL_FEE = 25;
 const DEPOSIT_REQUIRED_MILES = 25;
@@ -369,6 +371,7 @@ let state = {
     mirrors: { size:null, qty:1 },
     soundbar:{ qty:1 },
     led:      false,
+    ledChoice: null,            // 'tv' = TV Lights ($55) | 'house' = Inside House LEDs ($100, lights provided)
     fireplaceStandalone: false,
     addons:  new Set(),
     promoInput: '',
@@ -453,10 +456,15 @@ function configHtml(key, prefix) {
             <input type="number" min="1" value="1" id="${prefix}_sbqty" onchange="state.soundbar.qty = parseInt(this.value)||1; calculateTotal();">`;
     }
     if (key === 'led') {
-        return `<p style="color:var(--text-muted); font-size:0.9rem">LED lighting is custom-quoted based on scope. We'll confirm the exact price by text after reviewing your space.</p>`;
+        const tvSel = state.ledChoice === 'tv' ? ' selected' : '';
+        const houseSel = state.ledChoice === 'house' ? ' selected' : '';
+        return `<div class="option-card${tvSel}" onclick="setLed('tv')"><span>💡 TV Lights Installation</span><span class="price-tag">$55</span></div>
+                <div class="option-card${houseSel}" onclick="setLed('house')"><span>💡 Inside House LEDs</span><span class="price-tag">$100</span></div>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">For Inside House LEDs, we provide the lights.</p>`;
     }
     if (key === 'fireplace') {
-        return `<p style="color:var(--text-muted); font-size:0.9rem">Electric fireplace installation is custom-quoted based on the unit and wall type. We'll confirm the exact price by text.</p>`;
+        return `<p style="color:var(--text-muted); font-size:0.9rem; margin:4px 0 8px">Electronic fireplace mounting / installation.</p>
+                <div class="option-card selected" style="pointer-events:none"><span>🔥 Base Installation</span><span class="price-tag">$150</span></div>`;
     }
     return '';
 }
@@ -588,6 +596,11 @@ function setMirrors(field, val) {
     if (field === 'qty')  state.mirrors.qty = parseInt(val) || 1;
     calculateTotal();
 }
+function setLed(choice) {
+    state.ledChoice = choice;
+    renderStep2();
+    calculateTotal();
+}
 function toggleAddon(key) {
     if (state.addons.has(key)) state.addons.delete(key);
     else state.addons.add(key);
@@ -617,7 +630,8 @@ function calculateTotal() {
     if (active.has('blinds') && state.blinds.size)   total += BLINDS[state.blinds.size] * (state.blinds.qty || 1);
     if (active.has('mirrors') && state.mirrors.size) total += MIRRORS[state.mirrors.size] * (state.mirrors.qty || 1);
     if (active.has('soundbar')) total += SOUNDBAR * (state.soundbar.qty || 1);
-    // led & fireplace standalone = custom quote (no auto number)
+    if (active.has('fireplace')) total += FIREPLACE;
+    if (active.has('led') && state.ledChoice) total += LED[state.ledChoice];
 
     // Apply promo discount
     let discount = 0;
@@ -729,8 +743,12 @@ function unknownDeposit(area) {
 function submitBooking() {
     const total = calculateTotal();
     const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
-    const primary = state.primary ? SERVICES[state.primary].name : '';
-    const addons = [...state.addons].map(k => SERVICES[k].name);
+    const primary = state.primary ? (state.primary === 'led'
+        ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
+        : SERVICES[state.primary].name) : '';
+    const addons = [...state.addons].map(k => k === 'led'
+        ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
+        : SERVICES[k].name);
     const tvDetails = state.tvs.map(tv => ({
         mount: tv.mount, sizeLabel: tv.size ? TV.sizeLabel[tv.size] : '',
         surfaceLabel: tv.surface ? TV.surfaceLabel[tv.surface] : '',
