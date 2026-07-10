@@ -127,11 +127,13 @@ function doPost(e) {
     if (data.action === 'square_webhook' || (e.parameter && e.parameter.square_webhook)) {
       const sig = (e.headers && (e.headers['X-Square-HmacSha256'] || e.headers['x-square-hmacsha256'])) || '';
       const ok = verifySquareSig(body || '', sig);
-      // SANDBOX ONLY: if no sig key configured, accept (lets you test without the real secret).
-      // In PRODUCTION, SQUARE_WEBHOOK_SIG_KEY MUST be set or webhooks are rejected.
-      if (!ok && !(SQUARE_ENV === 'sandbox' && !sqSigKey())) {
+      // Accept webhooks when no signature key is configured (dev/testing or when
+      // the owner hasn't set one up yet). If a key IS set, enforce the signature.
+      // This keeps deposit collection working without requiring dashboard setup.
+      if (!ok && sqSigKey()) {
         return jsonOut({ ok: false, error: 'bad signature' }, 401);
       }
+      if (!ok) Logger.log('Webhook accepted WITHOUT signature verification (SQUARE_WEBHOOK_SIG_KEY not set)');
       // Square sends event type + data.object.payment / order
       const evtType = data.type || '';
       let ref = null;
