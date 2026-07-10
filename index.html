@@ -751,12 +751,46 @@ function submitBooking() {
     };
 
     if (!APP_SCRIPT_URL) {
-        // No backend configured yet — show what would be sent and queue locally
         queueLocal(payload);
         alert('Booking captured locally (backend not connected yet).\n\n' + summarize(payload));
         return;
     }
 
+    // If a deposit is required, first create the Square checkout link, then redirect.
+    if (needsDeposit) {
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerText = 'Creating secure checkout…';
+        fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.assign({ action: 'create_deposit' }, payload))
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.ok && res.checkout_url) {
+                // Also send the booking record (so it's logged even before payment)
+                fetch(APP_SCRIPT_URL, {
+                    method: 'POST', mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).catch(() => {});
+                window.location.href = res.checkout_url; // -> Square hosted checkout
+            } else {
+                throw new Error(res.error || 'could not create checkout');
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerText = 'Book & Pay $50 Deposit';
+            alert('Could not start payment: ' + err.message + '\nWe saved your info and will reach out.');
+            queueLocal(payload);
+        });
+        return;
+    }
+
+    // No deposit: just submit the booking.
     fetch(APP_SCRIPT_URL, {
         method: 'POST',
         mode: 'cors',
@@ -772,10 +806,19 @@ function submitBooking() {
         }
     })
     .catch(err => {
-        // Network/endpoint down → queue locally so no lead is lost
         queueLocal(payload);
         alert('Saved locally (couldn\'t reach server). We\'ll retry sync.\n\n' + summarize(payload));
     });
+}
+
+/* Show a thank-you if Square redirected back with ?paid= */
+function checkPaidRedirect() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') && params.get('src') === 'square') {
+        alert('✅ Deposit received! Your booking is confirmed and we\'ll be in touch shortly.');
+        // clean the URL so refresh doesn't re-alert
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 }
 
 function summarize(p) {
@@ -801,6 +844,7 @@ document.getElementById('file-input').addEventListener('change', function() {
 /* init */
 renderStep1();
 calculateTotal();
+checkPaidRedirect();
 </script>
 </body>
 </html>
