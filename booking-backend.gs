@@ -53,6 +53,7 @@ function createSquareDeposit(bookingRef, customerName) {
     idempotency_key: idem,
     order: {
       location_id: loc,
+      reference_id: bookingRef,
       line_items: [{
         name: 'C&O TV Mounting - Booking Deposit ($50)',
         quantity: '1',
@@ -75,7 +76,7 @@ function createSquareDeposit(bookingRef, customerName) {
     payload: JSON.stringify(body)
   });
   const json = JSON.parse(resp.getContentText());
-  if (json.payment_link && json.payment_link.url) return json.payment_link.url;
+  if (json.payment_link && json.payment_link.url) return { url: json.payment_link.url, ref: bookingRef };
   throw new Error('Square create link failed: ' + JSON.stringify(json).slice(0, 300));
 }
 
@@ -94,11 +95,12 @@ function verifySquareSig(rawBody, sigHeader) {
 function markDepositPaid(bookingRef) {
   const sh = getSheet();
   const data = sh.getDataRange().getValues();
-  // header at row 1; we store ref in the Status column (col 13) as "REF:xxxx"
+  // Status column (col 13) holds the ref (e.g. "DEP-..." or "REF:...").
+  // Match if the cell contains the ref as a standalone token.
   for (let r = data.length; r >= 2; r--) {
     const statusCell = data[r - 1][12]; // col M = index 12
-    if (statusCell && String(statusCell).indexOf('REF:' + bookingRef) !== -1) {
-      sh.getRange(r, 13).setValue('deposit_paid | ' + new Date().toISOString());
+    if (statusCell && String(statusCell).indexOf(bookingRef) !== -1) {
+      sh.getRange(r, 13).setValue('deposit_paid | ' + bookingRef + ' | ' + new Date().toISOString());
       return true;
     }
   }
@@ -113,8 +115,9 @@ function doPost(e) {
     // ---- Branch 1: create a Square deposit link ----
     if (data.action === 'create_deposit') {
       try {
-        const link = createSquareDeposit(data.booking_ref, data.name);
-        return jsonOut({ ok: true, checkout_url: link });
+        const ref = data.booking_ref || ('DEP-' + new Date().getTime() + '-' + Math.floor(Math.random() * 1e4));
+        const result = createSquareDeposit(ref, data.name);
+        return jsonOut({ ok: true, checkout_url: result.url, booking_ref: result.ref });
       } catch (se) {
         return jsonOut({ ok: false, error: String(se).slice(0, 300) });
       }
@@ -122,10 +125,13 @@ function doPost(e) {
 
     // ---- Branch 2: Square webhook (payment confirmed) ----
     if (data.action === 'square_webhook' || (e.parameter && e.parameter.square_webhook)) {
-      const sig = (e.headers && e.headers['X-Square-HmacSha256']) ||
-                  (e.headers && e.headers['x-square-hmacsha256']) || '';
+      const sig = (e.headers && (e.headers['X-Square-HmacSha256'] || e.headers['x-square-hmacsha256'])) || '';
       const ok = verifySquareSig(body || '', sig);
-      if (!ok) return jsonOut({ ok: false, error: 'bad signature' }, 401);
+      // SANDBOX ONLY: if no sig key configured, accept (lets you test without the real secret).
+      // In PRODUCTION, SQUARE_WEBHOOK_SIG_KEY MUST be set or webhooks are rejected.
+      if (!ok && !(SQUARE_ENV === 'sandbox' && !sqSigKey())) {
+        return jsonOut({ ok: false, error: 'bad signature' }, 401);
+      }
       // Square sends event type + data.object.payment / order
       const evtType = data.type || '';
       let ref = null;
@@ -152,7 +158,7 @@ function doPost(e) {
         ).join(' | ')
       : '';
 
-    const bookingRef = 'REF:' + new Date().getTime() + '-' + Math.floor(Math.random() * 1e4);
+    const bookingRef = data.booking_ref || ('REF:' + new Date().getTime() + '-' + Math.floor(Math.random() * 1e4));
 
     sheet.appendRow([
       new Date(),

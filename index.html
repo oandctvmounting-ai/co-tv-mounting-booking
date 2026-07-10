@@ -770,11 +770,12 @@ function submitBooking() {
         .then(r => r.json())
         .then(res => {
             if (res.ok && res.checkout_url) {
-                // Also send the booking record (so it's logged even before payment)
+                // Also send the booking record (so it's logged even before payment),
+                // carrying the same booking_ref Square will echo back in the webhook.
                 fetch(APP_SCRIPT_URL, {
                     method: 'POST', mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(Object.assign({ booking_ref: res.booking_ref }, payload))
                 }).catch(() => {});
                 window.location.href = res.checkout_url; // -> Square hosted checkout
             } else {
