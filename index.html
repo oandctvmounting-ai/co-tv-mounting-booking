@@ -764,7 +764,7 @@ function submitBooking() {
         fetch(APP_SCRIPT_URL, {
             method: 'POST',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(Object.assign({ action: 'create_deposit' }, payload))
         })
         .then(r => r.json())
@@ -774,7 +774,7 @@ function submitBooking() {
                 // carrying the same booking_ref Square will echo back in the webhook.
                 fetch(APP_SCRIPT_URL, {
                     method: 'POST', mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(Object.assign({ booking_ref: res.booking_ref }, payload))
                 }).catch(() => {});
                 window.location.href = res.checkout_url; // -> Square hosted checkout
@@ -795,7 +795,7 @@ function submitBooking() {
     fetch(APP_SCRIPT_URL, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
     })
     .then(r => r.json())
