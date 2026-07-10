@@ -34,7 +34,7 @@ const TELEGRAM_GROUP_CHAT = '-5510113560';
 function sqToken()      { return PropertiesService.getScriptProperties().getProperty('SQUARE_ACCESS_TOKEN'); }
 function sqLocationId() { return PropertiesService.getScriptProperties().getProperty('SQUARE_LOCATION_ID'); }
 function sqSigKey()     { return PropertiesService.getScriptProperties().getProperty('SQUARE_WEBHOOK_SIG_KEY'); }
-const SQUARE_ENV = 'sandbox'; // 'sandbox' for testing, 'production' for live
+const SQUARE_ENV = 'production'; // 'sandbox' for testing, 'production' for live
 function sqBase() { return SQUARE_ENV === 'production' ? 'https://connect.squareup.com' : 'https://connect.squareupsandbox.com'; }
 const SQUARE_VERSION = '2024-01-17';
 
