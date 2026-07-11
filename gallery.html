@@ -11,7 +11,7 @@
             --gold: #D4AF37;
             --white: #FFFFFF;
             --off-white: #F8F9FA;
-            --text-dark: #1A1A1A;
+            --text-dark: --text-dark: #1A1A1A7: #1A1A1A;
             --text-muted: #666666;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,12 +60,12 @@
             height: auto;
             display: block;
         }
-        .gallery-item caption {
+        .gallery-item figcaption {
             padding: 12px;
             text-align: center;
             font-weight: 600;
             color: var(--text-dark);
-            background: var(--gold-light);
+            background: #fff9e6;
         }
         .back-link {
             display: block;
@@ -87,7 +87,12 @@
         <p>Our Work Gallery</p>
     </header>
     <div class="gallery">
-        <!-- Real images from Google Drive -->
+        <!-- New image from user -->
+        <figure class="gallery-item">
+            <img src="images/tv_mount_01.jpg" alt="TV mounted above stone fireplace">
+            <figcaption>TV Mounted Above Stone Fireplace</figcaption>
+        </figure>
+        <!-- Existing placeholder items (we keep them but maybe replace with real later) -->
         <figure class="gallery-item">
             <img src="https://drive.google.com/uc?export=download&id=1zoOZYUxHrRq26XB6LXGEgig3P55B9Fwf" alt="TV Mount Living Room">
             <figcaption>Living Room TV Mount</figcaption>
