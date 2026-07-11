@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C&O TV Mounting - Project Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-blue: #002366;
+            --gold: #D4AF37;
+            --white: #FFFFFF;
+            --off-white: #F8F9FA;
+            --text-dark: #1A1A1A;
+            --text-muted: #666666;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--off-white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,35,102,0.1);
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        header {
+            background: var(--royal-blue);
+            color: var(--white);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+        }
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        .gallery-item {
+            background: var(--off-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .gallery-item caption {
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-dark);
+            background: var(--gold-light);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--royal-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>C&O TV Mounting</h1>
+        <p>Our Work Gallery</p>
+    </header>
+    <div class="gallery">
+        <!-- Sample images using placeholder.com -->
+        <figure class="gallery-item">
+            <img src="https://via.placeholder.com/600x400/002366/FFFFFF?text=TV+Mount+Living+Room" alt="TV Mount Living Room">
+            <figcaption>Living Room TV Mount</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="https://via.placeholder.com/600x400/002366/FFFFFF?text=TV+Mount+Bedroom" alt="TV Mount Bedroom">
+            <figcaption>Bedroom TV Mount</figcaption
+        </figure>
+        <figure class="gallery-item">
+            <img src="https://via.placeholder.com/600x400/002366/FFFFFF?text=Soundbar+Mount" alt="Soundbar Mount">
+            <figcaption>Soundbar Mount</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="https://via.placeholder.com/600x400/002366/FFFFFF?text=Fireplace+TV+Setup" alt="Fireplace TV Setup">
+            <figcaption>Fireplace TV Setup</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="https://via.placeholder.com/600x400/002366/FFFFFF?text=Blinds+Installation" alt="Blinds Installation">
+            <figcaption>Blinds Installation</figcaption>
+        </figure>
+        <figure class="gallery-item">
+            <img src="https://via.placeholder.com/600x400/002366/FFFFFF?text=Mirror+Hanging" alt="Mirror Hanging">
+            <figcaption>Mirror Hanging</figcaption>
+        </figure>
+    </div>
+    <a href="index.html" class="back-link">&larr; Back to Booking Page</a>
+</div>
+</body>
+</html>
