@@ -344,8 +344,8 @@ const LED = { tv: 55, house: 100 };                   // tv lights | inside-hous
 
 const TRAVEL_FEE = 25;
 const DEPOSIT_REQUIRED_MILES = 25;
+const TRAVEL_FEE_MAX_DISTANCE = 20; // miles
 const IRVING = { lat: 32.8140, lon: -96.9489 };
-
 // ===== Backend endpoint (Google Apps Script Web App URL) =====
 const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzs4KIAsEe4BHfMlRk0kJcZ_Q1VmnUBPtRhs-ttj2BT-ODe4Y1NlEDsUs5eHHKyxLZxQ/exec';
 
@@ -377,7 +377,11 @@ let state = {
     fireplaceStandalone: false,
     addons:  new Set(),
     promoInput: '',
-    appliedPromo: null
+    appliedPromo: null,
+    travelDistance: null   // miles from Irving, updated when address changes
+};
+};
+    travelDistance: null   // miles from Irving, updated when address changes
 };
 
 /* ---------- Step 1 render ---------- */
@@ -625,7 +629,10 @@ function tvTotal() {
     return state.tvs.reduce((sum, tv) => sum + tvUnitTotal(tv), 0);
 }
 function calculateTotal() {
-    let total = TRAVEL_FEE;
+    // Travel fee: $25 if distance > 20 miles from Irving
+    if (state.travelDistance !== null && state.travelDistance > 20) {
+        total += 25;
+    }
     const active = new Set([state.primary, ...state.addons]);
 
     if (active.has('tv'))       total += tvTotal();
@@ -712,6 +719,27 @@ function haversine(lat1, lon1, lat2, lon2) {
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+async function updateTravelDistance() {
+    const addr = document.getElementById('cust-address').value;
+    if (!addr.trim()) {
+        state.travelDistance = null;
+        return;
+    }
+    try {
+        const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(addr);
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const data = await res.json();
+        if (!data || !data[0]) {
+            state.travelDistance = null;
+            return;
+        }
+        const d = haversine(IRVING.lat, IRVING.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
+        state.travelDistance = d;
+    } catch (e) {
+        console.error('Could not geocode address for travel distance:', e);
+        state.travelDistance = null;
+    }
 }
 async function evaluateDeposit() {
     const area = document.getElementById('deposit-area');
@@ -874,8 +902,18 @@ document.getElementById('file-input').addEventListener('change', function() {
 
 /* init */
 renderStep1();
-calculateTotal();
-checkPaidRedirect();
+// Set up address input listener for travel fee
+const addrInput = document.getElementById('cust-address');
+addrInput.addEventListener('input', () => {
+    updateTravelDistance().then(() => {
+        calculateTotal();
+    });
+});
+// Initial load
+updateTravelDistance().then(() => {
+    calculateTotal();
+    checkPaidRedirect();
+});
 </script>
 </body>
 </html>
