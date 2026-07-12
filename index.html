@@ -845,6 +845,7 @@ function submitBooking() {
         total: total,
         deposit: needsDeposit ? 50 : 0,
         promo: state.appliedPromo ? state.appliedPromo.code : '',
+        photo: PHOTO_DATA || '',
         source: 'booking-page'
     };
 
@@ -929,16 +930,54 @@ function summarize(p) {
 
 function queueLocal(payload) {
     try {
+        // strip the (potentially large) base64 photo to avoid blowing the 5MB localStorage quota
+        const safe = Object.assign({}, payload);
+        delete safe.photo;
         const q = JSON.parse(localStorage.getItem('co_pending_bookings') || '[]');
-        q.push(Object.assign({ queuedAt: new Date().toISOString() }, payload));
+        q.push(Object.assign({ queuedAt: new Date().toISOString() }, safe));
         localStorage.setItem('co_pending_bookings', JSON.stringify(q));
     } catch (e) { /* localStorage unavailable — nothing we can do */ }
 }
 
-/* file upload label */
+/* ---- Photo capture: read + compress so it can ride along in the JSON payload ---- */
+let PHOTO_DATA = null;
 document.getElementById('file-input').addEventListener('change', function() {
-    document.getElementById('file-label').innerText = this.files[0] ? '✓ ' + this.files[0].name : 'Click to upload a photo';
+    const file = this.files[0];
+    if (!file) { document.getElementById('file-label').innerText = 'Click to upload a photo'; PHOTO_DATA = null; return; }
+    document.getElementById('file-label').innerText = '⏳ Processing photo…';
+    compressImage(file, 1280, 0.7).then(b64 => {
+        PHOTO_DATA = b64;
+        document.getElementById('file-label').innerText = '✓ ' + file.name;
+    }).catch(() => {
+        // fallback: send the raw data URL if canvas compression isn't supported
+        const reader = new FileReader();
+        reader.onload = e => { PHOTO_DATA = e.target.result; document.getElementById('file-label').innerText = '✓ ' + file.name; };
+        reader.readAsDataURL(file);
+    });
 });
+function compressImage(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxDim || h > maxDim) {
+                    const scale = maxDim / Math.max(w, h);
+                    w = Math.round(w * scale); h = Math.round(h * scale);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
 
 /* init */
 renderStep1();
