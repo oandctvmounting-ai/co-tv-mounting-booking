@@ -898,18 +898,8 @@ document.getElementById('file-input').addEventListener('change', function() {
 
 /* init */
 renderStep1();
-// Set up address input listener for travel fee
-const addrInput = document.getElementById('cust-address');
-addrInput.addEventListener('input', () => {
-    updateTravelDistance().then(() => {
-        calculateTotal();
-    });
-});
-// Initial load
-updateTravelDistance().then(() => {
-    calculateTotal();
-    checkPaidRedirect();
-});
+calculateTotal();
+checkPaidRedirect();
 </script>
 </body>
 </html>
