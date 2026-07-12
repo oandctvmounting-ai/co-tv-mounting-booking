@@ -274,6 +274,12 @@
             <input type="datetime-local" id="booking-time">
         </div>
         <div id="deposit-area"></div>
+        <div id="final-pricing" class="total-box" style="margin-top:18px">
+            <span class="total-label">Final Estimate</span>
+            <span class="total-amount" id="final-total">$0</span>
+            <div id="final-travel-note" class="total-note"></div>
+            <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
+        </div>
         <div class="nav-buttons">
             <button class="btn-back" onclick="prevStep(3)">Back</button>
             <button class="btn-submit" id="submit-btn" onclick="submitBooking()">Book Now</button>
@@ -705,7 +711,32 @@ function goToStep4() {
         alert('Please enter your name and service address.'); return;
     }
     showStep(4);
+    renderFinalPricing();
     evaluateDeposit();
+}
+
+/* ---------- Final pricing + travel-fee note (Step 4) ---------- */
+function renderFinalPricing() {
+    const total = calculateTotal();
+    const ft = document.getElementById('final-total');
+    if (ft) ft.innerText = '$' + total;
+
+    const note = document.getElementById('final-travel-note');
+    if (note) {
+        if (state.travelDistance !== null && state.travelDistance > TRAVEL_FEE_MAX_DISTANCE) {
+            note.innerText = `Includes a $${TRAVEL_FEE} travel fee — you are ${state.travelDistance.toFixed(0)} miles from Irving, TX (fee applies beyond ${TRAVEL_FEE_MAX_DISTANCE} miles).`;
+        } else if (state.travelDistance !== null) {
+            note.innerText = `No travel fee — you are within ${TRAVEL_FEE_MAX_DISTANCE} miles of Irving, TX.`;
+        } else {
+            note.innerText = '';
+        }
+    }
+
+    const fp = document.getElementById('final-promo');
+    if (fp) {
+        const p = state.appliedPromo;
+        fp.innerText = p ? `Promo ${p.code} applied` : '';
+    }
 }
 
 /* ---------- Deposit logic (distance from Irving, TX) ---------- */
