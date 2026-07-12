@@ -217,8 +217,8 @@
         <div id="step2-content"></div>
         <div class="total-box">
             <span class="total-label">Estimated Total</span>
-            <span class="total-amount" id="display-total">$25</span>
-            <span class="total-note">Travel fee included · Final price confirmed before work</span>
+            <span class="total-amount" id="display-total">$0</span>
+            <span class="total-note">Final price confirmed before work</span>
             <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
         </div>
         <div class="input-group" style="margin-top:18px">
@@ -380,8 +380,6 @@ let state = {
     appliedPromo: null,
     travelDistance: null   // miles from Irving, updated when address changes
 };
-};
-    travelDistance: null   // miles from Irving, updated when address changes
 };
 
 /* ---------- Step 1 render ---------- */
@@ -629,6 +627,7 @@ function tvTotal() {
     return state.tvs.reduce((sum, tv) => sum + tvUnitTotal(tv), 0);
 }
 function calculateTotal() {
+    let total = 0;
     // Travel fee: $25 if distance > 20 miles from Irving
     if (state.travelDistance !== null && state.travelDistance > 20) {
         total += 25;
