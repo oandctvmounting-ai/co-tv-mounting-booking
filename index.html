@@ -681,8 +681,7 @@ function applyPromo() {
         msg.style.color = '#1e7e34';
         msg.innerText = `✓ ${found.code} applied — ${found.type === 'percent' ? found.value + '% off' : '$' + found.value + ' off'}!`;
     }
-    calculateTotal();
-}
+    console.log('After promo application, appliedPromo:', state.appliedPromo);
     calculateTotal();
 }
 
