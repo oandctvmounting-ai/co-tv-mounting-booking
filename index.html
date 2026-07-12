@@ -274,10 +274,10 @@
             <input type="datetime-local" id="booking-time">
         </div>
         <div id="deposit-area"></div>
+        <div id="final-travel-note"></div>
         <div id="final-pricing" class="total-box" style="margin-top:18px">
             <span class="total-label">Final Estimate</span>
             <span class="total-amount" id="final-total">$0</span>
-            <div id="final-travel-note" class="total-note"></div>
             <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
         </div>
         <div class="nav-buttons">
@@ -724,11 +724,19 @@ function renderFinalPricing() {
     const note = document.getElementById('final-travel-note');
     if (note) {
         if (state.travelDistance !== null && state.travelDistance > TRAVEL_FEE_MAX_DISTANCE) {
-            note.innerText = `Includes a $${TRAVEL_FEE} travel fee — you are ${state.travelDistance.toFixed(0)} miles from Irving, TX (fee applies beyond ${TRAVEL_FEE_MAX_DISTANCE} miles).`;
+            note.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue); text-align:left">
+                <span class="total-label" style="color:var(--royal-blue)">Travel Fee Applies (${state.travelDistance.toFixed(0)} mi from Irving)</span>
+                <span class="total-amount" style="color:var(--royal-blue); font-size:1.4rem">$${TRAVEL_FEE}.00</span>
+                <span class="total-note" style="color:var(--royal-blue)">Included in your final price — applies to jobs beyond ${TRAVEL_FEE_MAX_DISTANCE} miles from Irving, TX</span>
+            </div>`;
         } else if (state.travelDistance !== null) {
-            note.innerText = `No travel fee — you are within ${TRAVEL_FEE_MAX_DISTANCE} miles of Irving, TX.`;
+            note.innerHTML = `<div class="total-box" style="background:#e6f4ea; color:#1e7e34; border-color:#1e7e34; text-align:left">
+                <span class="total-label" style="color:#1e7e34">No Travel Fee</span>
+                <span class="total-amount" style="color:#1e7e34; font-size:1.4rem">Within ${TRAVEL_FEE_MAX_DISTANCE} miles</span>
+                <span class="total-note" style="color:#1e7e34">No travel fee — you are ${state.travelDistance.toFixed(0)} miles from Irving, TX</span>
+            </div>`;
         } else {
-            note.innerText = '';
+            note.innerHTML = '';
         }
     }
 
