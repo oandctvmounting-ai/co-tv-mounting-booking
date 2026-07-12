@@ -654,10 +654,12 @@ function calculateTotal() {
 
 function applyPromo() {
     const raw = (state.promoInput || '').toUpperCase().trim();
+    console.log('Promo input raw:', raw);
     const msg = document.getElementById('promo-msg');
     if (!raw) { msg.style.color = 'var(--text-muted)'; msg.innerText = 'Enter a code first.'; return; }
     const now = new Date();
     const found = PROMOS.find(x => x.code.toUpperCase() === raw);
+    console.log('Found promo:', found);
     if (!found) {
         state.appliedPromo = null;
         msg.style.color = '#b71c1c'; msg.innerText = 'Invalid promo code.';
