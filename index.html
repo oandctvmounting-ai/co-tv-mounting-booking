@@ -781,6 +781,7 @@ async function evaluateDeposit() {
         const data = await res.json();
         if (!data || !data[0]) { unknownDeposit(area); return; }
         const d = haversine(IRVING.lat, IRVING.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
+        state.travelDistance = d;   // keep travel-fee engine in sync with deposit geocode
         if (d > DEPOSIT_REQUIRED_MILES) {
             area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
                 <span class="total-label" style="color:var(--royal-blue)">Deposit Required (${d.toFixed(0)} mi from Irving)</span>
@@ -794,6 +795,7 @@ async function evaluateDeposit() {
                 <span class="total-note" style="color:#1e7e34">Just pay on completion — ${d.toFixed(0)} mi from Irving</span></div>`;
             document.getElementById('submit-btn').innerText = 'Book Now';
         }
+        renderFinalPricing();   // refresh final total + travel-fee note now that distance is known
     } catch (e) {
         unknownDeposit(area);
     }
