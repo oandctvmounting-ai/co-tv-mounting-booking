@@ -656,24 +656,33 @@ function applyPromo() {
     const raw = (state.promoInput || '').toUpperCase().trim();
     console.log('Promo input raw:', raw);
     const msg = document.getElementById('promo-msg');
-    if (!raw) { msg.style.color = 'var(--text-muted)'; msg.innerText = 'Enter a code first.'; return; }
+    if (!raw) { 
+        msg.style.color = 'var(--text-muted)'; 
+        msg.innerText = 'Enter a code first.'; 
+        return; 
+    }
     const now = new Date();
     const found = PROMOS.find(x => x.code.toUpperCase() === raw);
     console.log('Found promo:', found);
     if (!found) {
         state.appliedPromo = null;
-        msg.style.color = '#b71c1c'; msg.innerText = 'Invalid promo code.';
+        msg.style.color = '#b71c1c'; 
+        msg.innerText = 'Invalid promo code.';
     } else if (!found.active) {
         state.appliedPromo = null;
-        msg.style.color = '#b71c1c'; msg.innerText = `Code "${found.code}" is not active right now.`;
+        msg.style.color = '#b71c1c'; 
+        msg.innerText = `Code "${found.code}" is not active right now.`;
     } else if (found.expires && now > new Date(found.expires + 'T23:59:59')) {
         state.appliedPromo = null;
-        msg.style.color = '#b71c1c'; msg.innerText = `Code "${found.code}" has expired.`;
+        msg.style.color = '#b71c1c'; 
+        msg.innerText = `Code "${found.code}" has expired.`;
     } else {
         state.appliedPromo = found;
         msg.style.color = '#1e7e34';
         msg.innerText = `✓ ${found.code} applied — ${found.type === 'percent' ? found.value + '% off' : '$' + found.value + ' off'}!`;
     }
+    calculateTotal();
+}
     calculateTotal();
 }
 
