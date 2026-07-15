@@ -909,6 +909,17 @@ function showStep(n) {
 }
 function nextStep(n) {
     if (n === 2 && !state.primary) { alert('Please select a service first.'); return; }
+    if (n === 3) {
+        // Validate TV selections before moving to Step 3
+        if (state.primary === 'tv' || state.addons.has('tv')) {
+            for (let i = 0; i < state.tvs.length; i++) {
+                const tv = state.tvs[i];
+                if (!tv.mount) { alert(`Please select a mount type for TV #${i + 1}.`); return; }
+                if (!tv.size) { alert(`Please select a TV size for TV #${i + 1}.`); return; }
+                if (!tv.surface) { alert(`Please select a wall type for TV #${i + 1}.`); return; }
+            }
+        }
+    }
     if (n === 2) renderStep2();
     showStep(n);
 }
