@@ -679,8 +679,9 @@ function renderTvs(prefix) {
             <div class="options-grid" style="margin-top:10px">
                 ${optCard(prefix + '_size_' + i, 'TV Size', Object.entries(TV.size).map(([k,v]) => [k, TV.sizeLabel[k] + ' (+$' + v + ')']))}
             </div>
-            <div class="options-grid" style="margin-top:12px">
-                ${optCard(prefix + '_surface_' + i, 'Wall Surface', Object.entries(TV.surface).map(([k, v]) => [k, TV.surfaceLabel[k] + ' (+$' + v + ')']))}
+            <div class="section-label required" style="margin-top:18px">Wall Type <span class="req-badge">Required</span></div>
+            <div class="options-grid" style="margin-top:10px">
+                ${optCard(prefix + '_surface_' + i, 'Wall Type', Object.entries(TV.surface).map(([k, v]) => [k, TV.surfaceLabel[k] + ' (+$' + v + ')']))}
             </div>
             <div class="options-grid" style="margin-top:12px">
                 <div class="option-card" id="${prefix}_fw_${i}" onclick="toggleFireplace('${prefix}', ${i})"><span>Over Fireplace</span><span class="price-tag">+$${TV.fireplaceSurcharge}</span></div>
@@ -915,6 +916,15 @@ function prevStep(n) { showStep(n); }
 function goToStep4() {
     if (!document.getElementById('cust-name').value || !document.getElementById('cust-address').value) {
         alert('Please enter your name and service address.'); return;
+    }
+    // Validate all TV units have mount type, size, and wall surface selected
+    if (state.primary === 'tv' || state.addons.has('tv')) {
+        for (let i = 0; i < state.tvs.length; i++) {
+            const tv = state.tvs[i];
+            if (!tv.mount) { alert(`Please select a mount type for TV #${i + 1}.`); return; }
+            if (!tv.size) { alert(`Please select a TV size for TV #${i + 1}.`); return; }
+            if (!tv.surface) { alert(`Please select a wall type for TV #${i + 1}.`); return; }
+        }
     }
     showStep(4);
     renderFinalPricing();
