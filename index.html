@@ -403,11 +403,10 @@
         </div>
         <div id="deposit-area"></div>
         <div id="final-travel-note"></div>
-        <div class="total-box" style="margin-top:18px">
-            <span class="total-label">Instant Estimate Range</span>
-            <span class="total-amount" id="display-total">$0 – $<span id="range-max">0</span></span>
-            <span class="total-note" id="instant-note" style="display:none">Based on selections — exact quote after address verification</span>
-            <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
+        <div id="final-pricing" class="total-box" style="margin-top:18px">
+            <span class="total-label">Final Estimate</span>
+            <span class="total-amount" id="final-total">$0</span>
+            <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
         </div>
         <div class="nav-buttons">
             <button class="btn-back" onclick="prevStep(3)">Back</button>
@@ -926,7 +925,16 @@ function goToStep4() {
 function renderFinalPricing() {
     const total = calculateTotal();
     const ft = document.getElementById('final-total');
-    if (ft) ft.innerText = '$' + total;
+    // On final step, show exact price (not range)
+    if (ft) {
+        ft.innerText = '$' + total;
+        const parent = ft.parentElement;
+        if (parent && parent.classList.contains('total-box')) {
+            // Ensure label says "Final Estimate" not "Instant Estimate Range"
+            const label = parent.querySelector('.total-label');
+            if (label) label.innerText = 'Final Estimate';
+        }
+    }
 
     const note = document.getElementById('final-travel-note');
     if (note) {
