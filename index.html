@@ -403,10 +403,11 @@
         </div>
         <div id="deposit-area"></div>
         <div id="final-travel-note"></div>
-        <div id="final-pricing" class="total-box" style="margin-top:18px">
-            <span class="total-label">Final Estimate</span>
-            <span class="total-amount" id="final-total">$0</span>
-            <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
+        <div class="total-box" style="margin-top:18px">
+            <span class="total-label">Instant Estimate Range</span>
+            <span class="total-amount" id="display-total">$0 – $<span id="range-max">0</span></span>
+            <span class="total-note" id="instant-note" style="display:none">Based on selections — exact quote after address verification</span>
+            <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
         </div>
         <div class="nav-buttons">
             <button class="btn-back" onclick="prevStep(3)">Back</button>
@@ -782,6 +783,50 @@ function tvUnitTotal(tv) {
 function tvTotal() {
     return state.tvs.reduce((sum, tv) => sum + tvUnitTotal(tv), 0);
 }
+function getInstantRange() {
+    let min = 0, max = 0;
+    const active = new Set([state.primary, ...state.addons]);
+    
+    // Base services
+    if (active.has('tv')) {
+        state.tvs.forEach(tv => {
+            min += tvUnitTotal(tv);
+            max += tvUnitTotal(tv) + 30; // +$30 range for unselected options
+        });
+    }
+    if (active.has('blinds') && state.blinds.size) {
+        const cost = BLINDS[state.blinds.size] * (state.blinds.qty || 1);
+        min += cost; max += cost + 10;
+    }
+    if (active.has('mirrors') && state.mirrors.size) {
+        const cost = MIRRORS[state.mirrors.size] * (state.mirrors.qty || 1);
+        min += cost; max += cost + 5;
+    }
+    if (active.has('soundbar')) {
+        const cost = SOUNDBAR * (state.soundbar.qty || 1);
+        min += cost; max += cost + 10;
+    }
+    if (active.has('fireplace')) { min += FIREPLACE; max += FIREPLACE + 25; }
+    if (active.has('led') && state.ledChoice) {
+        const cost = LED[state.ledChoice];
+        min += cost; max += cost + 15;
+    }
+    // Travel fee boundary
+    if (state.travelDistance !== null) {
+        if (state.travelDistance > 20) min += 25;
+        if (state.travelDistance > 25) max += 25; // deposit might apply
+    }
+    // Promo discount (already applied in calculateTotal)
+    if (state.appliedPromo) {
+        const base = min;
+        const disc = state.appliedPromo.type === 'percent' 
+            ? Math.round(base * state.appliedPromo.value / 100) 
+            : Math.min(state.appliedPromo.value, base);
+        min = Math.max(0, min - disc);
+        max = Math.max(0, max - disc);
+    }
+    return { min, max };
+}
 function calculateTotal() {
     let total = 0;
     // Travel fee: $25 if distance > 20 miles from Irving
@@ -807,7 +852,15 @@ function calculateTotal() {
 
     const disp = document.getElementById('display-total');
     if (disp) {
-        disp.innerText = '$' + total;
+        // Show instant range if we have selections
+        const range = getInstantRange();
+        if (range.min > 0 || range.max > 0) {
+            disp.innerHTML = '$' + range.min + ' – $' + range.max;
+            const note = document.getElementById('instant-note');
+            if (note) note.style.display = 'inline';
+        } else {
+            disp.innerText = '$0';
+        }
         const pa = document.getElementById('promo-applied');
         if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
     }
