@@ -726,7 +726,10 @@ function pickOption(group, val, el) {
     const field = parts[parts.length - 2]; // 'mount' or 'surface'
     const i = parseInt(parts[parts.length - 1], 10);
     const tv = state.tvs[i];
-    if (tv) tv[field] = val;
+    if (tv) {
+        tv[field] = val;
+        console.log(`pickOption: group=${group}, field=${field}, val=${val}, TV[${i}].${field}=${tv[field]}`);
+    }
     document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
     calculateTotal();
@@ -912,8 +915,10 @@ function nextStep(n) {
     if (n === 3) {
         // Validate TV selections before moving to Step 3
         if (state.primary === 'tv' || state.addons.has('tv')) {
+            console.log('Validating TV selections, state.tvs:', state.tvs);
             for (let i = 0; i < state.tvs.length; i++) {
                 const tv = state.tvs[i];
+                console.log(`TV #${i + 1}: mount=${tv.mount}, size=${tv.size}, surface=${tv.surface}`);
                 if (!tv.mount) { alert(`Please select a mount type for TV #${i + 1}.`); return; }
                 if (!tv.size) { alert(`Please select a TV size for TV #${i + 1}.`); return; }
                 if (!tv.surface) { alert(`Please select a wall type for TV #${i + 1}.`); return; }
