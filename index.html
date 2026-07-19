@@ -415,10 +415,33 @@
             <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What areas do you serve? <span class="chev">▾</span></button>
             <div class="faq-a">The entire Dallas–Fort Worth metroplex and all surrounding areas — Dallas, Fort Worth, Plano, Irving, Arlington and more.</div>
         </div>
-    </div>
-</div>
+            </div>
+        </div>
 
-<script>
+        <!-- Trust badges & payment info -->
+        <div style="padding: 24px 20px; text-align: center; background: var(--gold-light); border-top: 1px solid rgba(212,175,55,0.3);">
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px;">
+                <div style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--white); border: 2px solid var(--gold); border-radius: 999px; font-weight: 700; color: var(--royal-blue); font-size: 0.85rem; box-shadow: 0 2px 8px rgba(212,175,55,0.15);">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 20px; height: 20px; stroke: var(--royal-blue); stroke-width: 1.5;">
+                        <path d="M12 2l2.39 1.74 2.95-.02 1.0 2.8 2.4 1.74-.92 2.8.92 2.8-2.4 1.74-1.0 2.8-2.95-.02L12 22l-2.39-1.74-2.95.02-1.0-2.8-2.4-1.74.92-2.8-.92-2.8 2.4-1.74 1.0-2.8 2.95.02L12 2z" stroke-linejoin="round"/>
+                        <path d="M8.5 12.2l2.3 2.3 4.7-4.9" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Trusted Across the DFW Metroplex
+                </div>
+                <div style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--royal-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 999px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(212,175,55,0.15);">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 20px; height: 20px; stroke: var(--gold); stroke-width: 1.5;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round"/>
+                        <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <strong>12-Month Workmanship Warranty</strong>
+                </div>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+                <strong>Secure payments via Square</strong> — Deposits (when required) accept Apple Pay, Google Pay, debit & credit cards.
+            </div>
+        </div>
+
+        <script>
 /* ---------- Pricing model (from C&O TV Mounting Pricing.md) ---------- */
 const SERVICES = {
     tv:       { name: 'TV Mounting',          icon: '📺' },
@@ -509,8 +532,7 @@ let state = {
     blinds:  { size:null, qty:1 },
     mirrors: { size:null, qty:1 },
     soundbar:{ qty:1 },
-    led:      false,
-    ledChoice: null,            // 'tv' = TV Lights ($55) | 'house' = Inside House LEDs ($100, lights provided)
+    ledChoices: [],            // can include 'tv' (TV Lights $55) and/or 'house' (Inside House LEDs $100, lights provided)
     fireplaceStandalone: false,
     addons:  new Set(),
     promoInput: '',
@@ -594,12 +616,12 @@ function configHtml(key, prefix) {
             <input type="number" min="1" value="1" id="${prefix}_sbqty" onchange="state.soundbar.qty = parseInt(this.value)||1; calculateTotal();">`;
     }
     if (key === 'led') {
-        const tvSel = state.ledChoice === 'tv' ? ' selected' : '';
-        const houseSel = state.ledChoice === 'house' ? ' selected' : '';
-        return `<div class="option-card${tvSel}" onclick="setLed('tv')"><span>💡 TV Lights Installation</span><span class="price-tag">$55</span></div>
-                <div class="option-card${houseSel}" onclick="setLed('house')"><span>💡 Inside House LEDs</span><span class="price-tag">$100</span></div>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">For Inside House LEDs, we provide the lights.</p>`;
-    }
+            const tvSel = state.ledChoices && state.ledChoices.includes('tv') ? ' selected' : '';
+            const houseSel = state.ledChoices && state.ledChoices.includes('house') ? ' selected' : '';
+            return `<div class="option-card${tvSel}" onclick="toggleLed('tv')"><span>💡 TV Lights Installation</span><span class="price-tag">$55</span></div>
+                    <div class="option-card${houseSel}" onclick="toggleLed('house')"><span>💡 Inside House LEDs</span><span class="price-tag">$100</span></div>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">Select one or both. For Inside House LEDs, we provide the lights.</p>`;
+        }
     if (key === 'fireplace') {
         return `<p style="color:var(--text-muted); font-size:0.9rem; margin:4px 0 8px">Electronic fireplace mounting / installation.</p>
                 <div class="option-card selected" style="pointer-events:none"><span>🔥 Base Installation</span><span class="price-tag">$150</span></div>`;
@@ -738,8 +760,12 @@ function setMirrors(field, val) {
     if (field === 'qty')  state.mirrors.qty = parseInt(val) || 1;
     calculateTotal();
 }
-function setLed(choice) {
-    state.ledChoice = choice;
+function toggleLed(choice) {
+    if (state.ledChoices.includes(choice)) {
+        state.ledChoices = state.ledChoices.filter(c => c !== choice);
+    } else {
+        state.ledChoices.push(choice);
+    }
     renderStep2();
     calculateTotal();
 }
@@ -788,10 +814,12 @@ function getInstantRange() {
         min += cost; max += cost + 10;
     }
     if (active.has('fireplace')) { min += FIREPLACE; max += FIREPLACE + 25; }
-    if (active.has('led') && state.ledChoice) {
-        const cost = LED[state.ledChoice];
-        min += cost; max += cost + 15;
-    }
+    if (active.has('led') && state.ledChoices && state.ledChoices.length) {
+            state.ledChoices.forEach(c => {
+                const cost = LED[c];
+                min += cost; max += cost + 15;
+            });
+        }
     // Travel fee boundary
     if (state.travelDistance !== null) {
         if (state.travelDistance > 20) min += 25;
@@ -821,7 +849,11 @@ function calculateTotal() {
     if (active.has('mirrors') && state.mirrors.size) total += MIRRORS[state.mirrors.size] * (state.mirrors.qty || 1);
     if (active.has('soundbar')) total += SOUNDBAR * (state.soundbar.qty || 1);
     if (active.has('fireplace')) total += FIREPLACE;
-    if (active.has('led') && state.ledChoice) total += LED[state.ledChoice];
+    if (active.has('led') && state.ledChoices && state.ledChoices.length) {
+        state.ledChoices.forEach(c => {
+            total += LED[c];
+        });
+    }
 
     // Apply promo discount
     let discount = 0;
