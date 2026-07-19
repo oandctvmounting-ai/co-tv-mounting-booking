@@ -474,6 +474,11 @@ const TV = {
    To use real photos instead, set MOUNT_PHOTO[k] = 'https://...jpg' and
    change the .mount-card markup in mountCards() to <img src="${MOUNT_PHOTO[k]}">. */
 const MOUNT_TITLE = { fixed: 'Fixed Mount', tilt: 'Tilt Mount', full: 'Full Motion Mount' };
+const MOUNT_PHOTO = {
+    fixed: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=300&h=200&fit=crop&crop=center',
+    tilt: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=300&h=200&fit=crop&crop=center',
+    full: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=300&h=200&fit=crop&crop=center'
+};
 const MOUNT_SVG = {
     fixed: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Fixed mount">
         <rect width="200" height="150" fill="#F9F4E8"/>
@@ -581,12 +586,12 @@ function renderStep2() {
             const isAdded = state.addons.has(key);
             const open = isAdded ? ' open' : '';
             html += `<div class="addon-block${open}" data-svc="${key}">
-                <div class="addon-head" onclick="toggleAddon('${key}')" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px; background:${isAdded ? 'var(--royal-blue)' : 'var(--white)'}; color:${isAdded ? 'var(--white)' : 'var(--text-dark)'}; border:2px solid ${isAdded ? 'var(--royal-blue)' : '#e8e8e8'}; border-radius:12px; cursor:pointer; transition:all 0.2s ease; font-weight:700; font-size:1rem;">
-                    <span style="display:flex; align-items:center; gap:10px;">${s.icon} ${s.name}</span>
-                    <span style="padding:10px 18px; background:${isAdded ? 'var(--gold)' : 'var(--gold)'}; color:${isAdded ? 'var(--royal-blue)' : 'var(--royal-blue)'}; border-radius:999px; font-weight:800; font-size:0.85rem; box-shadow:0 2px 8px rgba(212,175,55,0.3);">${isAdded ? '✓ Added' : '+ Add Service'}</span>
-                </div>
-                <div class="addon-body">${configHtml(key, 'a')}</div>
-            </div>`;
+                            <div class="addon-head" onclick="toggleAddon('${key}')" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px; background:${isAdded ? 'var(--royal-blue)' : 'var(--white)'}; color:${isAdded ? 'var(--white)' : 'var(--text-dark)'}; border:2px solid ${isAdded ? 'var(--royal-blue)' : '#e8e8e8'}; border-radius:14px; cursor:pointer; transition:all 0.2s ease; font-weight:700; font-size:1.05rem;">
+                                <span style="display:flex; align-items:center; gap:12px; font-size:1.1rem;">${s.icon} ${s.name}</span>
+                                <span style="padding:14px 28px; background:var(--gold); color:var(--royal-blue); border-radius:999px; font-weight:900; font-size:0.95rem; box-shadow:0 4px 16px rgba(212,175,55,0.4); transition:all 0.2s ease;">${isAdded ? '✓ Added' : '+ Add Service'}</span>
+                            </div>
+                            <div class="addon-body">${configHtml(key, 'a')}</div>
+                        </div>`;
         }
     c.innerHTML = html;
     if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
@@ -656,8 +661,9 @@ function mountCards(group) {
     return `<label>Mount Type</label><div class="options-grid mount-grid">` +
         Object.entries(TV.mount).map(([k, v]) => {
             const title = MOUNT_TITLE[k] || k;
+            const photo = MOUNT_PHOTO[k] || '';
             return `<div class="option-card mount-card" data-group="${group}" onclick="pickOption('${group}','${k}', this)">
-                ${MOUNT_SVG[k] || ''}
+                ${photo ? `<img src="${photo}" alt="${title}" style="width:100%; height:auto; border-radius:10px; background:var(--gold-light);">` : (MOUNT_SVG[k] || '')}
                 <span class="mount-name">${title}</span>
                 <span class="price-tag">$${v} base</span>
             </div>`;
