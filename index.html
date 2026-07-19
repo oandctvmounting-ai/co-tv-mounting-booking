@@ -41,7 +41,7 @@
     }
     </script>
     <title>Book Your Installation | C&O TV Mounting</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --royal-blue: #002366;
@@ -52,219 +52,1211 @@
             --text-dark: #1A1A1A;
             --text-muted: #666666;
             --shadow: 0 10px 30px rgba(0,35,102,0.1);
-            --shadow-strong: 0 20px 40px rgba(0,35,102,0.15);
-            --radius: 16px;
-            --radius-sm: 10px;
-            --transition: 0.2s ease;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
+            background-color: var(--off-white);
             color: var(--text-dark);
             line-height: 1.6;
-            padding: 24px;
-            min-height: 100vh;
+            padding: 20px;
         }
         .container {
-            max-width: 680px;
+            max-width: 640px;
             margin: 0 auto;
             background: var(--white);
-            border-radius: 28px;
-            box-shadow: var(--shadow-strong);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
             overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
         header {
             background: var(--royal-blue);
             color: var(--white);
-            padding: 48px 24px 40px;
+            padding: 40px 20px;
             text-align: center;
-            position: relative;
-        }
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 2px;
+            border-bottom: 4px solid var(--gold);
         }
         header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.25rem;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
         }
-        header p { font-weight: 300; opacity: 0.85; font-size: 1.05rem; letter-spacing: 0.3px; }
+        header p { font-weight: 300; opacity: 0.9; font-size: 0.95rem; }
         .progress-bar {
             display: flex;
             justify-content: space-between;
-            padding: 24px 40px;
+            padding: 20px 50px;
             background: var(--gold-light);
-            position: relative;
-        }
-        .progress-bar::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 40px;
-            right: 40px;
-            height: 2px;
-            background: rgba(212, 175, 55, 0.3);
-            z-index: 0;
-            transform: translateY(-50%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
         }
         .step-dot {
-            width: 16px; height: 16px; border-radius: 50%;
-            background: #ddd;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            border: 3px solid var(--white);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            width: 14px; height: 14px; border-radius: 50%;
+            background: #ccc; transition: all 0.3s ease;
         }
         .step-dot.active {
             background: var(--royal-blue);
-            box-shadow: 0 0 0 4px rgba(0,35,102,0.15), 0 2px 8px rgba(0,35,102,0.2);
-            transform: scale(1.15);
-        }
-        .step-dot.completed {
-            background: var(--gold);
+            box-shadow: 0 0 0 4px rgba(0,35,102,0.2);
+            transform: scale(1.2);
         }
         .step-labels {
             display:flex; justify-content:space-between;
-            padding: 10px 40px 20px;
+            padding: 6px 50px 16px;
             background: var(--gold-light);
-            font-size:0.68rem; font-weight:700; color:var(--royal-blue);
-            text-transform:uppercase; letter-spacing:0.5px;
+            font-size:0.72rem; font-weight:700; color:var(--royal-blue);
+            text-transform:uppercase; letter-spacing:0.4px;
         }
-        .step-labels span { flex:1; text-align:center; position: relative; z-index: 1; }
-        .step-labels span.active { color:var(--gold); font-weight: 800; }
+        .step-labels span { flex:1; text-align:center; }
+        .step-labels span.active { color:var(--gold); }
+        /* ---- Serving cities line ---- */
         .serving-line {
-            text-align:center; padding:16px 24px 8px;
-            font-size:0.85rem; color:var(--text-muted); font-weight:600;
+            text-align:center; padding:12px 20px 4px;
+            font-size:0.82rem; color:var(--text-muted); font-weight:600;
         }
         .serving-line strong { color:var(--royal-blue); }
-        .faq { padding: 28px 32px 12px; }
-        .faq h3 { font-family:'Playfair Display',serif; color:var(--royal-blue); text-align:center; font-size:1.35rem; margin-bottom:20px; font-weight: 700; }
-        .faq-item { border:1px solid #e8e8e8; border-radius:12px; margin-bottom:12px; overflow:hidden; background:var(--white); transition: box-shadow var(--transition); }
-        .faq-item:hover { box-shadow: 0 4px 16px rgba(0,35,102,0.08); }
+        /* ---- FAQ accordion ---- */
+        .faq { padding: 22px 30px 6px; }
+        .faq h3 { font-family:'Playfair Display',serif; color:var(--royal-blue); text-align:center; font-size:1.25rem; margin-bottom:14px; }
+        .faq-item { border:1px solid #e3e3e3; border-radius:10px; margin-bottom:10px; overflow:hidden; background:var(--white); }
         .faq-q {
             width:100%; text-align:left; background:transparent; border:none;
-            padding:18px 20px; font-weight:700; font-size:1rem; color:var(--royal-blue);
+            padding:14px 16px; font-weight:700; font-size:0.95rem; color:var(--royal-blue);
             cursor:pointer; display:flex; justify-content:space-between; align-items:center;
         }
-        .faq-q .chev { transition:transform 0.3s ease; color:var(--gold); font-size:1.25rem; }
+        .faq-q .chev { transition:transform 0.25s ease; color:var(--gold); font-size:1.1rem; }
         .faq-item.open .faq-q .chev { transform:rotate(180deg); }
-        .faq-a { max-height:0; overflow:hidden; transition:max-height 0.35s ease, padding 0.35s ease; padding:0 20px; color:var(--text-muted); font-size:0.92rem; line-height: 1.7; }
-        .faq-item.open .faq-a { max-height:300px; padding:0 20px 18px; }
-        .form-step { display: none; padding: 36px 32px; animation: fadeIn 0.4s ease-out; }
+        .faq-a { max-height:0; overflow:hidden; transition:max-height 0.3s ease; padding:0 16px; color:var(--text-muted); font-size:0.88rem; }
+        .faq-item.open .faq-a { max-height:200px; padding:0 16px 14px; }
+        .form-step { display: none; padding: 30px; animation: fadeIn 0.4s ease-out; }
         .form-step.active { display: block; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         h2 {
             font-family: 'Playfair Display', serif;
             color: var(--royal-blue);
-            margin-bottom: 8px;
-            font-size: 1.65rem;
+            margin-bottom: 6px;
+            font-size: 1.5rem;
             text-align: center;
-            font-weight: 700;
         }
-        .step-sub { text-align:center; color: var(--text-muted); font-size:0.9rem; margin-bottom:28px; line-height: 1.5; }
-        .options-grid { display: grid; gap: 14px; margin-bottom: 24px; }
+        .step-sub { text-align:center; color: var(--text-muted); font-size:0.85rem; margin-bottom:22px; }
+        .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
         .option-card {
-            padding: 18px 22px;
-            border: 2px solid #e8e8e8;
-            border-radius: 14px;
+            padding: 16px 20px;
+            border: 2px solid #d9d9d9;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all 0.15s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
-            font-size: 1.08rem;
+            font-size: 1.05rem;
             background: var(--white);
             color: var(--text-dark);
         }
-        .option-card:hover { border-color: var(--gold); background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.15); }
+        .option-card:hover { border-color: var(--gold); background: var(--gold-light); transform: translateY(-1px); }
         .option-card.selected {
             border-color: var(--royal-blue);
             background: var(--royal-blue);
             color: var(--white);
-            box-shadow: 0 8px 24px rgba(0,35,102,0.25);
+            box-shadow: 0 6px 16px rgba(0,35,102,0.25);
             font-weight: 800;
         }
         .option-card.selected .price-tag { color: var(--gold); }
-        .price-tag { font-weight: 700; color: var(--royal-blue); font-size:1rem; }
+        .price-tag { font-weight: 700; color: var(--royal-blue); font-size:0.95rem; }
+        /* ---- Mount type cards (example illustration + title + price) ---- */
         .mount-grid { grid-template-columns: repeat(3, 1fr); }
         .mount-card {
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 10px;
-            padding: 16px 12px;
+            gap: 8px;
+            padding: 12px 10px;
         }
-        .mount-card svg { width: 100%; height: auto; display: block; border-radius: 10px; background: var(--gold-light); }
-        .mount-name { font-weight: 800; font-size: 0.92rem; line-height: 1.25; }
-        .mount-card .price-tag { font-size: 0.85rem; }
+        .mount-card svg { width: 100%; height: auto; display: block; border-radius: 8px; background: var(--gold-light); }
+        .mount-name { font-weight: 800; font-size: 0.9rem; line-height: 1.2; }
+        .mount-card .price-tag { font-size: 0.82rem; }
         .mount-card.selected .mount-name { color: var(--gold); }
         .section-label {
-            display:block; font-size:0.9rem; font-weight:800; color:var(--royal-blue);
-            text-transform:uppercase; letter-spacing:0.6px; margin:28px 0 14px;
-            border-bottom:2px solid rgba(212,175,55,0.5); padding-bottom:8px;
+            display:block; font-size:0.95rem; font-weight:800; color:var(--royal-blue);
+            text-transform:uppercase; letter-spacing:0.5px; margin:24px 0 12px;
+            border-bottom:2px solid rgba(212,175,55,0.6); padding-bottom:6px;
         }
         .section-label.required {
             background: var(--gold-light);
             border: 2px solid var(--gold);
             border-bottom: 2px solid var(--gold);
-            border-radius: 10px;
-            padding: 12px 16px;
+            border-radius: 8px;
+            padding: 10px 14px;
             color: var(--royal-blue);
-            box-shadow: 0 2px 10px rgba(212,175,55,0.2);
+            box-shadow: 0 2px 8px rgba(212,175,55,0.25);
         }
         .section-label .req-badge {
             float: right;
             background: var(--royal-blue); color: var(--white);
-            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.5px;
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
             padding: 3px 8px; border-radius: 20px; text-transform: uppercase;
         }
         .service-area-note {
-            display:block; font-weight:700; color:var(--royal-blue);
+            display:block; font-weight:800; color:var(--royal-blue);
             background:var(--gold-light); border:2px solid var(--gold);
-            border-radius:10px; padding:12px 16px; margin-bottom:18px;
+            border-radius:8px; padding:10px 14px; margin-bottom:14px;
             font-size:0.95rem; text-align:center; letter-spacing:0.3px;
-            box-shadow:0 2px 10px rgba(212,175,55,0.15);
+            box-shadow:0 2px 8px rgba(212,175,55,0.2);
         }
         .service-area-note strong { color:var(--royal-blue); }
         input, select {
-            width:100%; padding:14px 16px; border:1.5px solid #e0e0e0; border-radius:10px;
-            font-family:'Inter', sans-serif; font-size:1rem; transition:all var(--transition);
-            background: var(--white);
+            width:100%; padding:12px; border:1px solid #ddd; border-radius:8px;
+            font-family:'Inter', sans-serif; font-size:1rem; transition:border 0.2s;
         }
-        input:focus, select:focus { outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 4px rgba(0,35,102,0.1); }
-        input::placeholder { color: #aaa; }
+        input:focus, select:focus { outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 3px rgba(0,35,102,0.1); }
         .total-box {
-            margin-top: 22px; padding: 22px; background: var(--royal-blue); color: var(--white);
-            border-radius: 14px; text-align:center; border: 2px solid var(--gold);
+            margin-top: 18px; padding: 18px; background: var(--royal-blue); color: var(--white);
+            border-radius: 12px; text-align:center; border: 2px solid var(--gold);
         }
-        .total-label { font-size:0.8rem; opacity:0.85; text-transform:uppercase; letter-spacing:1.5px; font-weight: 600; }
-        .total-amount { font-family:'Playfair Display', serif; font-size:2.75rem; color:var(--gold); display:block; margin-top: 4px; font-weight: 700; }
-        .total-note { font-size:0.8rem; opacity:0.7; margin-top:6px; }
-        .nav-buttons { display:flex; gap:14px; margin-top:30px; }
+        .total-label { font-size:0.85rem; opacity:0.85; text-transform:uppercase; letter-spacing:1px; }
+        .total-amount { font-family:'Playfair Display', serif; font-size:2.4rem; color:var(--gold); display:block; }
+        .total-note { font-size:0.75rem; opacity:0.7; margin-top:4px; }
+        .nav-buttons { display:flex; gap:15px; margin-top:26px; }
         button {
-            flex:1; padding:16px 24px; border-radius:12px; font-weight:700; cursor:pointer;
-            transition: all var(--transition); font-family:'Inter', sans-serif; font-size:1.02rem;
-            border: none;
+            flex:1; padding:15px; border-radius:12px; font-weight:600; cursor:pointer;
+            transition: all 0.2s; font-family:'Inter', sans-serif; font-size:1rem;
         }
-        .btn-next { background: var(--royal-blue); color: var(--white); }
-        .btn-next:hover { background:#001a4d; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,102,0.3); }
-        .btn-back { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
-        .btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
-        .btn-submit { background:var(--
+        .btn-next { background: var(--royal-blue); color: var(--white); border:none; }
+        .btn-next:hover { background:#001a4d; transform:translateY(-2px); }
+        .btn-back { background:transparent; color:var(--text-muted); border:1px solid #ddd; }
+        .btn-back:hover { background:#eee; }
+        .btn-submit { background:var(--gold); color:var(--royal-blue); border:none; }
+        .btn-submit:hover { background:#c4a030; transform:translateY(-2px); }
+        .file-upload {
+            border:2px dashed var(--gold); padding:18px; text-align:center; border-radius:12px;
+            background:var(--gold-light); cursor:pointer; color:var(--royal-blue); font-size:0.9rem;
+        }
+        .addon-block { padding:14px 16px; border:1px solid #eee; border-radius:12px; margin-bottom:12px; background:var(--off-white); }
+        .addon-head { display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:500; }
+        .addon-body { display:none; margin-top:12px; }
+        .addon-block.open .addon-body { display:block; }
+        .spinner {
+            width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:var(--gold);
+            border-radius:50%; display:inline-block; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .deposit-info { font-size:0.85rem; margin-top:8px; }
+        .pill { display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; }
+        .pill-ok { background:#e6f4ea; color:#1e7e34; }
+        .pill-no { background:#fdecea; color:#b71c1c; }
+        /* ---- Official trust badge (under header) ---- */
+        .trust-badge-wrap { text-align:center; padding:16px 20px 4px; }
+        .trust-badge {
+            display:inline-flex; align-items:center; justify-content:center; gap:10px;
+            padding:11px 22px;
+            background:var(--gold-light);
+            border:2px solid var(--gold);
+            border-radius:999px;
+            color:var(--royal-blue);
+            font-weight:800; font-size:0.92rem; letter-spacing:0.5px;
+            box-shadow:0 3px 12px rgba(212,175,35,0.28);
+            position:relative;
+        }
+        .trust-badge::before {
+            content:""; position:absolute; inset:4px; border:1px solid rgba(0,35,102,0.25);
+            border-radius:999px; pointer-events:none;
+        }
+        .trust-badge svg { width:22px; height:22px; flex:0 0 auto; }
+        /* ---- Header text-us line ---- */
+        .header-contact {
+            text-align:center;
+            padding:10px 20px 0;
+        }
+        .header-contact a {
+            display:inline-flex; align-items:center; gap:7px;
+            color:var(--gold);
+            font-weight:800; font-size:0.95rem; letter-spacing:0.4px;
+            text-decoration:none;
+        }
+        .header-contact a:hover { text-decoration:underline; }
+        /* ---- Hero banner ---- */
+        .hero-banner {
+            width:100%;
+            height:200px;
+            object-fit:cover;
+            display:block;
+            border-bottom:4px solid var(--gold);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img class="hero-banner" src="images/hero.jpg" alt="C&O TV Mounting — professional TV installation in DFW">
+    <header>
+        <h1>C&O TV Mounting</h1>
+        <p>Premium Installations. Flawless Execution.</p>
+    </header>
+
+    <div class="trust-badge-wrap">
+        <div class="trust-badge">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M12 2l2.39 1.74 2.95-.02 1.0 2.8 2.4 1.74-.92 2.8.92 2.8-2.4 1.74-1.0 2.8-2.95-.02L12 22l-2.39-1.74-2.95.02-1.0-2.8-2.4-1.74.92-2.8-.92-2.8 2.4-1.74 1.0-2.8 2.95.02L12 2z" stroke="#002366" stroke-width="1.4" stroke-linejoin="round"/>
+                <path d="M8.5 12.2l2.3 2.3 4.7-4.9" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Trusted Across the DFW Metroplex
+        </div>
+        <div class="trust-badge" style="background:var(--royal-blue); color:var(--gold); border-color:var(--gold); margin-top:10px;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="stroke:var(--gold);">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <strong>12-Month Workmanship Warranty</strong>
+        </div>
+    </div>
+
+    <div style="margin:16px auto 8px; max-width:640px; padding:14px 20px; background:linear-gradient(135deg, var(--gold) 0%, #c4a030 100%); color:var(--royal-blue); border-radius:999px; text-align:center; font-weight:900; font-size:1.1rem; letter-spacing:0.5px; box-shadow:0 4px 16px rgba(212,175,55,0.4); border:2px solid var(--royal-blue);">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:22px; height:22px; vertical-align:middle; margin-right:8px; stroke:currentColor;">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-.01L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        TV Mounting <strong style="font-size:1.2em;">from $90</strong> · Flat-rate · No hidden fees
+    </div>
+
+    <div class="header-contact">
+        <a href="tel:8175239753" style="display:inline-flex; align-items:center; gap:10px; background:var(--gold); color:var(--royal-blue); padding:14px 28px; border-radius:999px; font-weight:900; font-size:1.15rem; letter-spacing:0.5px; text-decoration:none; box-shadow:0 4px 16px rgba(212,175,55,0.4); border:3px solid var(--royal-blue); transition:all 0.2s ease;">
+            <span style="font-size:1.3em;">📞</span>
+            <span>Text us: <strong>817-523-9753</strong></span>
+        </a>
+    </div>
+
+    <div class="progress-bar">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+    </div>
+    <div class="step-labels">
+        <span id="lbl-1" class="active">1 · Service</span>
+        <span id="lbl-2">2 · Configure</span>
+        <span id="lbl-3">3 · Details</span>
+        <span id="lbl-4">4 · Confirm</span>
+    </div>
+
+    <div class="serving-line">
+        Proudly serving <strong>Dallas, Fort Worth, Plano, Irving, Arlington</strong> &amp; all DFW
+    </div>
+
+    <!-- STEP 1: Primary service -->
+    <div class="form-step active" id="step-1">
+        <h2>What can we install for you?</h2>
+        <p class="step-sub">Pick your main service — you can add more on the next screen.</p>
+        <div class="options-grid" id="service-options"></div>
+        <div style="margin-top:16px; padding:14px; background:var(--royal-blue); color:var(--gold); border-radius:10px; text-align:center; font-weight:800; font-size:1.05rem; border:2px solid var(--gold);">
+            📺 TV Mounting <strong>from $90</strong> &nbsp;|&nbsp; Wire Concealment <strong>from $35</strong> &nbsp;|&nbsp; Over Fireplace <strong>+ $30</strong>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-next" onclick="nextStep(2)">Continue</button>
+            <button class="btn-next" style="background:var(--gold); color:var(--royal-blue); margin-left:10px;" onclick="window.open('gallery.html','_blank')">View Gallery</button>
+        </div>
+    </div>
+
+    <!-- STEP 2: Configure + add-ons -->
+    <div class="form-step" id="step-2">
+        <img src="images/logo.jpg" alt="C&O TV Mounting" style="width:100%; max-width:280px; display:block; margin:0 auto 16px; border-radius:12px; box-shadow:0 4px 16px rgba(0,35,102,0.15);">
+        <h2 id="step2-title">Configure Your Project</h2>
+        <p class="step-sub">Set up your main service, then add any others you'd like done.</p>
+        <div id="step2-content"></div>
+        <div class="total-box">
+            <span class="total-label">Estimated Total</span>
+            <span class="total-amount" id="display-total">$0</span>
+            <span class="total-note">Final price confirmed before work</span>
+            <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
+        </div>
+        <div class="input-group" style="margin-top:18px">
+            <label>Promo Code (optional)</label>
+            <div style="display:flex; gap:10px">
+                <input type="text" id="promo-input" placeholder="e.g. WELCOME10" style="text-transform:uppercase" oninput="state.promoInput=this.value.trim()">
+                <button type="button" class="btn-next" style="flex:0 0 110px" onclick="applyPromo()">Apply</button>
+            </div>
+            <div id="promo-msg" style="font-size:0.8rem; margin-top:6px"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="prevStep(1)">Back</button>
+            <button class="btn-next" onclick="nextStep(3)">Continue</button>
+        </div>
+    </div>
+
+    <!-- STEP 3: Details -->
+    <div class="form-step" id="step-3">
+        <img src="images/logo.jpg" alt="C&O TV Mounting" style="width:100%; max-width:280px; display:block; margin:0 auto 16px; border-radius:12px; box-shadow:0 4px 16px rgba(0,35,102,0.15);">
+        <h2>Your Details</h2>
+        <p class="step-sub">So we can confirm the appointment and prepare.</p>
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="cust-name" placeholder="Enter your name">
+        </div>
+        <div class="input-group">
+            <label>Service Address</label>
+            <div class="service-area-note">📍 We proudly serve the entire <strong>DFW metroplex &amp; all surrounding areas!</strong></div>
+            <input type="text" id="cust-address" placeholder="Street, City, TX (e.g. 123 Main St, Irving, TX 75061)">
+        </div>
+        <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" id="cust-phone" placeholder="(555) 000-0000">
+        </div>
+        <div class="input-group">
+            <label>Wall / Space Photo (helps us prepare)</label>
+            <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                <span id="file-label">Click to upload a photo</span>
+                <input type="file" id="file-input" style="display:none" accept="image/*">
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="prevStep(2)">Back</button>
+            <button class="btn-next" onclick="goToStep4()">Continue</button>
+        </div>
+    </div>
+
+    <!-- STEP 4: Schedule + deposit -->
+    <div class="form-step" id="step-4">
+        <img src="images/logo.jpg" alt="C&O TV Mounting" style="width:100%; max-width:280px; display:block; margin:0 auto 16px; border-radius:12px; box-shadow:0 4px 16px rgba(0,35,102,0.15);">
+        <h2>Finalize Booking</h2>
+        <p class="step-sub">Pick a time and we'll lock it in.</p>
+        <div style="margin-bottom:18px; padding:16px; background:var(--royal-blue); color:var(--gold); border-radius:12px; text-align:center; font-weight:900; font-size:1.15rem; border:3px solid var(--gold); box-shadow:0 4px 20px rgba(0,35,102,0.3); animation:pulse 2s infinite;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:28px; height:28px; vertical-align:middle; margin-right:8px; stroke:var(--gold);">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <strong>12-MONTH WORKMANSHIP WARRANTY</strong> — Your install is protected
+        </div>
+        <div class="input-group">
+            <label>Preferred Date & Time</label>
+            <input type="datetime-local" id="booking-time">
+        </div>
+        <div id="deposit-area"></div>
+        <div id="final-travel-note"></div>
+        <div id="final-pricing" class="total-box" style="margin-top:18px">
+            <span class="total-label">Final Estimate</span>
+            <span class="total-amount" id="final-total">$0</span>
+            <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="prevStep(3)">Back</button>
+            <button class="btn-submit" id="submit-btn" onclick="submitBooking()">Book Now</button>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq">
+        <h3>Frequently Asked Questions</h3>
+        <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is there a travel fee? <span class="chev">▾</span></button>
+            <div class="faq-a">Yes — a $25 travel fee applies only for jobs beyond 20 miles from Irving, TX. Within 20 miles, there's no travel fee.</div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I pay a deposit? <span class="chev">▾</span></button>
+            <div class="faq-a">A $50 deposit is required only for jobs beyond 25 miles from Irving. Within 25 miles, you simply pay on completion.</div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are the wires hidden? <span class="chev">▾</span></button>
+            <div class="faq-a">Yes — we offer both internal (in-wall) and external (raceway) wire concealment so your setup looks clean.</div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What's included in the install? <span class="chev">▾</span></button>
+            <div class="faq-a">Professional mounting, leveling, secure anchoring to your wall type, and a clean finish. Add-ons like wire concealment and over-fireplace mounting are available.</div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What areas do you serve? <span class="chev">▾</span></button>
+            <div class="faq-a">The entire Dallas–Fort Worth metroplex and all surrounding areas — Dallas, Fort Worth, Plano, Irving, Arlington and more.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ---------- Pricing model (from C&O TV Mounting Pricing.md) ---------- */
+const SERVICES = {
+    tv:       { name: 'TV Mounting',          icon: '📺' },
+    fireplace:{ name: 'Electronic Fireplace Mount/Install', icon: '🔥' },
+    blinds:   { name: 'Blinds & Shades',      icon: '🪟' },
+    mirrors:  { name: 'Mirrors & Portraits',  icon: '🖼️' },
+    led:      { name: 'LED Lighting',         icon: '💡' },
+    soundbar: { name: 'Soundbar Mounting',    icon: '🔊' }
+};
+
+const TV = {
+    mount:   { fixed: 30, tilt: 40, full: 60 },
+    size:    { s55: 90, s56: 95, s66: 100, s76: 115, s86: 135, s96: 170 },
+    sizeLabel: { s55: '55" & below', s56: '56"–65"', s66: '66"–75"', s76: '76"–85"', s86: '86"–95"', s96: '96"–110"' },
+    surface: { drywall: 0, brick: 50, tile: 85 },
+    surfaceLabel: { drywall: 'Drywall', brick: 'Brick', tile: 'Tile / Metal / Stucco' },
+    fireplaceSurcharge: 30,
+    largeTvSurcharge: 50,   // 85" and up
+    wire:    { internal: 60, external: 35 },
+    wireLabel: { internal: 'Internal (in-wall)', external: 'External (raceway)' }
+};
+
+/* Mount type display titles + example illustrations (inline SVG, on-brand).
+   To use real photos instead, set MOUNT_PHOTO[k] = 'https://...jpg' and
+   change the .mount-card markup in mountCards() to <img src="${MOUNT_PHOTO[k]}">. */
+const MOUNT_TITLE = { fixed: 'Fixed Mount', tilt: 'Tilt Mount', full: 'Full Motion Mount' };
+const MOUNT_SVG = {
+    fixed: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Fixed mount">
+        <rect width="200" height="150" fill="#F9F4E8"/>
+        <rect x="16" y="22" width="12" height="106" rx="2" fill="#002366"/>
+        <rect x="30" y="44" width="140" height="72" rx="6" fill="#1A1A1A" stroke="#D4AF37" stroke-width="2"/>
+        <rect x="46" y="58" width="108" height="44" rx="3" fill="#0d274d"/>
+        <rect x="28" y="78" width="6" height="6" fill="#D4AF37"/>
+    </svg>`,
+    tilt: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Tilt mount">
+        <rect width="200" height="150" fill="#F9F4E8"/>
+        <rect x="16" y="22" width="12" height="106" rx="2" fill="#002366"/>
+        <g transform="rotate(12 100 80)">
+            <rect x="30" y="44" width="140" height="72" rx="6" fill="#1A1A1A" stroke="#D4AF37" stroke-width="2"/>
+            <rect x="46" y="58" width="108" height="44" rx="3" fill="#0d274d"/>
+        </g>
+        <rect x="28" y="104" width="6" height="6" fill="#D4AF37"/>
+    </svg>`,
+    full: `<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" aria-label="Full motion mount">
+        <rect width="200" height="150" fill="#F9F4E8"/>
+        <rect x="16" y="22" width="12" height="106" rx="2" fill="#002366"/>
+        <line x1="28" y1="80" x2="64" y2="80" stroke="#D4AF37" stroke-width="6" stroke-linecap="round"/>
+        <line x1="64" y1="80" x2="64" y2="58" stroke="#D4AF37" stroke-width="6" stroke-linecap="round"/>
+        <g transform="rotate(-10 124 75)">
+            <rect x="64" y="40" width="120" height="70" rx="6" fill="#1A1A1A" stroke="#D4AF37" stroke-width="2"/>
+            <rect x="80" y="54" width="92" height="42" rx="3" fill="#0d274d"/>
+        </g>
+    </svg>`
+};
+const BLINDS  = { small: 55, medium: 70, large: 85 };   // per window
+const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
+const SOUNDBAR = 45;                                    // each
+const FIREPLACE = 150;                                  // electronic fireplace mounting/installation (standalone base)
+const LED = { tv: 55, house: 100 };                   // tv lights | inside-house LEDs (we provide lights)
+
+const TRAVEL_FEE = 25;
+const DEPOSIT_REQUIRED_MILES = 25;
+const TRAVEL_FEE_MAX_DISTANCE = 20; // miles
+const IRVING = { lat: 32.8140, lon: -96.9489 };
+// ===== Backend endpoint (Google Apps Script Web App URL) =====
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzs4KIAsEe4BHfMlRk0kJcZ_Q1VmnUBPtRhs-ttj2BT-ODe4Y1NlEDsUs5eHHKyxLZxQ/exec';
+
+/* ============================================================
+   PROMO CODES  — managed by Orion / Jarvis
+   To activate a code: set active:true.  To deactivate: active:false.
+   type: 'percent' (value = %)  or  'flat' (value = $ off)
+   expires: 'YYYY-MM-DD' or null.  Codes are case-insensitive.
+   ============================================================ */
+const PROMOS = [
+    { code: 'WELCOME10', type: 'percent', value: 10, active: true,  expires: null },
+    { code: 'FATHERS25', type: 'flat',    value: 25, active: false, expires: null },
+    { code: 'SUMMER15',  type: 'percent', value: 15, active: false, expires: '2026-09-01' },
+    { code: 'LETSMOUNTIT', type: 'percent', value: 10, active: true, expires: null }
+];
+
+/* ---------- State ---------- */
+function newTv() {
+    return { mount:null, size:null, surface:null, overFireplace:false, wire:null };
+}
+let state = {
+    primary: null,
+    tvs:     [ newTv() ],          // array of TV units (multi-TV support)
+    blinds:  { size:null, qty:1 },
+    mirrors: { size:null, qty:1 },
+    soundbar:{ qty:1 },
+    led:      false,
+    ledChoice: null,            // 'tv' = TV Lights ($55) | 'house' = Inside House LEDs ($100, lights provided)
+    fireplaceStandalone: false,
+    addons:  new Set(),
+    promoInput: '',
+    appliedPromo: null,
+    travelDistance: null   // miles from Irving, updated when address changes
+};
+function renderStep1() {
+    const wrap = document.getElementById('service-options');
+    wrap.innerHTML = '';
+    for (const key in SERVICES) {
+        const s = SERVICES[key];
+        const div = document.createElement('div');
+        div.className = 'option-card';
+        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class="price-tag">Select</span>`;
+        div.onclick = () => {
+            state.primary = key;
+            document.querySelectorAll('#service-options .option-card').forEach(c => c.classList.remove('selected'));
+            div.classList.add('selected');
+        };
+        wrap.appendChild(div);
+    }
+}
+
+/* ---------- Step 2 render ---------- */
+function renderStep2() {
+    const title = document.getElementById('step2-title');
+    title.innerText = `Configure: ${SERVICES[state.primary].name}`;
+    const c = document.getElementById('step2-content');
+    let html = '';
+
+    // Primary service config
+    html += `<span class="section-label">Your Main Service</span>`;
+    html += configHtml(state.primary, 'p');
+
+    // Add-on services
+    html += `<span class="section-label">Add More Services (optional)</span>`;
+    for (const key in SERVICES) {
+        if (key === state.primary) continue;
+        const s = SERVICES[key];
+        const open = state.addons.has(key) ? ' open' : '';
+        html += `<div class="addon-block${open}" data-svc="${key}">
+            <div class="addon-head" onclick="toggleAddon('${key}')">
+                <span>${s.icon} ${s.name}</span>
+                <span class="price-tag">${state.addons.has(key) ? '✓ Added' : '+ Add'}</span>
+            </div>
+            <div class="addon-body">${configHtml(key, 'a')}</div>
+        </div>`;
+    }
+    c.innerHTML = html;
+    if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
+    // addon TV blocks (if tv was added as an add-on)
+    state.addons.forEach(k => { if (k === 'tv' && state.primary !== 'tv') renderTvs('a'); });
+    calculateTotal();
+}
+
+/* Build config UI for a service. prefix 'p' = primary, 'a' = addon (unique IDs) */
+function configHtml(key, prefix) {
+    if (key === 'tv') {
+        let h = `<div id="${prefix}_tvs"></div>`;
+        h += `<button type="button" class="btn-next" style="margin-top:8px; background:var(--gold); color:var(--royal-blue)" onclick="addTv('${prefix}')">+ Add another TV</button>`;
+        return h;
+    }
+    if (key === 'blinds') {
+        return `<label>Window Size</label><select id="${prefix}_blindsize" onchange="setBlinds('size', this.value)">
+            <option value="">Select size…</option>` +
+            Object.entries(BLINDS).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
+            `</select>
+            <label style="margin-top:12px">How many windows?</label>
+            <input type="number" min="1" value="1" id="${prefix}_blindqty" onchange="setBlinds('qty', this.value)">`;
+    }
+    if (key === 'mirrors') {
+        return `<label>Item Size</label><select id="${prefix}_mirrorsize" onchange="setMirrors('size', this.value)">
+            <option value="">Select size…</option>` +
+            Object.entries(MIRRORS).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
+            `</select>
+            <label style="margin-top:12px">How many pieces?</label>
+            <input type="number" min="1" value="1" id="${prefix}_mirrorqty" onchange="setMirrors('qty', this.value)">`;
+    }
+    if (key === 'soundbar') {
+        return `<label>How many soundbars?</label>
+            <input type="number" min="1" value="1" id="${prefix}_sbqty" onchange="state.soundbar.qty = parseInt(this.value)||1; calculateTotal();">`;
+    }
+    if (key === 'led') {
+        const tvSel = state.ledChoice === 'tv' ? ' selected' : '';
+        const houseSel = state.ledChoice === 'house' ? ' selected' : '';
+        return `<div class="option-card${tvSel}" onclick="setLed('tv')"><span>💡 TV Lights Installation</span><span class="price-tag">$55</span></div>
+                <div class="option-card${houseSel}" onclick="setLed('house')"><span>💡 Inside House LEDs</span><span class="price-tag">$100</span></div>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">For Inside House LEDs, we provide the lights.</p>`;
+    }
+    if (key === 'fireplace') {
+        return `<p style="color:var(--text-muted); font-size:0.9rem; margin:4px 0 8px">Electronic fireplace mounting / installation.</p>
+                <div class="option-card selected" style="pointer-events:none"><span>🔥 Base Installation</span><span class="price-tag">$150</span></div>`;
+    }
+    return '';
+}
+
+/* helper: radio-style option cards */
+function optCard(group, label, options) {
+    // options: [[value, display], ...]  — value is the stored key, display is shown text
+    return `<label>${label}</label>` +
+        options.map(([val, disp]) => {
+            const show = disp || val;
+            const tag = (typeof disp === 'string' && disp.includes('$')) ? show : '';
+            const text = (typeof disp === 'string' && disp.includes('$')) ? show.replace(/\s*\(\+\$\d+\)/, '') : show;
+            return `<div class="option-card" data-group="${group}" onclick="pickOption('${group}','${val}', this)"><span>${text}</span><span class="price-tag">${tag}</span></div>`;
+        }).join('');
+}
+function toggleCard(id, label, disp) {
+    return `<div class="option-card" id="${id}" onclick="toggleFireplace()"><span>${label}</span><span class="price-tag">${disp}</span></div>`;
+}
+
+/* Mount type cards: example illustration + title + base price */
+function mountCards(group) {
+    return `<label>Mount Type</label><div class="options-grid mount-grid">` +
+        Object.entries(TV.mount).map(([k, v]) => {
+            const title = MOUNT_TITLE[k] || k;
+            return `<div class="option-card mount-card" data-group="${group}" onclick="pickOption('${group}','${k}', this)">
+                ${MOUNT_SVG[k] || ''}
+                <span class="mount-name">${title}</span>
+                <span class="price-tag">$${v} base</span>
+            </div>`;
+        }).join('') +
+        `</div>`;
+}
+
+/* ---------- Multi-TV UI ---------- */
+function renderTvs(prefix) {
+    const wrap = document.getElementById(prefix + '_tvs');
+    if (!wrap) return;
+    wrap.innerHTML = state.tvs.map((tv, i) => {
+        const isAddon = prefix !== 'p';
+        const label = `TV #${i + 1}`;
+        const removeBtn = state.tvs.length > 1
+            ? `<button type="button" class="btn-back" style="flex:0 0 auto; padding:8px 14px; margin-left:auto" onclick="removeTv('${prefix}', ${i})">Remove</button>` : '';
+        return `<div class="addon-block open" style="margin-bottom:14px">
+            <div class="addon-head" style="cursor:default; margin-bottom:8px">
+                <span style="font-weight:600; color:var(--royal-blue)">${label}</span>
+                ${removeBtn}
+            </div>
+            <div class="options-grid">
+                ${mountCards(prefix + '_mount_' + i)}
+            </div>
+            <div class="section-label required" style="margin-top:18px">TV Size <span class="req-badge">Required</span></div>
+            <div class="options-grid" style="margin-top:10px">
+                ${optCard(prefix + '_size_' + i, 'TV Size', Object.entries(TV.size).map(([k,v]) => [k, TV.sizeLabel[k] + ' (+$' + v + ')']))}
+            </div>
+            <div class="section-label required" style="margin-top:18px">Wall Type <span class="req-badge">Required</span></div>
+            <div class="options-grid" style="margin-top:10px">
+                ${optCard(prefix + '_surface_' + i, 'Wall Type', Object.entries(TV.surface).map(([k, v]) => [k, TV.surfaceLabel[k] + ' (+$' + v + ')']))}
+            </div>
+            <div class="options-grid" style="margin-top:12px">
+                <div class="option-card" id="${prefix}_fw_${i}" onclick="toggleFireplace('${prefix}', ${i})"><span>Over Fireplace</span><span class="price-tag">+$${TV.fireplaceSurcharge}</span></div>
+                <div class="option-card" id="${prefix}_wire_internal_${i}" onclick="setTv('${prefix}', ${i}, 'wire', 'internal')"><span>Internal Wire Concealment</span><span class="price-tag">+$${TV.wire.internal}</span></div>
+                <div class="option-card" id="${prefix}_wire_external_${i}" onclick="setTv('${prefix}', ${i}, 'wire', 'external')"><span>External Wire Concealment</span><span class="price-tag">+$${TV.wire.external}</span></div>
+            </div>
+        </div>`;
+    }).join('');
+    // restore selected highlight states
+    state.tvs.forEach((tv, i) => {
+        if (tv.mount)   markSelected(prefix + '_mount_' + i, tv.mount);
+        if (tv.size)    markSelected(prefix + '_size_' + i, tv.size);
+        if (tv.surface) markSelected(prefix + '_surface_' + i, tv.surface);
+        const fw = document.getElementById(prefix + '_fw_' + i); if (fw) fw.classList.toggle('selected', tv.overFireplace);
+        const wi = document.getElementById(prefix + '_wire_internal_' + i); if (wi) wi.classList.toggle('selected', tv.wire === 'internal');
+        const we = document.getElementById(prefix + '_wire_external_' + i); if (we) we.classList.toggle('selected', tv.wire === 'external');
+    });
+}
+function markSelected(group, val) {
+    document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => {
+        // find the card whose onclick contains this value
+        const m = /pickOption\('[^']+','([^']+)'/.exec(c.getAttribute('onclick') || '');
+        c.classList.toggle('selected', m && m[1] === val);
+    });
+}
+function addTv(prefix) {
+    state.tvs.push(newTv());
+    renderTvs(prefix);
+    calculateTotal();
+}
+function removeTv(prefix, i) {
+    if (state.tvs.length <= 1) return;
+    state.tvs.splice(i, 1);
+    renderTvs(prefix);
+    calculateTotal();
+}
+
+/* ---------- Setters ---------- */
+function pickOption(group, val, el) {
+    // group format: prefix + '_mount_' + i  OR  prefix + '_surface_' + i
+    const parts = group.split('_');
+    const field = parts[parts.length - 2]; // 'mount' or 'surface'
+    const i = parseInt(parts[parts.length - 1], 10);
+    const tv = state.tvs[i];
+    if (tv) {
+        tv[field] = val;
+        console.log(`pickOption: group=${group}, field=${field}, val=${val}, TV[${i}].${field}=${tv[field]}`);
+    }
+    document.querySelectorAll(`.option-card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    calculateTotal();
+}
+function toggleFireplace(prefix, i) {
+    const tv = state.tvs[i]; if (!tv) return;
+    tv.overFireplace = !tv.overFireplace;
+    document.getElementById(prefix + '_fw_' + i).classList.toggle('selected', tv.overFireplace);
+    calculateTotal();
+}
+function setTv(prefix, i, field, val) {
+    const tv = state.tvs[i]; if (!tv) return;
+    if (field === 'size') tv.size = val;
+    if (field === 'wire') tv.wire = (tv.wire === val) ? null : val;
+    if (field === 'wire') {
+        document.getElementById(prefix + '_wire_internal_' + i).classList.toggle('selected', tv.wire === 'internal');
+        document.getElementById(prefix + '_wire_external_' + i).classList.toggle('selected', tv.wire === 'external');
+    }
+    calculateTotal();
+}
+function setBlinds(field, val) {
+    if (field === 'size') state.blinds.size = val;
+    if (field === 'qty')  state.blinds.qty = parseInt(val) || 1;
+    calculateTotal();
+}
+function setMirrors(field, val) {
+    if (field === 'size') state.mirrors.size = val;
+    if (field === 'qty')  state.mirrors.qty = parseInt(val) || 1;
+    calculateTotal();
+}
+function setLed(choice) {
+    state.ledChoice = choice;
+    renderStep2();
+    calculateTotal();
+}
+function toggleAddon(key) {
+    if (state.addons.has(key)) state.addons.delete(key);
+    else state.addons.add(key);
+    renderStep2();
+}
+
+/* ---------- Pricing engine ---------- */
+function tvUnitTotal(tv) {
+    let t = 0;
+    if (tv.mount)   t += TV.mount[tv.mount] || 0;
+    if (tv.size)    t += TV.size[tv.size] || 0;
+    if (tv.surface) t += TV.surface[tv.surface] || 0;
+    if (tv.overFireplace) t += TV.fireplaceSurcharge;
+    // Large-TV surcharge applies to 85" and up → size keys s86 and s96
+    if (tv.size && (tv.size === 's86' || tv.size === 's96')) t += TV.largeTvSurcharge;
+    if (tv.wire)    t += TV.wire[tv.wire] || 0;
+    return t;
+}
+function tvTotal() {
+    return state.tvs.reduce((sum, tv) => sum + tvUnitTotal(tv), 0);
+}
+function getInstantRange() {
+    let min = 0, max = 0;
+    const active = new Set([state.primary, ...state.addons]);
+    
+    // Base services
+    if (active.has('tv')) {
+        state.tvs.forEach(tv => {
+            min += tvUnitTotal(tv);
+            max += tvUnitTotal(tv) + 30; // +$30 range for unselected options
+        });
+    }
+    if (active.has('blinds') && state.blinds.size) {
+        const cost = BLINDS[state.blinds.size] * (state.blinds.qty || 1);
+        min += cost; max += cost + 10;
+    }
+    if (active.has('mirrors') && state.mirrors.size) {
+        const cost = MIRRORS[state.mirrors.size] * (state.mirrors.qty || 1);
+        min += cost; max += cost + 5;
+    }
+    if (active.has('soundbar')) {
+        const cost = SOUNDBAR * (state.soundbar.qty || 1);
+        min += cost; max += cost + 10;
+    }
+    if (active.has('fireplace')) { min += FIREPLACE; max += FIREPLACE + 25; }
+    if (active.has('led') && state.ledChoice) {
+        const cost = LED[state.ledChoice];
+        min += cost; max += cost + 15;
+    }
+    // Travel fee boundary
+    if (state.travelDistance !== null) {
+        if (state.travelDistance > 20) min += 25;
+        if (state.travelDistance > 25) max += 25; // deposit might apply
+    }
+    // Promo discount (already applied in calculateTotal)
+    if (state.appliedPromo) {
+        const base = min;
+        const disc = state.appliedPromo.type === 'percent' 
+            ? Math.round(base * state.appliedPromo.value / 100) 
+            : Math.min(state.appliedPromo.value, base);
+        min = Math.max(0, min - disc);
+        max = Math.max(0, max - disc);
+    }
+    return { min, max };
+}
+function calculateTotal() {
+    let total = 0;
+    // Travel fee: $25 if distance > 20 miles from Irving
+    if (state.travelDistance !== null && state.travelDistance > 20) {
+        total += 25;
+    }
+    const active = new Set([state.primary, ...state.addons]);
+
+    if (active.has('tv'))       total += tvTotal();
+    if (active.has('blinds') && state.blinds.size)   total += BLINDS[state.blinds.size] * (state.blinds.qty || 1);
+    if (active.has('mirrors') && state.mirrors.size) total += MIRRORS[state.mirrors.size] * (state.mirrors.qty || 1);
+    if (active.has('soundbar')) total += SOUNDBAR * (state.soundbar.qty || 1);
+    if (active.has('fireplace')) total += FIREPLACE;
+    if (active.has('led') && state.ledChoice) total += LED[state.ledChoice];
+
+    // Apply promo discount
+    let discount = 0;
+    const p = state.appliedPromo;
+    if (p) {
+        discount = (p.type === 'percent') ? Math.round(total * p.value / 100) : Math.min(p.value, total);
+        total = Math.max(0, total - discount);
+    }
+
+    const disp = document.getElementById('display-total');
+    if (disp) {
+        // Show instant range if we have selections
+        const range = getInstantRange();
+        if (range.min > 0 || range.max > 0) {
+            disp.innerHTML = '$' + range.min + ' – $' + range.max;
+            const note = document.getElementById('instant-note');
+            if (note) note.style.display = 'inline';
+        } else {
+            disp.innerText = '$0';
+        }
+        const pa = document.getElementById('promo-applied');
+        if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
+    }
+    return total;
+}
+
+function applyPromo() {
+    const raw = (state.promoInput || '').toUpperCase().trim();
+    console.log('Promo input raw:', raw);
+    const msg = document.getElementById('promo-msg');
+    if (!raw) { 
+        msg.style.color = 'var(--text-muted)'; 
+        msg.innerText = 'Enter a code first.'; 
+        return; 
+    }
+    const now = new Date();
+    const found = PROMOS.find(x => x.code.toUpperCase() === raw);
+    console.log('Found promo:', found);
+    if (!found) {
+        state.appliedPromo = null;
+        msg.style.color = '#b71c1c'; 
+        msg.innerText = 'Invalid promo code.';
+    } else if (!found.active) {
+        state.appliedPromo = null;
+        msg.style.color = '#b71c1c'; 
+        msg.innerText = `Code "${found.code}" is not active right now.`;
+    } else if (found.expires && now > new Date(found.expires + 'T23:59:59')) {
+        state.appliedPromo = null;
+        msg.style.color = '#b71c1c'; 
+        msg.innerText = `Code "${found.code}" has expired.`;
+    } else {
+        state.appliedPromo = found;
+        msg.style.color = '#1e7e34';
+        msg.innerText = `✓ ${found.code} applied — ${found.type === 'percent' ? found.value + '% off' : '$' + found.value + ' off'}!`;
+    }
+    console.log('After promo application, appliedPromo:', state.appliedPromo);
+    calculateTotal();
+}
+
+/* ---------- Navigation ---------- */
+function showStep(n) {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    document.querySelectorAll('.step-dot').forEach((d, i) => d.classList.toggle('active', i < n));
+    document.querySelectorAll('.step-labels span').forEach((l, i) => l.classList.toggle('active', i === (n - 1)));
+}
+function nextStep(n) {
+    if (n === 2 && !state.primary) { alert('Please select a service first.'); return; }
+    if (n === 3) {
+        // Validate TV selections before moving to Step 3
+        if (state.primary === 'tv' || state.addons.has('tv')) {
+            console.log('Validating TV selections, state.tvs:', state.tvs);
+            for (let i = 0; i < state.tvs.length; i++) {
+                const tv = state.tvs[i];
+                console.log(`TV #${i + 1}: mount=${tv.mount}, size=${tv.size}, surface=${tv.surface}`);
+                if (!tv.mount) { alert(`Please select a mount type for TV #${i + 1}.`); return; }
+                if (!tv.size) { alert(`Please select a TV size for TV #${i + 1}.`); return; }
+                if (!tv.surface) { alert(`Please select a wall type for TV #${i + 1}.`); return; }
+            }
+        }
+    }
+    if (n === 2) renderStep2();
+    showStep(n);
+}
+function prevStep(n) { showStep(n); }
+function goToStep4() {
+    if (!document.getElementById('cust-name').value || !document.getElementById('cust-address').value) {
+        alert('Please enter your name and service address.'); return;
+    }
+    // Validate all TV units have mount type, size, and wall surface selected
+    if (state.primary === 'tv' || state.addons.has('tv')) {
+        for (let i = 0; i < state.tvs.length; i++) {
+            const tv = state.tvs[i];
+            if (!tv.mount) { alert(`Please select a mount type for TV #${i + 1}.`); return; }
+            if (!tv.size) { alert(`Please select a TV size for TV #${i + 1}.`); return; }
+            if (!tv.surface) { alert(`Please select a wall type for TV #${i + 1}.`); return; }
+        }
+    }
+    showStep(4);
+    renderFinalPricing();
+    evaluateDeposit();
+}
+
+/* ---------- Final pricing + travel-fee note (Step 4) ---------- */
+function renderFinalPricing() {
+    const total = calculateTotal();
+    const ft = document.getElementById('final-total');
+    // On final step, show exact price (not range)
+    if (ft) {
+        ft.innerText = '$' + total;
+        const parent = ft.parentElement;
+        if (parent && parent.classList.contains('total-box')) {
+            // Ensure label says "Final Estimate" not "Instant Estimate Range"
+            const label = parent.querySelector('.total-label');
+            if (label) label.innerText = 'Final Estimate';
+        }
+    }
+
+    const note = document.getElementById('final-travel-note');
+    if (note) {
+        if (state.travelDistance !== null && state.travelDistance > TRAVEL_FEE_MAX_DISTANCE) {
+            note.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue); text-align:left">
+                <span class="total-label" style="color:var(--royal-blue)">Travel Fee Applies (${state.travelDistance.toFixed(0)} mi from Irving)</span>
+                <span class="total-amount" style="color:var(--royal-blue); font-size:1.4rem">$${TRAVEL_FEE}.00</span>
+                <span class="total-note" style="color:var(--royal-blue)">Included in your final price — applies to jobs beyond ${TRAVEL_FEE_MAX_DISTANCE} miles from Irving, TX</span>
+            </div>`;
+        } else if (state.travelDistance !== null) {
+            note.innerHTML = `<div class="total-box" style="background:#e6f4ea; color:#1e7e34; border-color:#1e7e34; text-align:left">
+                <span class="total-label" style="color:#1e7e34">No Travel Fee</span>
+                <span class="total-amount" style="color:#1e7e34; font-size:1.4rem">Within ${TRAVEL_FEE_MAX_DISTANCE} miles</span>
+                <span class="total-note" style="color:#1e7e34">No travel fee — you are ${state.travelDistance.toFixed(0)} miles from Irving, TX</span>
+            </div>`;
+        } else {
+            note.innerHTML = '';
+        }
+    }
+
+    const fp = document.getElementById('final-promo');
+    if (fp) {
+        const p = state.appliedPromo;
+        fp.innerText = p ? `Promo ${p.code} applied` : '';
+    }
+}
+
+/* ---------- Deposit logic (distance from Irving, TX) ---------- */
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 3958.8; // miles
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+async function updateTravelDistance() {
+    const addr = document.getElementById('cust-address').value;
+    if (!addr.trim()) {
+        state.travelDistance = null;
+        return;
+    }
+    try {
+        const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(addr);
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const data = await res.json();
+        if (!data || !data[0]) {
+            state.travelDistance = null;
+            return;
+        }
+        const d = haversine(IRVING.lat, IRVING.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
+        state.travelDistance = d;
+    } catch (e) {
+        console.error('Could not geocode address for travel distance:', e);
+        state.travelDistance = null;
+    }
+}
+async function evaluateDeposit() {
+    const area = document.getElementById('deposit-area');
+    const addr = document.getElementById('cust-address').value;
+    area.innerHTML = `<div class="total-box" style="background:var(--royal-blue)">
+        <span class="total-label"><span class="spinner"></span>Checking distance from Irving…</span></div>`;
+    document.getElementById('submit-btn').innerText = 'Book Now';
+
+    try {
+        const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(addr);
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const data = await res.json();
+        if (!data || !data[0]) { unknownDeposit(area); return; }
+        const d = haversine(IRVING.lat, IRVING.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
+        state.travelDistance = d;   // keep travel-fee engine in sync with deposit geocode
+        if (d > DEPOSIT_REQUIRED_MILES) {
+            area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
+                <span class="total-label" style="color:var(--royal-blue)">Deposit Required (${d.toFixed(0)} mi from Irving)</span>
+                <span class="total-amount" style="color:var(--royal-blue)">$50.00</span>
+                <span class="total-note" style="color:var(--royal-blue)">Secures your slot for jobs beyond 25 miles</span></div>`;
+            document.getElementById('submit-btn').innerText = 'Book & Pay $50 Deposit';
+        } else {
+            area.innerHTML = `<div class="total-box" style="background:#e6f4ea; color:#1e7e34; border-color:#1e7e34">
+                <span class="total-label" style="color:#1e7e34">No Deposit Required</span>
+                <span class="total-amount" style="color:#1e7e34; font-size:1.4rem">Within 25 miles</span>
+                <span class="total-note" style="color:#1e7e34">Just pay on completion — ${d.toFixed(0)} mi from Irving</span></div>`;
+            document.getElementById('submit-btn').innerText = 'Book Now';
+        }
+        renderFinalPricing();   // refresh final total + travel-fee note now that distance is known
+    } catch (e) {
+        unknownDeposit(area);
+    }
+}
+function unknownDeposit(area) {
+    area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
+        <span class="total-label" style="color:var(--royal-blue)">Deposit</span>
+        <span class="total-amount" style="color:var(--royal-blue); font-size:1.3rem">Confirmed by text</span>
+        <span class="total-note" style="color:var(--royal-blue)">We'll verify distance & deposit when we confirm</span></div>`;
+    document.getElementById('submit-btn').innerText = 'Book Now';
+}
+
+/* ---------- Submit ---------- */
+function submitBooking() {
+    const total = calculateTotal();
+    const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
+    const primary = state.primary ? (state.primary === 'led'
+        ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
+        : SERVICES[state.primary].name) : '';
+    const addons = [...state.addons].map(k => k === 'led'
+        ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
+        : SERVICES[k].name);
+    const tvDetails = state.tvs.map(tv => ({
+        mount: tv.mount, sizeLabel: tv.size ? TV.sizeLabel[tv.size] : '',
+        surfaceLabel: tv.surface ? TV.surfaceLabel[tv.surface] : '',
+        overFireplace: tv.overFireplace, wireLabel: tv.wire ? TV.wireLabel[tv.wire] : ''
+    }));
+    const payload = {
+        name: document.getElementById('cust-name').value,
+        phone: document.getElementById('cust-phone').value,
+        address: document.getElementById('cust-address').value,
+        datetime: document.getElementById('booking-time').value,
+        primary: primary,
+        addons: addons,
+        tvDetails: tvDetails,
+        total: total,
+        deposit: needsDeposit ? 50 : 0,
+        promo: state.appliedPromo ? state.appliedPromo.code : '',
+        photo: PHOTO_DATA || '',
+        source: 'booking-page'
+    };
+
+    if (!APP_SCRIPT_URL) {
+        queueLocal(payload);
+        alert('Booking captured locally (backend not connected yet).\n\n' + summarize(payload));
+        return;
+    }
+
+    // If a deposit is required, first create the Square checkout link, then redirect.
+    if (needsDeposit) {
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerText = 'Creating secure checkout…';
+        fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(Object.assign({ action: 'create_deposit' }, payload))
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.ok && res.checkout_url) {
+                // Also send the booking record (so it's logged even before payment),
+                // carrying the same booking_ref Square will echo back in the webhook.
+                fetch(APP_SCRIPT_URL, {
+                    method: 'POST', mode: 'cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(Object.assign({ booking_ref: res.booking_ref }, payload))
+                }).catch(() => {});
+                window.location.href = res.checkout_url; // -> Square hosted checkout
+            } else {
+                throw new Error(res.error || 'could not create checkout');
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerText = 'Book & Pay $50 Deposit';
+            alert('Could not start payment: ' + err.message + '\nWe saved your info and will reach out.');
+            queueLocal(payload);
+        });
+        return;
+    }
+
+    // No deposit: just submit the booking.
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.ok) {
+            alert('✓ Booking sent! We\'ll confirm shortly.\n\n' + summarize(payload));
+        } else {
+            throw new Error(res.error || 'submit failed');
+        }
+    })
+    .catch(err => {
+        queueLocal(payload);
+        alert('Saved locally (couldn\'t reach server). We\'ll retry sync.\n\n' + summarize(payload));
+    });
+}
+
+/* Show a thank-you if Square redirected back with ?paid= */
+function checkPaidRedirect() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') && params.get('src') === 'square') {
+        alert('✅ Deposit received! Your booking is confirmed and we\'ll be in touch shortly.');
+        // clean the URL so refresh doesn't re-alert
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
+function summarize(p) {
+    let s = `✅ Booking Confirmed!\n\nService: ${p.primary}`;
+    if (p.addons && p.addons.length) s += `\nAdd-ons: ` + p.addons.join(', ');
+    s += `\nName: ${p.name}`;
+    s += `\nAddress: ${p.address}`;
+    if (p.datetime) s += `\nDate/Time: ${p.datetime}`;
+    s += `\nEstimate: $${p.total}`;
+    if (p.promo) s += `\nPromo: ${p.promo}`;
+    if (p.deposit) s += `\nDeposit paid: $${p.deposit}`;
+    s += `\n\nWe'll confirm shortly. Questions? Text 817-523-9753.`;
+    return s;
+}
+
+function queueLocal(payload) {
+    try {
+        // strip the (potentially large) base64 photo to avoid blowing the 5MB localStorage quota
+        const safe = Object.assign({}, payload);
+        delete safe.photo;
+        const q = JSON.parse(localStorage.getItem('co_pending_bookings') || '[]');
+        q.push(Object.assign({ queuedAt: new Date().toISOString() }, safe));
+        localStorage.setItem('co_pending_bookings', JSON.stringify(q));
+    } catch (e) { /* localStorage unavailable — nothing we can do */ }
+}
+
+/* ---- Photo capture: read + compress so it can ride along in the JSON payload ---- */
+let PHOTO_DATA = null;
+document.getElementById('file-input').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) { document.getElementById('file-label').innerText = 'Click to upload a photo'; PHOTO_DATA = null; return; }
+    document.getElementById('file-label').innerText = '⏳ Processing photo…';
+    compressImage(file, 1280, 0.7).then(b64 => {
+        PHOTO_DATA = b64;
+        document.getElementById('file-label').innerText = '✓ ' + file.name;
+    }).catch(() => {
+        // fallback: send the raw data URL if canvas compression isn't supported
+        const reader = new FileReader();
+        reader.onload = e => { PHOTO_DATA = e.target.result; document.getElementById('file-label').innerText = '✓ ' + file.name; };
+        reader.readAsDataURL(file);
+    });
+});
+function compressImage(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxDim || h > maxDim) {
+                    const scale = maxDim / Math.max(w, h);
+                    w = Math.round(w * scale); h = Math.round(h * scale);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/* init */
+renderStep1();
+calculateTotal();
+checkPaidRedirect();
+</script>
+</body>
+</html>
