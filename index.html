@@ -59,97 +59,97 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
-            color: var(--text-dark);
-            line-height: 1.6;
-            padding: 24px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: 28px;
-            box-shadow: var(--shadow-strong);
-            overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
+                        font-family: 'Inter', sans-serif;
+                        background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
+                        color: var(--text-dark);
+                        line-height: 1.6;
+                        padding: 12px;
+                        min-height: 100vh;
+                    }
+                    .container {
+                        max-width: 100%;
+                        margin: 0 auto;
+                        background: var(--white);
+                        border-radius: 16px;
+                        box-shadow: var(--shadow-strong);
+                        overflow: hidden;
+                        border: 1px solid rgba(212, 175, 55, 0.2);
+                    }
         header {
-            background: var(--royal-blue);
-            color: var(--white);
-            padding: 48px 24px 40px;
-            text-align: center;
-            position: relative;
-        }
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 2px;
-        }
-        header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.25rem;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-        }
-        header p { font-weight: 300; opacity: 0.85; font-size: 1.05rem; letter-spacing: 0.3px; }
-        .progress-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 24px 40px;
-            background: var(--gold-light);
-            position: relative;
-        }
-        .progress-bar::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 40px;
-            right: 40px;
-            height: 2px;
-            background: rgba(212, 175, 55, 0.3);
-            z-index: 0;
-            transform: translateY(-50%);
-        }
+                    background: var(--royal-blue);
+                    color: var(--white);
+                    padding: 24px 16px 20px;
+                    text-align: center;
+                    position: relative;
+                }
+                header::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 50px;
+                    height: 3px;
+                    background: var(--gold);
+                    border-radius: 2px;
+                }
+                header h1 {
+                    font-family: 'Playfair Display', serif;
+                    font-size: 1.6rem;
+                    margin-bottom: 4px;
+                    letter-spacing: 0.3px;
+                    font-weight: 700;
+                }
+                header p { font-weight: 300; opacity: 0.9; font-size: 0.9rem; letter-spacing: 0.2px; }
+                .progress-bar {
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 16px 20px;
+                            background: var(--gold-light);
+                            position: relative;
+                        }
+                .progress-bar::before {
+                            content: '';
+                            position: absolute;
+                            top: 50%;
+                            left: 20px;
+                            right: 20px;
+                            height: 2px;
+                            background: rgba(212, 175, 55, 0.3);
+                            z-index: 0;
+                            transform: translateY(-50%);
+                        }
         .step-dot {
-            width: 16px; height: 16px; border-radius: 50%;
-            background: #ddd;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            border: 3px solid var(--white);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .step-dot.active {
-            background: var(--royal-blue);
-            box-shadow: 0 0 0 4px rgba(0,35,102,0.15), 0 2px 8px rgba(0,35,102,0.2);
-            transform: scale(1.15);
-        }
-        .step-dot.completed {
-            background: var(--gold);
-        }
-        .step-labels {
-            display:flex; justify-content:space-between;
-            padding: 10px 40px 20px;
-            background: var(--gold-light);
-            font-size:0.68rem; font-weight:700; color:var(--royal-blue);
-            text-transform:uppercase; letter-spacing:0.5px;
-        }
-        .step-labels span { flex:1; text-align:center; position: relative; z-index: 1; }
-        .step-labels span.active { color:var(--gold); font-weight: 800; }
+                            width: 10px; height: 10px; border-radius: 50%;
+                            background: #ddd;
+                            transition: all 0.3s ease;
+                            position: relative;
+                            z-index: 1;
+                            border: 2px solid var(--white);
+                            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+                        }
+                        .step-dot.active {
+                            background: var(--royal-blue);
+                            box-shadow: 0 0 0 3px rgba(0,35,102,0.15), 0 1px 4px rgba(0,35,102,0.15);
+                            transform: scale(1.1);
+                        }
+                        .step-dot.completed {
+                            background: var(--gold);
+                        }
+                        .step-labels {
+                            display:flex; justify-content:space-between;
+                            padding: 6px 20px 12px;
+                            background: var(--gold-light);
+                            font-size:0.55rem; font-weight:700; color:var(--royal-blue);
+                            text-transform:uppercase; letter-spacing:0.3px;
+                        }
+                .step-labels span { flex:1; text-align:center; position: relative; z-index: 1; }
+                .step-labels span.active { color:var(--gold); font-weight: 800; }
         .serving-line {
-            text-align:center; padding:16px 24px 8px;
-            font-size:0.85rem; color:var(--text-muted); font-weight:600;
-        }
-        .serving-line strong { color:var(--royal-blue); }
+                    text-align:center; padding:12px 16px 6px;
+                    font-size:0.78rem; color:var(--text-muted); font-weight:600;
+                }
+                .serving-line strong { color:var(--royal-blue); }
         .faq { padding: 28px 32px 12px; }
         .faq h3 { font-family:'Playfair Display',serif; color:var(--royal-blue); text-align:center; font-size:1.35rem; margin-bottom:20px; font-weight: 700; }
         .faq-item { border:1px solid #e8e8e8; border-radius:12px; margin-bottom:12px; overflow:hidden; background:var(--white); transition: box-shadow var(--transition); }
@@ -163,36 +163,36 @@
         .faq-item.open .faq-q .chev { transform:rotate(180deg); }
         .faq-a { max-height:0; overflow:hidden; transition:max-height 0.35s ease, padding 0.35s ease; padding:0 20px; color:var(--text-muted); font-size:0.92rem; line-height: 1.7; }
         .faq-item.open .faq-a { max-height:300px; padding:0 20px 18px; }
-        .form-step { display: none; padding: 36px 32px; animation: fadeIn 0.4s ease-out; }
-        .form-step.active { display: block; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--royal-blue);
-            margin-bottom: 8px;
-            font-size: 1.65rem;
-            text-align: center;
-            font-weight: 700;
-        }
-        .step-sub { text-align:center; color: var(--text-muted); font-size:0.9rem; margin-bottom:28px; line-height: 1.5; }
-        .options-grid { display: grid; gap: 14px; margin-bottom: 24px; }
-        .option-card {
-            padding: 18px 22px;
-            border: 2px solid #e8e8e8;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all var(--transition);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.08rem;
-            background: var(--white);
-            color: var(--text-dark);
-        }
+        .form-step { display: none; padding: 24px 20px; animation: fadeIn 0.4s ease-out; }
+                .form-step.active { display: block; }
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(12px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                h2 {
+                    font-family: 'Playfair Display', serif;
+                    color: var(--royal-blue);
+                    margin-bottom: 6px;
+                    font-size: 1.4rem;
+                    text-align: center;
+                    font-weight: 700;
+                }
+                .step-sub { text-align:center; color: var(--text-muted); font-size:0.8rem; margin-bottom:20px; line-height: 1.5; }
+                .options-grid { display: grid; gap: 10px; margin-bottom: 18px; }
+                .option-card {
+                    padding: 14px 18px;
+                    border: 2px solid #e8e8e8;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    transition: all var(--transition);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-weight: 700;
+                    font-size: 0.98rem;
+                    background: var(--white);
+                    color: var(--text-dark);
+                }
         .option-card:hover { border-color: var(--gold); background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.15); }
         .option-card.selected {
             border-color: var(--royal-blue);
@@ -221,92 +221,60 @@
             border-bottom:2px solid rgba(212,175,55,0.5); padding-bottom:8px;
         }
         .section-label.required {
-            background: var(--gold-light);
-            border: 2px solid var(--gold);
-            border-bottom: 2px solid var(--gold);
-            border-radius: 10px;
-            padding: 12px 16px;
-            color: var(--royal-blue);
-            box-shadow: 0 2px 10px rgba(212,175,55,0.2);
-        }
-        .section-label .req-badge {
-            float: right;
-            background: var(--royal-blue); color: var(--white);
-            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.5px;
-            padding: 3px 8px; border-radius: 20px; text-transform: uppercase;
-        }
-        .service-area-note {
-            display:block; font-weight:700; color:var(--royal-blue);
-            background:var(--gold-light); border:2px solid var(--gold);
-            border-radius:10px; padding:12px 16px; margin-bottom:18px;
-            font-size:0.95rem; text-align:center; letter-spacing:0.3px;
-            box-shadow:0 2px 10px rgba(212,175,55,0.15);
-        }
-        .service-area-note strong { color:var(--royal-blue); }
-        input, select {
-            width:100%; padding:14px 16px; border:1.5px solid #e0e0e0; border-radius:10px;
-            font-family:'Inter', sans-serif; font-size:1rem; transition:all var(--transition);
-            background: var(--white);
-        }
-        input:focus, select:focus { outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 4px rgba(0,35,102,0.1); }
-        input::placeholder { color: #aaa; }
-        .total-box {
-            margin-top: 22px; padding: 22px; background: var(--royal-blue); color: var(--white);
-            border-radius: 14px; text-align:center; border: 2px solid var(--gold);
-        }
-        .total-label { font-size:0.8rem; opacity:0.85; text-transform:uppercase; letter-spacing:1.5px; font-weight: 600; }
-        .total-amount { font-family:'Playfair Display', serif; font-size:2.75rem; color:var(--gold); display:block; margin-top: 4px; font-weight: 700; }
-        .total-note { font-size:0.8rem; opacity:0.7; margin-top:6px; }
-        .nav-buttons { display:flex; gap:14px; margin-top:30px; }
-        button {
-            flex:1; padding:16px 24px; border-radius:12px; font-weight:700; cursor:pointer;
-            transition: all var(--transition); font-family:'Inter', sans-serif; font-size:1.02rem;
-            border: none;
-        }
-        .btn-next { background: var(--royal-blue); color: var(--white); }
-        .btn-next:hover { background:#001a4d; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,102,0.3); }
-        .btn-back { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
-        .btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
-        .btn-submit { background:var(--</style>
-</head>
+                    background: var(--gold-light);
+                    border: 2px solid var(--gold);
+                    border-bottom: 2px solid var(--gold);
+                    border-radius: 8px;
+                    padding: 10px 14px;
+                    color: var(--royal-blue);
+                    box-shadow: 0 2px 8px rgba(212,175,55,0.2);
+                }
+                .section-label .req-badge {
+                    float: right;
+                    background: var(--royal-blue); color: var(--white);
+                    font-size: 0.55rem; font-weight: 800; letter-spacing: 0.5px;
+                    padding: 2px 6px; border-radius: 16px; text-transform: uppercase;
+                }
+                .service-area-note {
+                    display:block; font-weight:700; color:var(--royal-blue);
+                    background:var(--gold-light); border:2px solid var(--gold);
+                    border-radius:8px; padding:10px 14px; margin-bottom:14px;
+                    font-size:0.88rem; text-align:center; letter-spacing:0.3px;
+                    box-shadow:0 2px 8px rgba(212,175,55,0.15);
+                }
+                .service-area-note strong { color:var(--royal-blue); }
+                input, select {
+                    width:100%; padding:12px 14px; border:1.5px solid #e0e0e0; border-radius:8px;
+                    font-family:'Inter', sans-serif; font-size:0.95rem; transition:all var(--transition);
+                    background: var(--white);
+                }
+                input:focus, select:focus { outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 3px rgba(0,35,102,0.1); }
+                input::placeholder { color: #aaa; }
+                .total-box {
+                    margin-top: 18px; padding: 18px; background: var(--royal-blue); color: var(--white);
+                    border-radius: 12px; text-align:center; border: 2px solid var(--gold);
+                }
+                .total-label { font-size:0.75rem; opacity:0.85; text-transform:uppercase; letter-spacing:1px; font-weight: 600; }
+                .total-amount { font-family:'Playfair Display', serif; font-size:2.2rem; color:var(--gold); display:block; margin-top: 4px; font-weight: 700; }
+                .total-note { font-size:0.75rem; opacity:0.7; margin-top:4px; }
+                .nav-buttons { display:flex; gap:12px; margin-top:24px; }
+                button {
+                    flex:1; padding:14px 20px; border-radius:10px; font-weight:700; cursor:pointer;
+                    transition: all var(--transition); font-family:'Inter', sans-serif; font-size:0.95rem;
+                    border: none;
+                }
+                .btn-next { background: var(--royal-blue); color: var(--white); }
+                .btn-next:hover { background:#001a4d; transform:translateY(-1px); box-shadow: 0 4px 14px rgba(0,35,102,0.25); }
+                .btn-back { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
+                .btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
+                .btn-submit { background:var(--gold); color:var(--royal-blue); font-weight: 800; }
+                .btn-submit:hover { background:#c4a030; transform:translateY(-1px); }
 <body>
 <div class="container">
-    <img class="hero-banner" src="images/hero.jpg" alt="C&O TV Mounting — professional TV installation in DFW">
     <header>
         <h1>C&O TV Mounting</h1>
         <p>Premium Installations. Flawless Execution.</p>
     </header>
-
-    <div class="trust-badge-wrap">
-        <div class="trust-badge">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M12 2l2.39 1.74 2.95-.02 1.0 2.8 2.4 1.74-.92 2.8.92 2.8-2.4 1.74-1.0 2.8-2.95-.02L12 22l-2.39-1.74-2.95.02-1.0-2.8-2.4-1.74.92-2.8-.92-2.8 2.4-1.74 1.0-2.8 2.95.02L12 2z" stroke="#002366" stroke-width="1.4" stroke-linejoin="round"/>
-                <path d="M8.5 12.2l2.3 2.3 4.7-4.9" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Trusted Across the DFW Metroplex
-        </div>
-        <div class="trust-badge" style="background:var(--royal-blue); color:var(--gold); border-color:var(--gold); margin-top:10px;">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="stroke:var(--gold);">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <strong>12-Month Workmanship Warranty</strong>
-        </div>
-    </div>
-
-    <div style="margin:16px auto 8px; max-width:640px; padding:14px 20px; background:linear-gradient(135deg, var(--gold) 0%, #c4a030 100%); color:var(--royal-blue); border-radius:999px; text-align:center; font-weight:900; font-size:1.1rem; letter-spacing:0.5px; box-shadow:0 4px 16px rgba(212,175,55,0.4); border:2px solid var(--royal-blue);">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:22px; height:22px; vertical-align:middle; margin-right:8px; stroke:currentColor;">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-.01L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-        TV Mounting <strong style="font-size:1.2em;">from $90</strong> · Flat-rate · No hidden fees
-    </div>
-
-    <div class="header-contact">
-        <a href="tel:8175239753" style="display:inline-flex; align-items:center; gap:10px; background:var(--gold); color:var(--royal-blue); padding:14px 28px; border-radius:999px; font-weight:900; font-size:1.15rem; letter-spacing:0.5px; text-decoration:none; box-shadow:0 4px 16px rgba(212,175,55,0.4); border:3px solid var(--royal-blue); transition:all 0.2s ease;">
-            <span style="font-size:1.3em;">📞</span>
-            <span>Text us: <strong>817-523-9753</strong></span>
-        </a>
-    </div>
 
     <div class="progress-bar">
         <div class="step-dot active" id="dot-1"></div>
@@ -340,9 +308,8 @@
     </div>
 
     <!-- STEP 2: Configure + add-ons -->
-    <div class="form-step" id="step-2">
-        <img src="images/logo.jpg" alt="C&O TV Mounting" style="width:100%; max-width:280px; display:block; margin:0 auto 16px; border-radius:12px; box-shadow:0 4px 16px rgba(0,35,102,0.15);">
-        <h2 id="step2-title">Configure Your Project</h2>
+        <div class="form-step" id="step-2">
+            <h2 id="step2-title">Configure Your Project</h2>
         <p class="step-sub">Set up your main service, then add any others you'd like done.</p>
         <div id="step2-content"></div>
         <div class="total-box">
@@ -366,10 +333,9 @@
     </div>
 
     <!-- STEP 3: Details -->
-    <div class="form-step" id="step-3">
-        <img src="images/logo.jpg" alt="C&O TV Mounting" style="width:100%; max-width:280px; display:block; margin:0 auto 16px; border-radius:12px; box-shadow:0 4px 16px rgba(0,35,102,0.15);">
-        <h2>Your Details</h2>
-        <p class="step-sub">So we can confirm the appointment and prepare.</p>
+        <div class="form-step" id="step-3">
+            <h2>Your Details</h2>
+            <p class="step-sub">So we can confirm the appointment and prepare.</p>
         <div class="input-group">
             <label>Full Name</label>
             <input type="text" id="cust-name" placeholder="Enter your name">
@@ -397,10 +363,9 @@
     </div>
 
     <!-- STEP 4: Schedule + deposit -->
-    <div class="form-step" id="step-4">
-        <img src="images/logo.jpg" alt="C&O TV Mounting" style="width:100%; max-width:280px; display:block; margin:0 auto 16px; border-radius:12px; box-shadow:0 4px 16px rgba(0,35,102,0.15);">
-        <h2>Finalize Booking</h2>
-        <p class="step-sub">Pick a time and we'll lock it in.</p>
+        <div class="form-step" id="step-4">
+            <h2>Finalize Booking</h2>
+            <p class="step-sub">Pick a time and we'll lock it in.</p>
         <div style="margin-bottom:18px; padding:16px; background:var(--royal-blue); color:var(--gold); border-radius:12px; text-align:center; font-weight:900; font-size:1.15rem; border:3px solid var(--gold); box-shadow:0 4px 20px rgba(0,35,102,0.3); animation:pulse 2s infinite;">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:28px; height:28px; vertical-align:middle; margin-right:8px; stroke:var(--gold);">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
