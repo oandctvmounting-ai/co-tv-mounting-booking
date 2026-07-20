@@ -38,6 +38,13 @@ const SQUARE_ENV = 'production'; // 'sandbox' for testing, 'production' for live
 function sqBase() { return SQUARE_ENV === 'production' ? 'https://connect.squareup.com' : 'https://connect.squareupsandbox.com'; }
 const SQUARE_VERSION = '2024-01-17';
 
+// ===== Lead Source columns (appended after Status at col 13) =====
+// Col 14 (N) = Lead Source (utm_source)
+// Col 15 (O) = Lead Medium (utm_medium)
+// Col 16 (P) = Lead Campaign (utm_campaign)
+// Col 17 (Q) = Lead Content (utm_content)
+// Col 18 (R) = Lead Term (utm_term)
+
 // Public booking page (used as the Square redirect after payment)
 const BOOKING_PAGE = 'https://oandctvmounting-ai.github.io/co-tv-mounting-booking/';
 
@@ -175,6 +182,11 @@ function doPost(e) {
       data.deposit || '',
       data.promo || '',
       data.source || 'booking-page',
+      data.utm_source || '',
+      data.utm_medium || '',
+      data.utm_campaign || '',
+      data.utm_content || '',
+      data.utm_term || '',
       bookingRef  // Status column holds the ref for webhook matching
     ]);
 

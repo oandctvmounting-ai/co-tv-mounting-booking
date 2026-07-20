@@ -1080,6 +1080,20 @@ function unknownDeposit(area) {
     document.getElementById('submit-btn').innerText = 'Book Now';
 }
 
+/* ---------- Lead source capture (reads URL params on load) ---------- */
+function captureLeadSource() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        lead_source: params.get('src') || params.get('utm_source') || '',
+        lead_source_detail: params.get('detail') || params.get('utm_medium') || '',
+        lead_campaign: params.get('campaign') || params.get('utm_campaign') || '',
+        lead_content: params.get('content') || params.get('utm_content') || '',
+        lead_term: params.get('term') || params.get('utm_term') || ''
+    };
+}
+
+const LEAD_SOURCE = captureLeadSource();
+
 /* ---------- Submit ---------- */
 function submitBooking() {
     const total = calculateTotal();
@@ -1096,19 +1110,24 @@ function submitBooking() {
         overFireplace: tv.overFireplace, wireLabel: tv.wire ? TV.wireLabel[tv.wire] : ''
     }));
     const payload = {
-        name: document.getElementById('cust-name').value,
-        phone: document.getElementById('cust-phone').value,
-        address: document.getElementById('cust-address').value,
-        datetime: document.getElementById('booking-time').value,
-        primary: primary,
-        addons: addons,
-        tvDetails: tvDetails,
-        total: total,
-        deposit: needsDeposit ? 50 : 0,
-        promo: state.appliedPromo ? state.appliedPromo.code : '',
-        photo: PHOTO_DATA || '',
-        source: 'booking-page'
-    };
+            name: document.getElementById('cust-name').value,
+            phone: document.getElementById('cust-phone').value,
+            address: document.getElementById('cust-address').value,
+            datetime: document.getElementById('booking-time').value,
+            primary: primary,
+            addons: addons,
+            tvDetails: tvDetails,
+            total: total,
+            deposit: needsDeposit ? 50 : 0,
+            promo: state.appliedPromo ? state.appliedPromo.code : '',
+            photo: PHOTO_DATA || '',
+            source: 'booking-page',
+            utm_source: LEAD_SOURCE.lead_source,
+            utm_medium: LEAD_SOURCE.lead_source_detail,
+            utm_campaign: LEAD_SOURCE.lead_campaign,
+            utm_content: LEAD_SOURCE.lead_content,
+            utm_term: LEAD_SOURCE.lead_term
+        };
 
     if (!APP_SCRIPT_URL) {
         queueLocal(payload);
