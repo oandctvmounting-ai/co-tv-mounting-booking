@@ -506,12 +506,14 @@ async function updateCardPreview() {
     const email = partnerEmailInput.value.trim();
     const company = partnerCompanyInput.value.trim();
     
+    let serverCode = null;
+    
     // If email is provided, call backend for persistent code
     if (email) {
         try {
             const resp = await fetch(APP_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'generate_referral_code',
@@ -520,24 +522,28 @@ async function updateCardPreview() {
                     partnerEmail: email
                 })
             });
+            const result = await resp.json();
+            if (result.ok && result.referralCode) {
+                serverCode = result.referralCode;
+            }
         } catch (e) {
             console.error('Backend code fetch error:', e);
         }
-        // no-cors means we can't read response, but backend stores the code.
-        // Fall back to client-side generation for display purposes.
-        // The backend will dedupe by email on subsequent calls.
     }
     
-    // Generate code client-side for display
-    const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-    const code = `REF-${namePart}-${random}`;
+    // Use server code if available, otherwise generate client-side
+    const code = serverCode || (() => {
+        const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+        const companyPart = company ? company.split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0,4) : '';
+        const random = Math.random().toString(36).substring(2,5).toUpperCase();
+        return 'REF-' + namePart + (companyPart ? '-' + companyPart : '') + '-' + random;
+    })();
     
     partnerCodeInput.value = code;
     cardCodeDisplay.textContent = code;
     cardPreview.style.display = 'block';
     
-    showToast('Referral card generated! Code saved to your account.');
+    showToast(serverCode ? 'Code retrieved from your account!' : 'Referral card generated! Code saved.');
     
     generateCardBtn.textContent = 'Generate Card';
     generateCardBtn.disabled = false;
