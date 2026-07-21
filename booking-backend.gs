@@ -379,4 +379,4 @@ function doPost(e) {
     try {
       sendTelegramAlert(data, tvDetails);
     } catch (te) {
-      tgStatus =
+      tgStatus = bookingRef + ' | TG-ERR: ' + String(te).slice

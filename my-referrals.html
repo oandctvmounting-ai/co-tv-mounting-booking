@@ -296,6 +296,7 @@
             margin-bottom: 16px;
             opacity: 0.5;
         }
+        .hidden { display: none !important; }
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -344,4 +345,88 @@
     </div>
 
     <div class="section" style="display: none;" id="loading-state">
-        <div style="text-align:
+        <div style="text-align: center; padding: 40px;">
+            <div style="width: 40px; height: 40px; border: 3px solid var(--gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+            <p>Loading your referrals...</p>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzc_gjFNtZ8r-TCQMdRWYHLyhkPdMQemRVjFRhDqsf6cgXqdQTacd6pnHa7lpGiEt9t/exec';
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+async function loadReferrals() {
+    const email = document.getElementById('partner-email').value.trim().toLowerCase();
+    if (!email) {
+        showToast('Please enter your email');
+        return;
+    }
+
+    const emailForm = document.getElementById('email-form');
+    const loading = document.getElementById('loading-state');
+    const container = document.getElementById('referrals-section');
+    const emptyState = document.getElementById('empty-state');
+    const tableContainer = document.getElementById('referrals-table-container');
+
+    emailForm.classList.add('hidden');
+    loading.classList.remove('hidden');
+    container.classList.add('hidden');
+    emptyState.classList.add('hidden');
+
+    try {
+        const response = await fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'get_referrals',
+                partnerEmail: email
+            })
+        });
+
+        // With no-cors we can't read the response directly.
+        // In production you'd use a CORS-enabled endpoint or JSONP.
+        // For now, show a friendly message.
+        setTimeout(() => {
+            loading.classList.add('hidden');
+            showToast('Note: Referrals loading requires CORS-enabled endpoint. Check your email for referral confirmations.');
+            emptyState.classList.remove('hidden');
+        }, 1000);
+        
+    } catch (err) {
+        console.error('Error loading referrals:', err);
+        loading.classList.add('hidden');
+        showToast('Error loading referrals');
+        emailForm.classList.remove('hidden');
+    }
+}
+
+// Check if there's an email in localStorage from previous visit
+document.addEventListener('DOMContentLoaded', () => {
+    const savedEmail = localStorage.getItem('partnerEmail');
+    if (savedEmail) {
+        document.getElementById('partner-email').value = savedEmail;
+    }
+    
+    document.getElementById('partner-email').addEventListener('change', (e) => {
+        localStorage.setItem('partnerEmail', e.target.value);
+    });
+    
+    document.getElementById('email-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        loadReferrals();
+    });
+});
+</script>
+
+</body>
+</html>
