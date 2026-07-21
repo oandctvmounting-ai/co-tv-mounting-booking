@@ -136,7 +136,7 @@
         .info-box ul { list-style: none; padding: 0; }
         .info-box li {
             padding: 8px 0;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            border-bottom: 1px solid rgba(212,175,55,0.3);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -159,7 +159,7 @@
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 20px;
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 24px rgba(212,175,55,0.4);
         }
         .success-icon svg { width: 40px; height: 40px; stroke: var(--royal-blue); }
         .success-state h3 {
@@ -304,4 +304,184 @@
         }
         .card-preview .logo { color: var(--gold); font-size: 1.5rem; margin-bottom: 8px; }
         .card-preview .code { font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; display: inline-block; margin: 16px 0; }
-        .card-preview .tagline { font-size: 0.85rem;
+        .card-preview .tagline { font-size: 0.85rem; opacity: 0.8; }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e8e8e8;
+        }
+        .tab {
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 700;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all var(--transition);
+        }
+        .tab.active {
+            color: var(--royal-blue);
+            border-bottom-color: var(--royal-blue);
+        }
+        .tab:hover { color: var(--royal-blue); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--royal-blue);
+            font-weight: 700;
+            text-decoration: none;
+            padding: 10px 16px;
+            border: 2px solid var(--royal-blue);
+            border-radius: 8px;
+            transition: all var(--transition);
+        }
+        .download-link:hover {
+            background: var(--royal-blue);
+            color: var(--white);
+        }
+        .copy-btn {
+            background: var(--gold);
+            color: var(--royal-blue);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .copy-btn:hover { background: #c4a030; }
+        .copy-btn.copied { background: #27ae60; color: white; }
+        .tax-note {
+            background: #fff8e1;
+            border: 1px solid #ffd54f;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            color: #5d4e00;
+            margin-top: 16px;
+        }
+        .bonus-tier {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--gold-light);
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>C&O TV Mounting</h1>
+        <p>Referral Partner Portal</p>
+    </header>
+
+    <div class="section">
+        <div class="info-box" id="info-box">
+            <h3>🤝 Partner With C&O TV Mounting</h3>
+            <ul>
+                <li><span class="icon">💰</span> <strong>$40</strong> per booked job from your referral</li>
+                <li><span class="icon">📈</span> <strong>$100 bonus</strong> for 5+ jobs/quarter</li>
+                <li><span class="icon">📱</span> Unique referral code tracks every lead</li>
+                <li><span class="icon">💸</span> Monthly payouts via Square/Venmo</li>
+                <li><span class="icon">🛡️</span> 24-month workmanship warranty on every job</li>
+            </ul>
+        </div>
+
+        <!-- NEW SECTION: Additional Partner Resources -->
+        <section class="card">
+            <h2>Partner Dashboard</h2>
+            <p>Track your referrals, earnings, and payouts in real-time.</p>
+            <a href="#" class="btn btn-primary">Check Your Referrals</a>
+        </section>
+
+        <section class="card">
+            <h2>Tax Information</h2>
+            <p class="tax-note">Note: A 1099 form will be issued for annual earnings of $600 or more, as required by IRS regulations.</p>
+        </section>
+
+        <section class="card">
+            <h2>Resources</h2>
+            <a href="referral-partner-guide.pdf" class="download-link" download>
+                <span>📄</span> Download Partner One-Pager (Talking Points, Pricing, Process)
+            </a>
+        </section>
+
+        <section class="card">
+            <h2>Referral Card Generator</h2>
+            <div class="generator-form">
+                <label for="partner-name-card">Your Name (for the card)</label>
+                <input type="text" id="partner-name-card" placeholder="Your Name" required>
+                <label for="partner-code">Your Referral Code</label>
+                <input type="text" id="partner-code" placeholder="Your referral code will appear here" readonly>
+                <button class="btn btn-primary" id="generate-card">Generate Card</button>
+            </div>
+            <div class="card-preview" id="card-preview" style="display:none;">
+                <div class="logo">C&O</div>
+                <div class="code" id="card-code">REF-XXXX</div>
+                <div class="tagline">Trusted TV Mounting Partner</div>
+            </div>
+            <p><small>Generate a branded card to share with clients. Save or screenshot to send via text/email.</small></p>
+        </section>
+
+        <section class="card">
+            <h2>Email Templates</h2>
+            <div class="email-template">
+                <h4>Template 1: Simple Recommendation</h4>
+                <p>Hi [Client Name],</p>
+                <p>I highly recommend C&O TV Mounting for your TV installation needs. They’re professional, reliable, and offer a 24-month workmanship warranty. You can book directly at <a href="https://oandctvmounting-ai.github.io/co-tv-mounting-booking/">their website</a> or mention my referral code: [YOUR CODE].</p>
+                <p>Best regards,<br>[Your Name]</p>
+            </div>
+            <div class="email-template">
+                <h4>Template 2: Detailed Offer</h4>
+                <p>Hi [Client Name],</p>
+                <p>If you’re looking for a TV mounting service, I’ve had great experiences with C&O TV Mounting. They handle everything from standard mounts to complex fireplace installations, and they include wire concealment options. Plus, they offer a 24-month warranty on all work.</p>
+                <p>When you book, be sure to use my referral code: [YOUR CODE] — I’ll earn a $40 referral bonus (and you get the same great service!).</p>
+                <p>You can book online here: <a href="https://oandctvmounting-ai.github.io/co-tv-mounting-booking/">https://oandctvmounting-ai.github.io/co-tv-mounting-booking/</a></p>
+                <p>Let me know if you have any questions!</p>
+                <p>Best,<br>[Your Name]</p>
+            </div>
+            <div class="template-actions">
+                <button class="btn btn-outline" onclick="copyTemplate(0)">Copy Template 1</button>
+                <button class="btn btn-outline" onclick="copyTemplate(1)">Copy Template 2</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Bonus Tiers</h2>
+            <div class="bonus-tier">
+                <span>5+ jobs/quarter</span>
+                <span>$100 bonus</span>
+            </div>
+            <div class="bonus-tier">
+                <span>10+ jobs/quarter</span>
+                <span>$200 bonus</span>
+            </div>
+            <p><small>Bonuses are paid quarterly in addition to the $40 per job.</small></p>
+        </section>
+
+        <section class="card">
+            <h2>Referral Status Definitions</h2>
+            <div class="status-flow">
+                <div class="status-step">New</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step">Contacted</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step">Quoted</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step">Booked</div>
+                <div class="status-arrow">→</div>
+                <div class="status-step">Paid</div>
+            </div>
+            <p><small>Definitions:</small></p>
+            <ul>
+                <li><strong>New:</strong> Referral submitted, not yet contacted.</li>
+                <li><strong>Contacted:</strong> We’ve reached out to the client.</li>
+                <li><strong>Quoted:</strong> Client has received a
