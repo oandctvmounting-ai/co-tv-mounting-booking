@@ -183,6 +183,14 @@ function sendReferralEmail(partnerName, partnerEmail, referralCode) {
     subject: subject,
     htmlBody: body.replace(/\n/g, '<br>')
   });
+  // BCC owner on every referral
+  try {
+    MailApp.sendEmail({
+      to: 'trademarktmo97@gmail.com',
+      subject: '[COPY] Referral sent: ' + referralCode + ' - ' + partnerName,
+      htmlBody: ('Partner: ' + partnerName + ' (' + partnerEmail + ')<br>Code: ' + referralCode).replace(/\n/g, '<br>')
+    });
+  } catch(e) { Logger.log('BCC email failed: ' + e); }
 }
 
 // ===== Generate referral code =====
