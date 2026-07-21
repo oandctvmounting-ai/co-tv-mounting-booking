@@ -335,8 +335,7 @@ function doPost(e) {
 
     // ---- Branch 5: Generate referral code and store in ReferralCodes tab ----
     if (data.action === 'generate_referral_code') {
-      // If client sent a code, store that one (fire-and-forget pattern)
-      const referralCode = data.clientCode || getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail, data.clientCode);
+      const referralCode = getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail, data.clientCode);
       return jsonOut({ ok: true, referralCode: referralCode });
     }
 
