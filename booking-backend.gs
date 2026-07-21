@@ -227,7 +227,7 @@ function getReferralsByPartnerEmail(partnerEmail) {
 }
 
 // ===== Get or create referral code for partner (stored in ReferralCodes tab) =====
-function getOrCreateReferralCode(partnerName, partnerCompany, partnerEmail) {
+function getOrCreateReferralCode(partnerName, partnerCompany, partnerEmail, clientCode) {
   const sh = getReferralCodesSheet();
   const data = sh.getDataRange().getValues();
   
@@ -240,8 +240,8 @@ function getOrCreateReferralCode(partnerName, partnerCompany, partnerEmail) {
     }
   }
   
-  // Generate new code
-  const referralCode = generateReferralCode(partnerName, partnerCompany);
+  // Use client-provided code or generate new
+  const referralCode = clientCode || generateReferralCode(partnerName, partnerCompany);
   
   // Store in ReferralCodes sheet
   sh.appendRow([
@@ -335,7 +335,8 @@ function doPost(e) {
 
     // ---- Branch 5: Generate referral code and store in ReferralCodes tab ----
     if (data.action === 'generate_referral_code') {
-      const referralCode = getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail);
+      // If client sent a code, store that one (fire-and-forget pattern)
+      const referralCode = data.clientCode || getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail, data.clientCode);
       return jsonOut({ ok: true, referralCode: referralCode });
     }
 

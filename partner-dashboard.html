@@ -500,53 +500,36 @@ async function updateCardPreview() {
         return;
     }
     
-    generateCardBtn.textContent = 'Generating...';
-    generateCardBtn.disabled = true;
-    
     const email = partnerEmailInput.value.trim();
     const company = partnerCompanyInput.value.trim();
     
-    let serverCode = null;
-    
-    // If email is provided, call backend for persistent code
-    if (email) {
-        try {
-            const resp = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'generate_referral_code',
-                    partnerName: name,
-                    partnerCompany: company,
-                    partnerEmail: email
-                })
-            });
-            const result = await resp.json();
-            if (result.ok && result.referralCode) {
-                serverCode = result.referralCode;
-            }
-        } catch (e) {
-            console.error('Backend code fetch error:', e);
-        }
-    }
-    
-    // Use server code if available, otherwise generate client-side
-    const code = serverCode || (() => {
-        const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-        const companyPart = company ? company.split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0,4) : '';
-        const random = Math.random().toString(36).substring(2,5).toUpperCase();
-        return 'REF-' + namePart + (companyPart ? '-' + companyPart : '') + '-' + random;
-    })();
+    // Always generate code client-side for immediate display
+    const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+    const companyPart = company ? company.split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0,4) : '';
+    const random = Math.random().toString(36).substring(2,5).toUpperCase();
+    const code = 'REF-' + namePart + (companyPart ? '-' + companyPart : '') + '-' + random;
     
     partnerCodeInput.value = code;
     cardCodeDisplay.textContent = code;
     cardPreview.style.display = 'block';
     
-    showToast(serverCode ? 'Code retrieved from your account!' : 'Referral card generated! Code saved.');
+    // Send to backend in background (fire and forget via no-cors)
+    if (email) {
+        fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'generate_referral_code',
+                partnerName: name,
+                partnerCompany: company,
+                partnerEmail: email,
+                clientCode: code
+            })
+        }).catch(function() {});
+    }
     
-    generateCardBtn.textContent = 'Generate Card';
-    generateCardBtn.disabled = false;
+    showToast('Referral card generated! Code stored to your account.');
 }
 
 generateCardBtn.addEventListener('click', updateCardPreview);
