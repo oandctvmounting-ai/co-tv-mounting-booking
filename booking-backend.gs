@@ -1,12 +1,13 @@
 /**
  * C&O TV Mounting — Booking Intake Backend (Square Deposit Edition)
- * =========================================
+ * =======================================
  * DEPLOYED AS A GOOGLE APPS SCRIPT WEB APP.
  *
  * WHAT'S NEW (2026-07-10):
  *   - Square SANDBOX deposit collection via Payment Links (hosted checkout).
  *   - Webhook handler that marks a booking "deposit_paid" when Square
  *     confirms payment (with signature verification).
+ *   - Referral Partner Portal handler: writes to "Referrals" tab.
  *
  * SECURITY: Square tokens live in Script Properties, NEVER in this file.
  *   In the Apps Script editor: Project Settings → Script Properties:
@@ -20,6 +21,9 @@
  *       -> { ok:true, checkout_url:'https://sandbox.square.link/...' }
  *   { action: 'square_webhook', (raw Square event body) }
  *       -> verifies signature, marks booking deposit_paid
+ *   { action: 'referral', partnerName, partnerCompany, partnerPhone, partnerEmail,
+ *       clientName, clientPhone, clientEmail, clientAddress, jobService, jobNotes, referralCode }
+ *       -> appends row to Referrals tab, sends email to partner
  *   { (legacy booking payload) }  -> appends row + Telegram alert (unchanged)
  */
 
@@ -48,7 +52,41 @@ const SQUARE_VERSION = '2024-01-17';
 // Public booking page (used as the Square redirect after payment)
 const BOOKING_PAGE = 'https://oandctvmounting-ai.github.io/co-tv-mounting-booking/';
 
-/** Create a $50 Square deposit Payment Link, return its URL. */
+// ===== Sheet helpers =====
+function getSheet() {
+  return SpreadsheetApp.openById(BOOKINGS_SHEET_ID).getSheetByName('Bookings');
+}
+
+function getReferralsSheet() {
+  const ss = SpreadsheetApp.openById(BOOKINGS_SHEET_ID);
+  let sh = ss.getSheetByName('Referrals');
+  if (!sh) {
+    sh = ss.insertSheet('Referrals');
+    sh.appendRow([
+      'Submitted Date',
+      'Partner Name',
+      'Partner Company',
+      'Partner Phone',
+      'Partner Email',
+      'Client Name',
+      'Client Phone',
+      'Client Email',
+      'Client Address',
+      'Job Service',
+      'Job Notes',
+      'Referral Code',
+      'Status',
+      'Paid Date',
+      'Payout Amount'
+    ]);
+    // Format header row
+    sh.getRange(1, 1, 1, sh.getLastColumn()).setFontWeight('bold').setBackground('#002366').setFontColor('#D4AF37');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+// ===== Create a $50 Square deposit Payment Link, return its URL =====
 function createSquareDeposit(bookingRef, customerName) {
   const token = sqToken();
   const loc = sqLocationId();
@@ -87,23 +125,20 @@ function createSquareDeposit(bookingRef, customerName) {
   throw new Error('Square create link failed: ' + JSON.stringify(json).slice(0, 300));
 }
 
-/** Verify Square webhook HMAC-SHA1 signature (raw body + X-Square-HmacSha256 header). */
+// ===== Verify Square webhook HMAC-SHA1 signature =====
 function verifySquareSig(rawBody, sigHeader) {
   const key = sqSigKey();
   if (!key) return false; // not configured -> don't blindly accept
   if (!sigHeader) return false;
   const expected = Utilities.computeHmacSha256Signature(rawBody, key);
-  // Square sends base64
   const expectedB64 = Utilities.base64Encode(expected);
   return expectedB64 === sigHeader.trim();
 }
 
-/** Find booking row by booking_ref (stored in Status or a dedicated col). */
+// ===== Find booking row by booking_ref (stored in Status column M) and mark deposit_paid =====
 function markDepositPaid(bookingRef) {
   const sh = getSheet();
   const data = sh.getDataRange().getValues();
-  // Status column (col 13) holds the ref (e.g. "DEP-..." or "REF:...").
-  // Match if the cell contains the ref as a standalone token.
   for (let r = data.length; r >= 2; r--) {
     const statusCell = data[r - 1][12]; // col M = index 12
     if (statusCell && String(statusCell).indexOf(bookingRef) !== -1) {
@@ -112,6 +147,33 @@ function markDepositPaid(bookingRef) {
     }
   }
   return false;
+}
+
+// ===== Send referral confirmation email to partner =====
+function sendReferralEmail(partnerName, partnerEmail, referralCode) {
+  const subject = '🤝 Your C&O Referral Code: ' + referralCode;
+  const body = `Hi ${partnerName},
+
+Thanks for sending a referral to C&O TV Mounting!
+
+Your referral code: **${referralCode}**
+
+Save this code — it tracks every job that comes from your referral. You'll earn:
+• $40 per booked job
+• $100 bonus for 5+ jobs/quarter
+• Monthly payouts via Square/Venmo
+
+We'll reach out to your client within 2 hours and keep you updated.
+
+— The C&O Team
+📞 817-523-9753
+https://oandctvmounting-ai.github.io/co-tv-mounting-booking/`;
+
+  MailApp.sendEmail({
+    to: partnerEmail,
+    subject: subject,
+    htmlBody: body.replace(/\n/g, '<br>')
+  });
 }
 
 function doPost(e) {
@@ -134,19 +196,15 @@ function doPost(e) {
     if (data.action === 'square_webhook' || (e.parameter && e.parameter.square_webhook)) {
       const sig = (e.headers && (e.headers['X-Square-HmacSha256'] || e.headers['x-square-hmacsha256'])) || '';
       const ok = verifySquareSig(body || '', sig);
-      // Accept webhooks when no signature key is configured (dev/testing or when
-      // the owner hasn't set one up yet). If a key IS set, enforce the signature.
-      // This keeps deposit collection working without requiring dashboard setup.
       if (!ok && sqSigKey()) {
         return jsonOut({ ok: false, error: 'bad signature' }, 401);
       }
       if (!ok) Logger.log('Webhook accepted WITHOUT signature verification (SQUARE_WEBHOOK_SIG_KEY not set)');
-      // Square sends event type + data.object.payment / order
+
       const evtType = data.type || '';
       let ref = null;
       if (data.data && data.data.object) {
         const obj = data.data.object;
-        // Payment link / order usually carries our idempotency or order ref
         if (obj.order && obj.order.reference_id) ref = obj.order.reference_id;
         else if (obj.payment && obj.payment.reference_id) ref = obj.payment.reference_id;
         else if (obj.reference_id) ref = obj.reference_id;
@@ -156,7 +214,40 @@ function doPost(e) {
       return jsonOut({ ok: true, event: evtType, marked: marked });
     }
 
-    // ---- Branch 3: legacy booking intake (unchanged behavior) ----
+    // ---- Branch 3: Referral Partner Portal submission ----
+    if (data.action === 'referral') {
+      const refSheet = getReferralsSheet();
+      const referralCode = data.referralCode || generateReferralCode(data.partnerName, data.partnerCompany);
+
+      refSheet.appendRow([
+        new Date(),
+        data.partnerName || '',
+        data.partnerCompany || '',
+        data.partnerPhone || '',
+        data.partnerEmail || '',
+        data.clientName || '',
+        data.clientPhone || '',
+        data.clientEmail || '',
+        data.clientAddress || '',
+        data.jobService || '',
+        data.jobNotes || '',
+        referralCode,
+        'new',
+        '',
+        ''
+      ]);
+
+      // Send confirmation email to partner
+      try {
+        if (data.partnerEmail) sendReferralEmail(data.partnerName, data.partnerEmail, referralCode);
+      } catch (e) {
+        Logger.log('Referral email failed: ' + e);
+      }
+
+      return jsonOut({ ok: true, referral_code: referralCode });
+    }
+
+    // ---- Branch 4: legacy booking intake (unchanged behavior) ----
     const sheet = getSheet();
     const tvDetails = (data.tvDetails && data.tvDetails.length)
       ? data.tvDetails.map((t, i) =>
@@ -210,7 +301,7 @@ function doPost(e) {
 }
 
 function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({ status: 'C&O booking endpoint live (Square enabled)' }))
+  return ContentService.createTextOutput(JSON.stringify({ status: 'C&O booking endpoint live (Square + Referrals enabled)' }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -220,6 +311,15 @@ function jsonOut(obj, code) {
   return out;
 }
 
+// ===== Generate referral code =====
+function generateReferralCode(partnerName, company) {
+  const namePart = (partnerName || '').trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+  const companyPart = (company || '').trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+  const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+  return 'REF-' + namePart + '-' + companyPart + '-' + random;
+}
+
+// ===== Telegram alert =====
 function sendTelegramAlert(data, tvDetails) {
   if (!TELEGRAM_BOT_TOKEN) return;
   const total = (data.total != null ? '$' + data.total : '');
@@ -239,8 +339,6 @@ function sendTelegramAlert(data, tvDetails) {
   const url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
   const ownerPayload = { chat_id: TELEGRAM_OWNER_CHAT, text: msg };
   const groupPayload = { chat_id: TELEGRAM_GROUP_CHAT, text: msg };
-  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
-    payload: JSON.stringify(ownerPayload) });
-  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
-    payload: JSON.stringify(groupPayload) });
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(ownerPayload) });
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(groupPayload) });
 }
