@@ -3,11 +3,13 @@
  * =======================================
  * DEPLOYED AS A GOOGLE APPS SCRIPT WEB APP.
  *
- * WHAT'S NEW (2026-07-10):
- *   - Square SANDBOX deposit collection via Payment Links (hosted checkout).
+ * WHAT'S NEW (2026-07-21):
+ *   - Square deposit collection via Payment Links (hosted checkout).
  *   - Webhook handler that marks a booking "deposit_paid" when Square
  *     confirms payment (with signature verification).
  *   - Referral Partner Portal handler: writes to "Referrals" tab.
+ *   - Get referrals by partner email for "My Referrals" page.
+ *   - Generate referral code and store in "ReferralCodes" tab.
  *
  * SECURITY: Square tokens live in Script Properties, NEVER in this file.
  *   In the Apps Script editor: Project Settings → Script Properties:
@@ -18,12 +20,16 @@
  *
  * ENDPOINTS (all POST to the same Web App URL):
  *   { action: 'create_deposit', booking_ref, name, phone, address }
- *       -> { ok:true, checkout_url:'https://sandbox.square.link/...' }
+ *       -> { ok:true, checkout_url:'https://...square.link/...' }
  *   { action: 'square_webhook', (raw Square event body) }
  *       -> verifies signature, marks booking deposit_paid
  *   { action: 'referral', partnerName, partnerCompany, partnerPhone, partnerEmail,
  *       clientName, clientPhone, clientEmail, clientAddress, jobService, jobNotes, referralCode }
  *       -> appends row to Referrals tab, sends email to partner
+ *   { action: 'get_referrals', partnerEmail }
+ *       -> { ok:true, referrals: [...] }
+ *   { action: 'generate_referral_code', partnerName, partnerCompany, partnerEmail }
+ *       -> { ok:true, referralCode: 'REF-...' }
  *   { (legacy booking payload) }  -> appends row + Telegram alert (unchanged)
  */
 
@@ -86,6 +92,26 @@ function getReferralsSheet() {
   return sh;
 }
 
+function getReferralCodesSheet() {
+  const ss = SpreadsheetApp.openById(BOOKINGS_SHEET_ID);
+  let sh = ss.getSheetByName('ReferralCodes');
+  if (!sh) {
+    sh = ss.insertSheet('ReferralCodes');
+    sh.appendRow([
+      'Created Date',
+      'Partner Name',
+      'Partner Company',
+      'Partner Email',
+      'Referral Code',
+      'Status' // active, inactive
+    ]);
+    // Format header row
+    sh.getRange(1, 1, 1, sh.getLastColumn()).setFontWeight('bold').setBackground('#002366').setFontColor('#D4AF37');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
 // ===== Create a $50 Square deposit Payment Link, return its URL =====
 function createSquareDeposit(bookingRef, customerName) {
   const token = sqToken();
@@ -125,7 +151,7 @@ function createSquareDeposit(bookingRef, customerName) {
   throw new Error('Square create link failed: ' + JSON.stringify(json).slice(0, 300));
 }
 
-// ===== Verify Square webhook HMAC-SHA1 signature =====
+// ===== Verify Square webhook HMAC-SHA256 signature =====
 function verifySquareSig(rawBody, sigHeader) {
   const key = sqSigKey();
   if (!key) return false; // not configured -> don't blindly accept
@@ -152,28 +178,84 @@ function markDepositPaid(bookingRef) {
 // ===== Send referral confirmation email to partner =====
 function sendReferralEmail(partnerName, partnerEmail, referralCode) {
   const subject = '🤝 Your C&O Referral Code: ' + referralCode;
-  const body = `Hi ${partnerName},
-
-Thanks for sending a referral to C&O TV Mounting!
-
-Your referral code: **${referralCode}**
-
-Save this code — it tracks every job that comes from your referral. You'll earn:
-• $40 per booked job
-• $100 bonus for 5+ jobs/quarter
-• Monthly payouts via Square/Venmo
-
-We'll reach out to your client within 2 hours and keep you updated.
-
-— The C&O Team
-📞 817-523-9753
-https://oandctvmounting-ai.github.io/co-tv-mounting-booking/`;
+  const body = `Hi ${partnerName},\n\nThanks for sending a referral to C&O TV Mounting!\n\nYour referral code: **${referralCode}**\n\nSave this code — it tracks every job that comes from your referral. You'll earn:\n• $40 per booked job\n• $100 bonus for 5+ jobs/quarter\n• Monthly payouts via Square/Venmo\n\nWe'll reach out to your client within 2 hours and keep you updated.\n\n— The C&O Team\n📞 817-523-9753\nhttps://oandctvmounting-ai.github.io/co-tv-mounting-booking/`;
 
   MailApp.sendEmail({
     to: partnerEmail,
     subject: subject,
     htmlBody: body.replace(/\n/g, '<br>')
   });
+}
+
+// ===== Generate referral code =====
+function generateReferralCode(partnerName, company) {
+  const namePart = (partnerName || '').trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+  const companyPart = (company || '').trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+  const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+  return 'REF-' + namePart + '-' + companyPart + '-' + random;
+}
+
+// ===== Get referrals by partner email =====
+function getReferralsByPartnerEmail(partnerEmail) {
+  const sh = getReferralsSheet();
+  const data = sh.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  
+  const referrals = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const email = String(row[4] || '').toLowerCase().trim(); // Partner Email is column E (index 4)
+    if (email === partnerEmail.toLowerCase().trim()) {
+      referrals.push({
+        submittedDate: row[0],
+        partnerName: row[1],
+        partnerCompany: row[2],
+        partnerPhone: row[3],
+        partnerEmail: row[4],
+        clientName: row[5],
+        clientPhone: row[6],
+        clientEmail: row[7],
+        clientAddress: row[8],
+        jobService: row[9],
+        jobNotes: row[10],
+        referralCode: row[11],
+        status: row[12],
+        paidDate: row[13],
+        payoutAmount: row[14]
+      });
+    }
+  }
+  return referrals;
+}
+
+// ===== Get or create referral code for partner (stored in ReferralCodes tab) =====
+function getOrCreateReferralCode(partnerName, partnerCompany, partnerEmail) {
+  const sh = getReferralCodesSheet();
+  const data = sh.getDataRange().getValues();
+  
+  // Check if partner already has a code
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const email = String(row[3] || '').toLowerCase().trim(); // Partner Email is column D (index 3)
+    if (email === partnerEmail.toLowerCase().trim()) {
+      return row[4]; // Return existing referral code (column E)
+    }
+  }
+  
+  // Generate new code
+  const referralCode = generateReferralCode(partnerName, partnerCompany);
+  
+  // Store in ReferralCodes sheet
+  sh.appendRow([
+    new Date(),
+    partnerName,
+    partnerCompany,
+    partnerEmail,
+    referralCode,
+    'active'
+  ]);
+  
+  return referralCode;
 }
 
 function doPost(e) {
@@ -247,7 +329,19 @@ function doPost(e) {
       return jsonOut({ ok: true, referral_code: referralCode });
     }
 
-    // ---- Branch 4: legacy booking intake (unchanged behavior) ----
+    // ---- Branch 4: Get referrals by partner email ----
+    if (data.action === 'get_referrals') {
+      const referrals = getReferralsByPartnerEmail(data.partnerEmail || '');
+      return jsonOut({ ok: true, referrals: referrals });
+    }
+
+    // ---- Branch 5: Generate referral code and store in ReferralCodes tab ----
+    if (data.action === 'generate_referral_code') {
+      const referralCode = getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail);
+      return jsonOut({ ok: true, referralCode: referralCode });
+    }
+
+    // ---- Branch 6: legacy booking intake (unchanged behavior) ----
     const sheet = getSheet();
     const tvDetails = (data.tvDetails && data.tvDetails.length)
       ? data.tvDetails.map((t, i) =>
@@ -285,60 +379,4 @@ function doPost(e) {
     try {
       sendTelegramAlert(data, tvDetails);
     } catch (te) {
-      tgStatus = bookingRef + ' | TG-ERR: ' + String(te).slice(0, 200);
-      Logger.log('Telegram alert failed: ' + te);
-    }
-    try {
-      const sh = getSheet();
-      const lastRow = sh.getLastRow();
-      sh.getRange(lastRow, 13).setValue(tgStatus);
-    } catch (e2) { /* ignore */ }
-
-    return jsonOut({ ok: true, booking_ref: bookingRef });
-  } catch (err) {
-    return jsonOut({ ok: false, error: String(err) });
-  }
-}
-
-function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({ status: 'C&O booking endpoint live (Square + Referrals enabled)' }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function jsonOut(obj, code) {
-  const out = ContentService.createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
-  return out;
-}
-
-// ===== Generate referral code =====
-function generateReferralCode(partnerName, company) {
-  const namePart = (partnerName || '').trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-  const companyPart = (company || '').trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
-  const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-  return 'REF-' + namePart + '-' + companyPart + '-' + random;
-}
-
-// ===== Telegram alert =====
-function sendTelegramAlert(data, tvDetails) {
-  if (!TELEGRAM_BOT_TOKEN) return;
-  const total = (data.total != null ? '$' + data.total : '');
-  const deposit = data.deposit ? ('\n💳 Deposit: $' + data.deposit) : '';
-  const promo = data.promo ? ('\n🏷 Promo: ' + data.promo) : '';
-  const msg =
-    '🔔 NEW BOOKING — C&O TV Mounting\n' +
-    '👤 ' + (data.name || '?') + '  📞 ' + (data.phone || '?') + '\n' +
-    '📍 ' + (data.address || '?') + '\n' +
-    '🗓 ' + (data.datetime || '?') + '\n' +
-    '🔧 ' + (data.primary || '?') +
-    ((data.addons && data.addons.length) ? ' + ' + data.addons.join(', ') : '') + '\n' +
-    (tvDetails ? '📺 ' + tvDetails + '\n' : '') +
-    '💰 Est. Total: ' + total + deposit + promo + '\n' +
-    '— lands in C&O Sheet (Bookings tab)';
-
-  const url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
-  const ownerPayload = { chat_id: TELEGRAM_OWNER_CHAT, text: msg };
-  const groupPayload = { chat_id: TELEGRAM_GROUP_CHAT, text: msg };
-  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(ownerPayload) });
-  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: JSON.stringify(groupPayload) });
-}
+      tgStatus =
