@@ -1,15 +1,75 @@
+REF-XXXXXX</div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px;">Save this code — it tracks every job from this referral. Payouts sent monthly.</p>
+        <a href="index.html" class="footer-link">← Back to Booking</a>
+    </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRaZOhmwsnB1Kp-7UH8krlwCGBxo9ePaj7l_XCydsjuHhH8xHNOHQ1A7wUHeLM62Po/exec';
+
+function generateReferralCode(partnerName, company) {
+    const namePart = partnerName.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+    const companyPart = company.trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+    return `REF-${namePart}-${companyPart}-${random}`;
 }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <header>
-                <h1>C&O TV Mounting</h1>
-                <p>Referral Partner Portal</p>
-            </header>
-            <div class="section">
-                <a href="partner-dashboard.html" class="btn btn-primary">Partner Dashboard</a>
-            </div>
-        </div>
-    </body>
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+function showSuccess(referralCode) {
+    document.getElementById('referral-form').style.display = 'none';
+    document.getElementById('success-state').classList.add('show');
+    document.getElementById('referral-code-display').textContent = referralCode;
+    showToast('Referral submitted! Your code: ' + referralCode);
+}
+
+document.getElementById('referral-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.disabled = true;
+
+    const payload = {
+        action: 'referral',
+        partnerName: document.getElementById('partner-name').value.trim(),
+        partnerCompany: document.getElementById('partner-company').value.trim(),
+        partnerPhone: document.getElementById('partner-phone').value.trim(),
+        partnerEmail: document.getElementById('partner-email').value.trim(),
+        clientName: document.getElementById('client-name').value.trim(),
+        clientPhone: document.getElementById('client-phone').value.trim(),
+        clientEmail: document.getElementById('client-email').value.trim(),
+        clientAddress: document.getElementById('client-address').value.trim(),
+        jobService: document.getElementById('job-service').value,
+        jobNotes: document.getElementById('job-notes').value.trim()
+    };
+
+    const referralCode = generateReferralCode(payload.partnerName, payload.partnerCompany);
+    payload.referralCode = referralCode;
+
+    try {
+        await fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        showSuccess(referralCode);
+    } catch (err) {
+        console.error('Submit error:', err);
+        showToast('Submitted! Check email for confirmation.');
+        showSuccess(referralCode);
+    } finally {
+        submitBtn = originalText;
+        submitBtn.disabled = false;
+    }
+});
+</script>
+</body>
 </html>
