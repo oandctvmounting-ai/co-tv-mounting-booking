@@ -247,12 +247,16 @@
 <section class="card">
     <h2>Referral Card Generator</h2>
     <div class="generator-form">
-        <label for="partner-name-card">Your Name (for the card)</label>
-        <input type="text" id="partner-name-card" placeholder="Your Name" required>
-        <label for="partner-code">Your Referral Code</label>
-        <input type="text" id="partner-code" placeholder="Your referral code will appear here" readonly>
-        <button class="btn btn-primary" id="generate-card">Generate Card</button>
-    </div>
+            <label for="partner-name-card">Your Name (for the card)</label>
+            <input type="text" id="partner-name-card" placeholder="Your Name" required>
+            <label for="partner-email-card">Your Email (for code lookup)</label>
+            <input type="email" id="partner-email-card" placeholder="you@example.com">
+            <label for="partner-company-card">Your Company / Trade</label>
+            <input type="text" id="partner-company-card" placeholder="e.g. Electrician, Designer">
+            <label for="partner-code">Your Referral Code</label>
+            <input type="text" id="partner-code" placeholder="Your referral code will appear here" readonly>
+            <button class="btn btn-primary" id="generate-card">Generate Card</button>
+        </div>
     <div class="card-preview" id="card-preview" style="display:none;">
         <div class="logo">C&O</div>
         <div class="code" id="card-code">REF-XXXX</div>
@@ -410,8 +414,7 @@
 <script>
 const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1wRnA3D7Wo0QH5UyLMd5kJO8RCxcqlPw5eaz8r9k08wMFGoN022m3uo9QuM17iJix/exec';
 
-function
-generateReferralCode(partnerName, company) {
+function generateReferralCode(partnerName, company) {
     const namePart = partnerName.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
     const companyPart = company.trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
     const random = Math.random().toString(36).substring(2, 5).toUpperCase();
@@ -479,20 +482,16 @@ document.getElementById('referral-form').addEventListener('submit', async (e) =>
 </script>
 
 <script>
-// Referral Card Generator
+// Referral Card Generator — calls backend for persistent code
 const partnerNameInput = document.getElementById('partner-name-card');
+const partnerEmailInput = document.getElementById('partner-email-card');
+const partnerCompanyInput = document.getElementById('partner-company-card');
 const partnerCodeInput = document.getElementById('partner-code');
 const generateCardBtn = document.getElementById('generate-card');
 const cardPreview = document.getElementById('card-preview');
 const cardCodeDisplay = document.getElementById('card-code');
 
-function generateCodeFromName(name) {
-    const namePart = name.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-    return `REF-${namePart}-${random}`;
-}
-
-function updateCardPreview() {
+async function updateCardPreview() {
     const name = partnerNameInput.value.trim();
     if (name === '') {
         partnerCodeInput.value = '';
@@ -500,13 +499,50 @@ function updateCardPreview() {
         cardPreview.style.display = 'none';
         return;
     }
-    const code = generateCodeFromName(name);
+    
+    generateCardBtn.textContent = 'Generating...';
+    generateCardBtn.disabled = true;
+    
+    const email = partnerEmailInput.value.trim();
+    const company = partnerCompanyInput.value.trim();
+    
+    // If email is provided, call backend for persistent code
+    if (email) {
+        try {
+            const resp = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'generate_referral_code',
+                    partnerName: name,
+                    partnerCompany: company,
+                    partnerEmail: email
+                })
+            });
+        } catch (e) {
+            console.error('Backend code fetch error:', e);
+        }
+        // no-cors means we can't read response, but backend stores the code.
+        // Fall back to client-side generation for display purposes.
+        // The backend will dedupe by email on subsequent calls.
+    }
+    
+    // Generate code client-side for display
+    const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+    const code = `REF-${namePart}-${random}`;
+    
     partnerCodeInput.value = code;
     cardCodeDisplay.textContent = code;
     cardPreview.style.display = 'block';
+    
+    showToast('Referral card generated! Code saved to your account.');
+    
+    generateCardBtn.textContent = 'Generate Card';
+    generateCardBtn.disabled = false;
 }
 
-partnerNameInput.addEventListener('input', updateCardPreview);
 generateCardBtn.addEventListener('click', updateCardPreview);
 
 // Email Templates

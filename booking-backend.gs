@@ -13,7 +13,7 @@
  *
  * SECURITY: Square tokens live in Script Properties, NEVER in this file.
  *   In the Apps Script editor: Project Settings → Script Properties:
- *     SQUARE_ACCESS_TOKEN = (your token)
+ *     SQUARE_ACCESS_TOKEN=*** (your token)
  *     SQUARE_LOCATION_ID  = (your location id)
  *     SQUARE_WEBHOOK_SIG_KEY = (Square webhook signature key, from dev portal)
  *   The page only ever receives a redirect URL — no token touches the client.
@@ -36,7 +36,7 @@
 const BOOKINGS_SHEET_ID = '1sOEzOQF0vFpx4l1tAxGSDS6vnLZ8j2AVUeifdcKxE5w';
 
 // ===== Telegram alert config =====
-const TELEGRAM_BOT_TOKEN = '8944456012:***';
+const TELEGRAM_BOT_TOKEN='***';
 const TELEGRAM_OWNER_CHAT = '6217602404';
 const TELEGRAM_GROUP_CHAT = '-5510113560';
 
@@ -85,7 +85,6 @@ function getReferralsSheet() {
       'Paid Date',
       'Payout Amount'
     ]);
-    // Format header row
     sh.getRange(1, 1, 1, sh.getLastColumn()).setFontWeight('bold').setBackground('#002366').setFontColor('#D4AF37');
     sh.setFrozenRows(1);
   }
@@ -105,7 +104,6 @@ function getReferralCodesSheet() {
       'Referral Code',
       'Status' // active, inactive
     ]);
-    // Format header row
     sh.getRange(1, 1, 1, sh.getLastColumn()).setFontWeight('bold').setBackground('#002366').setFontColor('#D4AF37');
     sh.setFrozenRows(1);
   }
@@ -379,4 +377,46 @@ function doPost(e) {
     try {
       sendTelegramAlert(data, tvDetails);
     } catch (te) {
-      tgStatus = bookingRef + ' | TG-ERR: ' + String(te).slice
+      tgStatus = bookingRef + ' | TG-ERR: ' + String(te).slice(0, 200);
+      Logger.log('Telegram alert failed: ' + te);
+    }
+    try {
+      const sh = getSheet();
+      sh.getRange(sh.getLastRow(), 13).setValue(tgStatus);
+    } catch (e2) {
+      Logger.log('Status write failed: ' + e2);
+    }
+
+    return jsonOut({ ok: true, booking_ref: bookingRef });
+  } catch (err) {
+    return jsonOut({ ok: false, error: String(err).slice(0, 500) });
+  }
+}
+
+function doGet() {
+  return jsonOut({ status: 'C&O booking endpoint live' });
+}
+
+function sendTelegramAlert(data, tvDetails) {
+  if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === '***') return;
+  const total = (data.total != null ? '$' + data.total : '');
+  const deposit = data.deposit ? ('\nDeposit: $' + data.deposit) : '';
+  const promo = data.promo ? ('\nPromo: ' + data.promo) : '';
+  const msg = '📦 NEW BOOKING — C&O TV Mounting\n' +
+    (data.name || '?') + '  ' + (data.phone || '?') + '\n' +
+    (data.address || '?') + '\n' +
+    (data.datetime || '?') + '\n' +
+    (data.primary || '?') + ((data.addons && data.addons.length) ? ' + ' + data.addons.join(', ') : '') + '\n' +
+    (tvDetails ? tvDetails + '\n' : '') +
+    'Est. Total: ' + total + deposit + promo;
+  const url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
+  const payload = JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: msg });
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: payload });
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+    payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: msg }) });
+}
+
+function jsonOut(obj, code) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
