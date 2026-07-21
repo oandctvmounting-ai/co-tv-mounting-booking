@@ -1,9 +1,276 @@
-REF-XXXXXX</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23002366'/><rect x='8' y='7' width='16' height='11' rx='2' fill='%231A1A1A' stroke='%23D4AF37' stroke-width='1.5'/><rect x='6' y='5' width='3' height='22' rx='1' fill='%23002366'/></svg>">
+    <meta name="description" content="C&O TV Mounting Referral Partner Portal — Submit referrals, track payouts, grow together.">
+    <title>Referral Partner Portal | C&O TV Mounting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-blue: #002366;
+            --gold: #D4AF37;
+            --gold-light: #F9F4E8;
+            --white: #FFFFFF;
+            --off-white: #F8F9FA;
+            --text-dark: #1A1A1A;
+            --text-muted: #666666;
+            --shadow: 0 10px 30px rgba(0,35,102,0.1);
+            --shadow-strong: 0 20px 40px rgba(0,35,102,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.2s ease;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 12px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-strong);
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        header {
+            background: var(--royal-blue);
+            color: var(--white);
+            padding: 24px 16px 20px;
+            text-align: center;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+            font-weight: 700;
+        }
+        header p { font-weight: 300; opacity: 0.9; font-size: 0.9rem; letter-spacing: 0.2px; }
+        .section {
+            padding: 28px 24px 12px;
+        }
+        .section-label {
+            display:block; font-size:0.9rem; font-weight:800; color:var(--royal-blue);
+            text-transform:uppercase; letter-spacing:0.6px; margin:24px 0 12px;
+            border-bottom:2px solid rgba(212,175,55,0.5); padding-bottom:8px;
+        }
+        .section-label:first-of-type { margin-top: 0; }
+        .input-group { margin-bottom: 16px; }
+        .input-group label {
+            display:block; font-size:0.85rem; font-weight:700; color:var(--royal-blue);
+            margin-bottom: 6px; letter-spacing: 0.2px;
+        }
+        .input-group input, .input-group select, .input-group textarea {
+            width:100%; padding:12px 14px; border:1.5px solid #e0e0e0; border-radius:8px;
+            font-family:'Inter', sans-serif; font-size:0.95rem; transition:all var(--transition);
+            background: var(--white);
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 3px rgba(0,35,102,0.1);
+        }
+        .input-group input::placeholder { color: #aaa; }
+        .input-group .hint {
+            font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;
+        }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+        .btn {
+            padding:14px 20px; border-radius:10px; font-weight:700; cursor:pointer;
+            transition: all var(--transition); font-family:'Inter', sans-serif; font-size:0.95rem;
+            border: none; width: 100%;
+        }
+        .btn-primary { background: var(--royal-blue); color: var(--white); }
+        .btn-primary:hover { background:#001a4d; transform:translateY(-1px); box-shadow: 0 4px 14px rgba(0,35,102,0.25); }
+        .btn-gold { background: var(--gold); color: var(--royal-blue); }
+        .btn-gold:hover { background:#c4a030; transform:translateY(-1px); }
+        .btn-secondary { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
+        .btn-secondary:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
+        .btn-outline { background: transparent; color: var(--royal-blue); border: 2px solid var(--royal-blue); }
+        .btn-outline:hover { background: var(--royal-blue); color: var(--white); }
+        .btn-row { display: flex; gap: 12px; margin-top: 24px; }
+        .btn-row .btn { flex: 1; }
+        .success-state { display: none; text-align: center; padding: 40px 20px; }
+        .success-state.show { display: block; }
+        .success-icon {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--gold), #e8c547);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 24px rgba(212,175,55,0.4);
+        }
+        .success-icon svg { width: 40px; height: 40px; stroke: var(--royal-blue); }
+        .success-state h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--royal-blue);
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .success-state p { color: var(--text-muted); margin-bottom: 24px; }
+        .referral-code {
+            background: var(--royal-blue);
+            color: var(--gold);
+            padding: 16px 24px;
+            border-radius: 999px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            display: inline-block;
+            border: 3px solid var(--gold);
+            box-shadow: 0 4px 16px rgba(212,175,55,0.3);
+            margin-bottom: 16px;
+        }
+        .footer-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--royal-blue);
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .footer-link:hover { color: var(--gold); }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--royal-blue);
+            color: var(--gold);
+            padding: 14px 24px;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 2px solid var(--gold);
+            box-shadow: 0 8px 24px rgba(0,35,102,0.3);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>C&O TV Mounting</h1>
+        <p>Referral Partner Portal</p>
+    </header>
+
+    <div class="section">
+        <a href="partner-dashboard.html" class="btn btn-primary">Partner Dashboard</a>
+    </div>
+
+    <form id="referral-form">
+        <div class="section-label">Your Info (Partner)</div>
+        <div class="row">
+            <div class="input-group">
+                <label>Full Name *</label>
+                <input type="text" id="partner-name" placeholder="John Smith" required>
+            </div>
+            <div class="input-group">
+                <label>Company / Trade *</label>
+                <input type="text" id="partner-company" placeholder="Smith Electrical / ABC Remodeling" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label>Phone *</label>
+                <input type="tel" id="partner-phone" placeholder="(555) 000-0000" required>
+            </div>
+            <div class="input-group">
+                <label>Email *</label>
+                <input type="email" id="partner-email" placeholder="john@smithelectrical.com" required>
+            </div>
+        </div>
+
+        <div class="section-label">Client Info (The Referral)</div>
+        <div class="input-group">
+            <label>Client Name *</label>
+            <input type="text" id="client-name" placeholder="Jane Doe" required>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label>Client Phone *</label>
+                <input type="tel" id="client-phone" placeholder="(555) 000-0000" required>
+            </div>
+            <div class="input-group">
+                <label>Client Email</label>
+                <input type="email" id="client-email" placeholder="jane@email.com">
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Service Address *</label>
+            <input type="text" id="client-address" placeholder="123 Main St, Irving, TX 75061" required>
+        </div>
+
+        <div class="section-label">Job Details</div>
+        <div class="input-group">
+            <label>What do they need? *</label>
+            <select id="job-service" required>
+                <option value="">Select service...</option>
+                <option value="TV Mounting">TV Mounting</option>
+                <option value="Electric Fireplace Install">Electric Fireplace Install</option>
+                <option value="Blinds & Shades">Blinds & Shades</option>
+                <option value="Mirrors & Portraits">Mirrors & Portraits</option>
+                <option value="LED Lighting">LED Lighting</option>
+                <option value="Soundbar Mounting">Soundbar Mounting</option>
+                <option value="Multiple Services">Multiple Services</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Notes / Special Details</label>
+            <textarea id="job-notes" rows="3" placeholder="Over fireplace? Wire concealment? Timeline? Budget range?"></textarea>
+            <div class="hint">Helps us prep the quote and schedule the right tech.</div>
+        </div>
+
+        <div class="btn-row">
+            <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Cancel</button>
+            <button type="submit" class="btn btn-gold">Submit Referral</button>
+        </div>
+    </form>
+
+    <div class="success-state" id="success-state">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h3>Referral Submitted!</h3>
+        <p>Thanks for sending work our way. We'll review and reach out to your client within 2 hours.</p>
+        <div class="referral-code" id="referral-code-display">REF-XXXXXX</div>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px;">Save this code — it tracks every job from this referral. Payouts sent monthly.</p>
         <a href="index.html" class="footer-link">← Back to Booking</a>
     </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
 const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRaZOhmwsnB1Kp-7UH8krlwCGBxo9ePaj7l_XCydsjuHhH8xHNOHQ1A7wUHeLM62Po/exec';
 
@@ -36,40 +303,4 @@ document.getElementById('referral-form').addEventListener('submit', async (e) =>
     submitBtn.textContent = 'Submitting...';
     submitBtn.disabled = true;
 
-    const payload = {
-        action: 'referral',
-        partnerName: document.getElementById('partner-name').value.trim(),
-        partnerCompany: document.getElementById('partner-company').value.trim(),
-        partnerPhone: document.getElementById('partner-phone').value.trim(),
-        partnerEmail: document.getElementById('partner-email').value.trim(),
-        clientName: document.getElementById('client-name').value.trim(),
-        clientPhone: document.getElementById('client-phone').value.trim(),
-        clientEmail: document.getElementById('client-email').value.trim(),
-        clientAddress: document.getElementById('client-address').value.trim(),
-        jobService: document.getElementById('job-service').value,
-        jobNotes: document.getElementById('job-notes').value.trim()
-    };
-
-    const referralCode = generateReferralCode(payload.partnerName, payload.partnerCompany);
-    payload.referralCode = referralCode;
-
-    try {
-        await fetch(APP_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        showSuccess(referralCode);
-    } catch (err) {
-        console.error('Submit error:', err);
-        showToast('Submitted! Check email for confirmation.');
-        showSuccess(referralCode);
-    } finally {
-        submitBtn = originalText;
-        submitBtn.disabled = false;
-    }
-});
-</script>
-</body>
-</html>
+    const
