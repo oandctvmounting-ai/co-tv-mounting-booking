@@ -197,26 +197,23 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
         return;
     }
     const btn = document.getElementById('qe-submit');
-    const orig = btn.textContent;
     btn.textContent = 'Sending...';
     btn.disabled = true;
-    try {
-        await fetch(APP_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'quick_lead',
-                name: name,
-                phone: phone,
-                source: 'gallery-page'
-            })
-        });
-    } catch(e) { /* fire-and-forget */ }
-    document.getElementById('qe-form').style.display = 'none';
+    // Show confirmation immediately, then swap form
     document.getElementById('qe-confirm').style.display = 'block';
-    btn.textContent = orig;
-    btn.disabled = false;
+    document.getElementById('qe-form').style.display = 'none';
+    // Fire and forget
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'quick_lead',
+            name: name,
+            phone: phone,
+            source: 'gallery-page'
+        })
+    }).catch(() => {});
 });
 </script>
 </body>

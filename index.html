@@ -98,7 +98,11 @@
         .quick-estimate-banner {
             background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
             border-bottom: 2px solid var(--gold);
-            padding: 16px 20px;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,35,102,0.12);
         }
         .qe-content { max-width: 800px; margin: 0 auto; }
         .qe-tagline {
@@ -339,7 +343,7 @@
     <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
             <div class="qe-tagline">Want a free estimate in minutes?</div>
-            <div class="qe-form">
+            <div class="qe-form" id="qe-form">
                 <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
                 <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
                 <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
@@ -1352,26 +1356,23 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
         return;
     }
     const btn = document.getElementById('qe-submit');
-    const orig = btn.textContent;
     btn.textContent = 'Sending...';
     btn.disabled = true;
-    try {
-        await fetch(APP_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'quick_lead',
-                name: name,
-                phone: phone,
-                source: document.title || 'website-banner'
-            })
-        });
-    } catch(e) { /* fire-and-forget — we show confirmation anyway */ }
-    document.getElementById('qe-form').style.display = 'none';
+    // Show confirmation immediately, then swap form
     document.getElementById('qe-confirm').style.display = 'block';
-    btn.textContent = orig;
-    btn.disabled = false;
+    document.getElementById('qe-form').style.display = 'none';
+    // Fire and forget
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'quick_lead',
+            name: name,
+            phone: phone,
+            source: document.title || 'website-banner'
+        })
+    }).catch(() => {});
 });
 </script>
 </body>
