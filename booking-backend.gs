@@ -334,7 +334,7 @@ function doPost(e) {
       const referralCode = getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail, data.clientCode);
       // Notify business owner
       try {
-        GmailApp.sendEmail('trademarktmo97@gmail.com',
+        GmailApp.sendEmail('oandctvmounting@gmail.com',
           'New referral code generated: ' + referralCode,
           'Partner: ' + (data.partnerName || '') + '\nCompany: ' + (data.partnerCompany || '') + '\nEmail: ' + (data.partnerEmail || '') + '\nCode: ' + referralCode
         );
