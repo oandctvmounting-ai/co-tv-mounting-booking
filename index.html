@@ -213,6 +213,11 @@
         .serving-line strong { color:var(--royal-blue); }
         .faq { padding: 28px 32px 12px; }
         .faq h3 { font-family:'Playfair Display',serif; color:var(--royal-blue); text-align:center; font-size:1.35rem; margin-bottom:20px; font-weight: 700; }
+        .faq-main-toggle { width:100%; text-align:left; background:transparent; border:none; padding:18px 20px; font-weight:700; font-size:1.1rem; color:var(--royal-blue); cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:'Playfair Display',serif; }
+        .faq-main-toggle:hover { color:var(--gold); }
+        .faq-main-chev { transition:transform 0.3s ease; color:var(--gold); font-size:1.25rem; }
+        .faq-content { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; }
+        .faq-content.open { max-height:2000px; padding-top: 12px; }
         .faq-item { border:1px solid #e8e8e8; border_radius:12px; margin-bottom:12px; overflow:hidden; background:var(--white); transition: box-shadow var(--transition); }
         .faq-item:hover { box-shadow: 0 4px 16px rgba(0,35,102,0.08); }
         .faq-q {
@@ -471,8 +476,12 @@
 
     <!-- FAQ -->
     <div class="faq">
-        <h3>Frequently Asked Questions</h3>
-        <div class="faq-item">
+        <button class="faq-main-toggle" onclick="toggleFaqMain()">
+            <span>Frequently Asked Questions</span>
+            <span class="faq-main-chev">▾</span>
+        </button>
+        <div class="faq-content" id="faq-content">
+            <div class="faq-item">
             <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is there a travel fee? <span class="chev">▾</span></button>
             <div class="faq-a">Yes — a $25 travel fee applies only for jobs beyond 20 miles from Irving, TX. Within 20 miles, there's no travel fee.</div>
         </div>
@@ -524,10 +533,19 @@
             <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you remove old mounts? <span class="chev">▾</span></button>
             <div class="faq-a">Yes — we can remove your existing mount and patch the holes for a small fee.</div>
         </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Trust badges & payment info -->
+            <script>
+            function toggleFaqMain() {
+                const content = document.getElementById('faq-content');
+                const chev = document.querySelector('.faq-main-chev');
+                content.classList.toggle('open');
+                chev.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+            </script>
+
+            <!-- Trust badges & payment info -->
         <div style="padding: 24px 20px; text-align: center; background: var(--gold-light); border-top: 1px solid rgba(212,175,55,0.3);">
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px;">
                 <div style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--white); border: 2px solid var(--gold); border-radius: 999px; font-weight: 700; color: var(--royal-blue); font-size: 0.85rem; box-shadow: 0 2px 8px rgba(212,175,55,0.15);">
