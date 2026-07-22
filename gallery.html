@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23002366'/><rect x='8' y='7' width='16' height='11' rx='2' fill='%231A1A1A' stroke='%23D4AF37' stroke-width='1.5'/><rect x='6' y='5' width='3' height='22' rx='1' fill='%23002366'/></svg>">
     <title>C&O TV Mounting - Project Gallery</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -43,6 +47,70 @@
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
+
+        /* Quick Estimate Banner */
+        .quick-estimate-banner {
+            background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 16px 20px;
+        }
+        .qe-content { max-width: 800px; margin: 0 auto; }
+        .qe-tagline {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--royal-blue);
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+        }
+        .qe-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .qe-form input {
+            padding: 12px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            flex: 1;
+            min-width: 160px;
+            max-width: 250px;
+        }
+        .qe-form input:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 3px rgba(0,35,102,0.08);
+        }
+        .qe-form .btn {
+            flex: 0 0 auto;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            background: var(--gold);
+            color: var(--royal-blue);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        .qe-form .btn:hover { background: #c4a030; }
+        .qe-confirmation {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #1a7a1a;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 560px) {
+            .qe-form { flex-direction: column; }
+            .qe-form input { max-width: 100%; width: 100%; }
+            .qe-form .btn { width: 100%; }
+        }
+
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -79,61 +147,77 @@
         <h1>C&O TV Mounting</h1>
         <p>Our Work Gallery</p>
     </header>
+
+    <!-- Quick Estimate Banner -->
+    <div class="quick-estimate-banner" id="quick-banner">
+        <div class="qe-content">
+            <div class="qe-tagline">Want a free estimate in minutes?</div>
+            <div class="qe-form" id="qe-form">
+                <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
+                <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
+                <button type="button" id="qe-submit" class="btn">Get Free Estimate</button>
+            </div>
+            <div class="qe-confirmation" id="qe-confirm" style="display:none;">
+                <span>✅ Got it! We'll text you within 5 minutes.</span>
+            </div>
+        </div>
+    </div>
+
     <div class="gallery">
         <!-- Images 1-12 -->
-        <figure class="gallery-item">
-            <img src="images/img01.jpg" alt="TV mounted on light wall">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img02.jpg" alt="TV on dark wall with blue screen">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img03.jpg" alt="TV installation">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img04.jpg" alt="TV setup">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img05.jpg" alt="TV mount">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img06.jpg" alt="TV mounting">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img07.jpg" alt="TV installed">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img08.jpg" alt="TV on wall">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img09.jpg" alt="TV mount example">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img10.jpg" alt="TV installation">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img11.jpg" alt="TV mounted">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img12.jpg" alt="TV setup">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img13.jpg" alt="TV mounting project">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img14.jpg" alt="TV mounted on wall">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img15.jpg" alt="TV installation in living room">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img16.jpg" alt="TV mounted above fireplace">
-        </figure>
-        <figure class="gallery-item">
-            <img src="images/img17.jpg" alt="TV mounting project">
-        </figure>
+        <figure class="gallery-item"><img src="images/img01.jpg" alt="TV mounted on light wall"></figure>
+        <figure class="gallery-item"><img src="images/img02.jpg" alt="TV on dark wall with blue screen"></figure>
+        <figure class="gallery-item"><img src="images/img03.jpg" alt="TV installation"></figure>
+        <figure class="gallery-item"><img src="images/img04.jpg" alt="TV setup"></figure>
+        <figure class="gallery-item"><img src="images/img05.jpg" alt="TV mount"></figure>
+        <figure class="gallery-item"><img src="images/img06.jpg" alt="TV mounting"></figure>
+        <figure class="gallery-item"><img src="images/img07.jpg" alt="TV installed"></figure>
+        <figure class="gallery-item"><img src="images/img08.jpg" alt="TV on wall"></figure>
+        <figure class="gallery-item"><img src="images/img09.jpg" alt="TV mount example"></figure>
+        <figure class="gallery-item"><img src="images/img10.jpg" alt="TV installation"></figure>
+        <figure class="gallery-item"><img src="images/img11.jpg" alt="TV mounted"></figure>
+        <figure class="gallery-item"><img src="images/img12.jpg" alt="TV setup"></figure>
+        <figure class="gallery-item"><img src="images/img13.jpg" alt="TV mounting project"></figure>
+        <figure class="gallery-item"><img src="images/img14.jpg" alt="TV mounted on wall"></figure>
+        <figure class="gallery-item"><img src="images/img15.jpg" alt="TV installation in living room"></figure>
+        <figure class="gallery-item"><img src="images/img16.jpg" alt="TV mounted above fireplace"></figure>
+        <figure class="gallery-item"><img src="images/img17.jpg" alt="TV mounting project"></figure>
     </div>
     <a href="index.html" class="back-link">&larr; Back to Booking Page</a>
 </div>
+
+<script>
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR4VnnJrI4eZrbSNds-LoRaEzNZ8oS04r8PfUOaDDiQHUIp3qTaoSn4jVZyn_5L1s/exec';
+
+document.getElementById('qe-submit').addEventListener('click', async () => {
+    const name = document.getElementById('qe-name').value.trim();
+    const phone = document.getElementById('qe-phone').value.trim();
+    if (!name || !phone) {
+        alert('Please enter both your name and phone number.');
+        return;
+    }
+    const btn = document.getElementById('qe-submit');
+    const orig = btn.textContent;
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    try {
+        await fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'quick_lead',
+                name: name,
+                phone: phone,
+                source: 'gallery-page'
+            })
+        });
+    } catch(e) { /* fire-and-forget */ }
+    document.getElementById('qe-form').style.display = 'none';
+    document.getElementById('qe-confirm').style.display = 'block';
+    btn.textContent = orig;
+    btn.disabled = false;
+});
+</script>
 </body>
 </html>

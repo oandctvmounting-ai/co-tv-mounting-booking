@@ -110,6 +110,24 @@ function getReferralCodesSheet() {
   return sh;
 }
 
+function getLeadsSheet() {
+  const ss = SpreadsheetApp.openById(BOOKINGS_SHEET_ID);
+  let sh = ss.getSheetByName('Leads');
+  if (!sh) {
+    sh = ss.insertSheet('Leads');
+    sh.appendRow([
+      'Submitted Date',
+      'Name',
+      'Phone',
+      'Source',
+      'Status'
+    ]);
+    sh.getRange(1, 1, 1, sh.getLastColumn()).setFontWeight('bold').setBackground('#002366').setFontColor('#D4AF37');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
 // ===== Create a $50 Square deposit Payment Link, return its URL =====
 function createSquareDeposit(bookingRef, customerName) {
   const token = sqToken();
@@ -340,6 +358,32 @@ function doPost(e) {
         );
       } catch(e) { Logger.log('Notify email failed: ' + e); }
       return jsonOut({ ok: true, referralCode: referralCode });
+    }
+
+    // ---- Branch 6: Quick lead capture (name + phone from banner) ----
+    if (data.action === 'quick_lead') {
+      const leadsSheet = getLeadsSheet();
+      leadsSheet.appendRow([
+        new Date(),
+        data.name || '',
+        data.phone || '',
+        data.source || 'website-banner',
+        'new'
+      ]);
+      // Telegram alert to group chat only (owner already gets booking alerts)
+      try {
+        if (TELEGRAM_BOT_TOKEN && TELEGRAM_BOT_TOKEN !== '***') {
+          const leadMsg = '🔔 NEW LEAD — C&O TV Mounting\n' +
+            'Name: ' + (data.name || '?') + '\n' +
+            'Phone: ' + (data.phone || '?') + '\n' +
+            'Source: ' + (data.source || 'website-banner') + '\n' +
+            'Action: Follow up immediately for a free estimate.';
+          const tgUrl = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
+          UrlFetchApp.fetch(tgUrl, { method: 'post', contentType: 'application/json',
+            payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: leadMsg }) });
+        }
+      } catch(e) { Logger.log('Lead Telegram alert failed: ' + e); }
+      return jsonOut({ ok: true });
     }
 
     // ---- Branch 6: legacy booking intake (unchanged behavior) ----

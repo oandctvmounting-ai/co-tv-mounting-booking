@@ -93,6 +93,63 @@
             background: var(--gold);
             border-radius: 2px;
         }
+
+        /* Quick Estimate Banner */
+        .quick-estimate-banner {
+            background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 16px 20px;
+        }
+        .qe-content { max-width: 800px; margin: 0 auto; }
+        .qe-tagline {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--royal-blue);
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+        }
+        .qe-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .qe-form input {
+            padding: 12px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            flex: 1;
+            min-width: 160px;
+            max-width: 250px;
+            transition: border-color var(--transition);
+        }
+        .qe-form input:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 3px rgba(0,35,102,0.08);
+        }
+        .qe-form .btn {
+            flex: 0 0 auto;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+        }
+        .qe-confirmation {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #1a7a1a;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 560px) {
+            .qe-form { flex-direction: column; }
+            .qe-form input { max-width: 100%; width: 100%; }
+            .qe-form .btn { width: 100%; }
+        }
+
         header h1 {
             font-family: 'Playfair Display', serif;
             font-size: 1.6rem;
@@ -277,6 +334,21 @@
         <h1>C&O TV Mounting</h1>
         <p>Premium Installations. Flawless Execution.</p>
     </header>
+
+    <!-- Quick Estimate Banner -->
+    <div class="quick-estimate-banner" id="quick-banner">
+        <div class="qe-content">
+            <div class="qe-tagline">Want a free estimate in minutes?</div>
+            <div class="qe-form">
+                <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
+                <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
+                <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
+            </div>
+            <div class="qe-confirmation" id="qe-confirm" style="display:none;">
+                <span>✅ Got it! We'll text you within 5 minutes.</span>
+            </div>
+        </div>
+    </div>
 
     <div class="progress-bar">
         <div class="step-dot active" id="dot-1"></div>
@@ -1270,6 +1342,37 @@ function compressImage(file, maxDim, quality) {
 renderStep1();
 calculateTotal();
 checkPaidRedirect();
+
+/* ---- Quick Estimate Banner ---- */
+document.getElementById('qe-submit').addEventListener('click', async () => {
+    const name = document.getElementById('qe-name').value.trim();
+    const phone = document.getElementById('qe-phone').value.trim();
+    if (!name || !phone) {
+        alert('Please enter both your name and phone number.');
+        return;
+    }
+    const btn = document.getElementById('qe-submit');
+    const orig = btn.textContent;
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    try {
+        await fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'quick_lead',
+                name: name,
+                phone: phone,
+                source: document.title || 'website-banner'
+            })
+        });
+    } catch(e) { /* fire-and-forget — we show confirmation anyway */ }
+    document.getElementById('qe-form').style.display = 'none';
+    document.getElementById('qe-confirm').style.display = 'block';
+    btn.textContent = orig;
+    btn.disabled = false;
+});
 </script>
 </body>
 </html>
