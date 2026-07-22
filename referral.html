@@ -112,6 +112,62 @@
         .btn-outline:hover { background: var(--royal-blue); color: var(--white); }
         .btn-row { display: flex; gap: 12px; margin-top: 24px; }
         .btn-row .btn { flex: 1; }
+
+        /* Benefits / Hook Box */
+        .benefits-box {
+            background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
+            border: 1.5px solid rgba(0,35,102,0.12);
+            border-radius: var(--radius);
+            padding: 28px 24px 20px;
+        }
+        .benefits-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--royal-blue);
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 0.3px;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 560px) {
+            .benefits-grid { grid-template-columns: 1fr; }
+        }
+        .benefit-card {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 16px 14px;
+            box-shadow: 0 2px 8px rgba(0,35,102,0.06);
+            border: 1px solid rgba(212,175,55,0.15);
+        }
+        .benefit-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .benefit-heading {
+            font-weight: 800;
+            font-size: 0.88rem;
+            color: var(--royal-blue);
+            margin-bottom: 4px;
+        }
+        .benefit-text {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .bonus-bar {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #002366, #001a4d);
+            color: var(--gold);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid var(--gold);
+        }
+        .bonus-bar strong { color: var(--white); }
+
         .success-state { display: none; text-align: center; padding: 40px 20px; }
         .success-state.show { display: block; }
         .success-icon {
@@ -181,11 +237,42 @@
         <p>Referral Partner Portal</p>
     </header>
 
-    <div class="section">
-            <a href="partner-dashboard.html" class="btn btn-primary">Partner Dashboard</a>
+    <div class="section" id="benefits-section">
+            <div class="benefits-box">
+                <h2 class="benefits-title">Why Partner With C&amp;O?</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">💰</div>
+                        <div class="benefit-heading">Earn $25–$75 Per Referral</div>
+                        <div class="benefit-text">Cash paid monthly for every completed job you send our way. TV mounts, fireplace installs, blinds — it all counts.</div>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⚡</div>
+                        <div class="benefit-heading">2-Hour Response Guarantee</div>
+                        <div class="benefit-text">Your client gets a call or text within 2 hours. They stay YOUR client — we’re just the tech behind the scenes.</div>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🔁</div>
+                        <div class="benefit-heading">Recurring Revenue, Zero Effort</div>
+                        <div class="benefit-text">Submit a name and address. We handle the rest. You collect the check. That's the whole model.</div>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🛡️</div>
+                        <div class="benefit-heading">Trusted &amp; Insured</div>
+                        <div class="benefit-text">Fully licensed and insured in Texas. Your reputation is safe — we treat every referral like it's our own business.</div>
+                    </div>
+                </div>
+                <div class="bonus-bar">
+                    🎯 <strong>Top Referrer Bonus:</strong> Send 10+ jobs a month and earn an extra <strong>$200</strong> on top of payouts. No cap.
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <a href="partner-dashboard.html" class="btn btn-primary">Go to Partner Dashboard →</a>
         </div>
         <div class="section">
-            <a href="my-referrals.html" class="btn btn-gold">View My Referrals</a>
+            <a href="my-referrals.html" class="btn btn-gold">View My Referrals →</a>
         </div>
 
         <form id="referral-form">
