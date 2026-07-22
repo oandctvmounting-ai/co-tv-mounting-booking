@@ -175,22 +175,10 @@ function markDepositPaid(bookingRef) {
 
 // ===== Send referral confirmation email to partner =====
 function sendReferralEmail(partnerName, partnerEmail, referralCode) {
-  const subject = '🤝 Your C&O Referral Code: ' + referralCode;
-  const body = `Hi ${partnerName},\n\nThanks for sending a referral to C&O TV Mounting!\n\nYour referral code: **${referralCode}**\n\nSave this code — it tracks every job that comes from your referral. You'll earn:\n• $40 per booked job\n• $100 bonus for 5+ jobs/quarter\n• Monthly payouts via Square/Venmo\n\nWe'll reach out to your client within 2 hours and keep you updated.\n\n— The C&O Team\n📞 817-523-9753\nhttps://oandctvmounting-ai.github.io/co-tv-mounting-booking/`;
-
-  MailApp.sendEmail({
-    to: partnerEmail,
-    subject: subject,
-    htmlBody: body.replace(/\n/g, '<br>')
-  });
-  // BCC owner on every referral
-  try {
-    MailApp.sendEmail({
-      to: 'trademarktmo97@gmail.com',
-      subject: '[COPY] Referral sent: ' + referralCode + ' - ' + partnerName,
-      htmlBody: ('Partner: ' + partnerName + ' (' + partnerEmail + ')<br>Code: ' + referralCode).replace(/\n/g, '<br>')
-    });
-  } catch(e) { Logger.log('BCC email failed: ' + e); }
+  const subject = 'Your C&O Referral Code: ' + referralCode;
+  const body = 'Hi ' + partnerName + ',\n\nThanks for sending a referral to C&O TV Mounting!\n\nYour referral code: ' + referralCode + '\n\nSave this code — it tracks every job that comes from your referral. You\'ll earn:\n- $40 per booked job\n- $100 bonus for 5+ jobs/quarter\n- Monthly payouts via Square/Venmo\n\nWe\'ll reach out to your client within 2 hours and keep you updated.\n\n— The C&O Team\n(817) 523-9753\nhttps://oandctvmounting-ai.github.io/co-tv-mounting-booking/';
+  
+  GmailApp.sendEmail(partnerEmail, subject, body, { htmlBody: body.replace(/\n/g, '<br>') });
 }
 
 // ===== Generate referral code =====
@@ -344,6 +332,13 @@ function doPost(e) {
     // ---- Branch 5: Generate referral code and store in ReferralCodes tab ----
     if (data.action === 'generate_referral_code') {
       const referralCode = getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail, data.clientCode);
+      // Notify business owner
+      try {
+        GmailApp.sendEmail('trademarktmo97@gmail.com',
+          'New referral code generated: ' + referralCode,
+          'Partner: ' + (data.partnerName || '') + '\nCompany: ' + (data.partnerCompany || '') + '\nEmail: ' + (data.partnerEmail || '') + '\nCode: ' + referralCode
+        );
+      } catch(e) { Logger.log('Notify email failed: ' + e); }
       return jsonOut({ ok: true, referralCode: referralCode });
     }
 
