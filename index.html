@@ -229,6 +229,11 @@
         .faq-item.open .faq-q .chev { transform:rotate(180deg); }
         .faq-a { max-height:0; overflow:hidden; transition:max-height 0.35s ease, padding 0.35s ease; padding:0 20px; color:var(--text-muted); font-size:0.92rem; line-height: 1.7; }
         .faq-item.open .faq-a { max-height:300px; padding:0 20px 18px; }
+        .addon-main-toggle { width:100%; text-align:left; background:var(--gold-light); border:2px solid var(--gold); border-radius:12px; padding:16px 20px; font-weight:700; font-size:1.05rem; color:var(--royal-blue); cursor:pointer; display:flex; justify-content:space-between; align-items:center; margin-top: 12px; margin-bottom: 16px; transition: all 0.2s ease; }
+        .addon-main-toggle:hover { background:var(--royal-blue); color:var(--white); border-color:var(--royal-blue); }
+        .addon-main-chev { transition:transform 0.3s ease; color:var(--gold); font-size:1.25rem; }
+        .addon-main-content { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; }
+        .addon-main-content.open { max-height:2000px; padding-top: 12px; }
         .form-step { display: none; padding: 24px 20px; animation: fadeIn 0.4s ease-out; }
         .form-step.active { display: block; }
         @keyframes fadeIn {
@@ -543,6 +548,12 @@
                 content.classList.toggle('open');
                 chev.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
             }
+            function toggleAddonMain() {
+                const content = document.getElementById('addon-main-content');
+                const chev = document.querySelector('.addon-main-chev');
+                content.classList.toggle('open');
+                chev.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
             </script>
 
             <!-- Trust badges & payment info -->
@@ -707,6 +718,12 @@ function renderStep2() {
 
     // Add-on services
     html += `<span class="section-label">Add More Services (optional)</span>`;
+    // Main addon toggle
+    html += `<button class="addon-main-toggle" onclick="toggleAddonMain()">
+        <span>Add More Services <span class="addon-count">(${state.addons.size} selected)</span></span>
+        <span class="addon-main-chev">▾</span>
+    </button>
+    <div class="addon-main-content" id="addon-main-content">`;
     for (const key in SERVICES) {
             if (key === state.primary) continue;
             const s = SERVICES[key];
@@ -720,6 +737,7 @@ function renderStep2() {
                             <div class="addon-body">${configHtml(key, 'a')}</div>
                         </div>`;
         }
+    html += `</div>`;
     c.innerHTML = html;
     if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
     // addon TV blocks (if tv was added as an add-on)
