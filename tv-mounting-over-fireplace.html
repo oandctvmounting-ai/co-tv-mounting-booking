@@ -90,147 +90,26 @@
         .cta-box p { margin-bottom: 20px; font-size: 1.05rem; }
         .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--royal-blue); padding: 16px 32px; border-radius: 999px; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px; text-decoration: none; box-shadow: 0 6px 20px rgba(212,175,55,0.4); transition: all 0.2s ease; border: 3px solid var(--royal-blue); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,175,55,0.5); }
+        .related-links { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 32px 0 16px; }
+        .related-link { padding: 10px 18px; background: var(--gold-light); border-radius: 8px; color: var(--royal-blue); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); }
+        .related-link:hover { background: var(--royal-blue); color: var(--white); }
+        @media (max-width: 640px) { .article-header h1 { font-size: 1.7rem; } .article-content { padding: 24px 16px; } header { padding: 32px 16px 24px; } .article-content h2 { font-size: 1.4rem; } table { font-size: 0.85rem; } th, td { padding: 10px 12px; } }
+
+        /* Quick Estimate Banner */
         .quick-estimate-banner { background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%); border-bottom: 2px solid var(--gold); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,35,102,0.12); }
         .qe-content { max-width: 800px; margin: 0 auto; }
         .qe-tagline { text-align: center; font-weight: 800; font-size: 1.05rem; color: var(--royal-blue); margin-bottom: 10px; letter-spacing: 0.2px; }
         .qe-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
         .qe-form input { padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; flex: 1; min-width: 140px; }
-        .qe-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.2); }
+        .qe-form input:focus { outline: none; border-color: var(--royal-blue); box-shadow: 0 0 0 3px rgba(0,35,102,0.08); }
         .qe-form button { padding: 12px 24px; background: var(--royal-blue); color: var(--white); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
         .qe-form button:hover { background: var(--gold); color: var(--royal-blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
-        .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--text-muted); }
-        .qe-confirm strong { color: var(--royal-blue); }@media (max-width: 640px) { .article-header h1 { font-size: 1.7rem; } .article-content { padding: 24px 16px; } header { padding: 32px 16px 24px; } .article-content h2 { font-size: 1.4rem; } table { font-size: 0.85rem; } th, td { padding: 10px 12px; } }
+        .qe-confirmation { display: none; text-align: center; margin-top: 10px; font-weight: 700; color: #1a7a1a; font-size: 0.95rem; }
+        @media (max-width: 560px) { .qe-form { flex-direction: column; } .qe-form input { max-width: 100%; width: 100%; } .qe-form .btn { width: 100%; } }
     </style>
 </head>
+<body>
     <!-- Quick Estimate Banner -->
     <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
-            <div class="qe-tagline">Want a free estimate in minutes?</div>
-            <div class="qe-form" id="qe-form">
-                <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
-                <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
-                <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
-            </div>
-            <div class="qe-confirmation" id="qe-confirm" style="display:none;">
-                <span>✅ Got it! We'll text you within 5 minutes.</span>
-            </div>
-        </div>
-    </div>
-
-        <div class="article-content">
-            <div class="callout"><strong>Quick Answer:</strong> Yes, you can safely mount a TV over your fireplace -- but you need the <strong>right mount (tilt)</strong>, <strong>proper heat clearance</strong>, <strong>secure stud anchoring</strong>, and <strong>professional wire concealment</strong>. C and O TV Mounting handles all of it across DFW.</div>
-
-            <h2>Why Over-Fireplace Mounting Is Popular -- And Tricky</h2>
-            <p>The fireplace wall is often the natural focal point of a living room. Mounting there saves space and creates a clean look. But it introduces three real challenges:</p>
-            <ul>
-                <li><strong>Heat exposure</strong> -- Rising heat can damage TV components over time.</li>
-                <li><strong>Viewing angle</strong> -- The screen sits too high for comfortable seated viewing.</li>
-                <li><strong>Structural anchoring</strong> -- Fireplace walls (stone, brick, tile) require specialized mounting hardware.</li>
-            </ul>
-
-            <h2>How We Handle Heat</h2>
-            <p>We measure mantle clearance (minimum 12 inches) and use tilt mounts that angle the screen downward. For gas fireplaces, we verify heat output stays within TV manufacturer limits. Heat shields installed when needed.</p>
-
-            <h2>The Right Mount: Tilt Is Mandatory</h2>
-            <p>Fixed mounts leave the screen too high. Full-motion is overkill unless you need swivel. A tilt mount (-10&deg; to +15&deg;) angles the screen down to seated eye level (42-48 inches from floor center). This is the single most important decision.</p>
-
-            <h2>Anchoring to Fireplace Walls</h2>
-            <p>Stone, brick, and tile require masonry anchors and proper drill bits. We locate studs behind the veneer or use commercial-grade toggle anchors rated for the TV weight. No drywall-only anchors on fireplace installations.</p>
-
-            <h2>Wire Concealment Options</h2>
-            <ul>
-                <li><strong>In-wall:</strong> Run cables behind the fireplace chase (cleanest look).</li>
-                <li><strong>Paintable raceway:</strong> Blends with wall texture, no wall penetration needed.</li>
-            </ul>
-            <p>Both leave a cord-free appearance. Power cables always get in-wall treatment per code.</p>
-
-            <h2>TV Sizes That Work Over Fireplaces</h2>
-            <p>55&rdquo; to 75&rdquo; are most common. Over 75&rdquo; may need additional structural support. We verify your wall can handle the weight and that the mount's VESA range matches your TV.</p>
-
-            <h2>What to Expect on Install Day</h2>
-            <ul>
-                <li>We arrive with the mount, all hardware, and tools</li>
-                <li>Heat measurement and mantle clearance check</li>
-                <li>Stud/masonry anchor placement verification</li>
-                <li>Mount installation, leveling, and TV hanging</li>
-                <li>Cable routing and concealment</li>
-                <li>Final walkthrough and 24-month warranty paperwork</li>
-            </ul>
-
-            <h2>Common Questions</h2>
-            <p><strong>Can you mount over a wood-burning fireplace?</strong> Yes, with proper heat shielding and clearance. Gas fireplaces are easier due to lower sustained heat.</p>
-            <p><strong>How long does it take?</strong> Typically 1.5-2.5 hours depending on wire routing complexity.</p>
-            <p><strong>Do I need to buy anything?</strong> No -- we bring the commercial-grade tilt mount rated for your TV size.</p>
-
-            <div class="cta-box">
-                            <h3>Ready for Your Over-Fireplace TV Mount?</h3>
-                            <p>C and O TV Mounting handles everything -- heat measurement, tilt mount, masonry anchoring, wire concealment. 24-month warranty.</p>
-                            <a href="index.html" class="btn-primary">Book Now</a>
-                        </div>
-
-            <div class="related-links">
-                <a href="index.html" class="related-link">Booking Page</a>
-                <a href="what-size-tv-mount.html" class="related-link">Mount Sizing Guide</a>
-                <a href="gallery.html" class="related-link">Project Gallery</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    (function() {
-        const form = document.getElementById('qe-form');
-        const confirm = document.getElementById('qe-confirm');
-        const submitBtn = document.getElementById('qe-submit');
-        if (!form) return;
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const name = document.getElementById('qe-name').value.trim();
-            const phone = document.getElementById('qe-phone').value.trim();
-            if (!name || !phone) return;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            try {
-                const res = await fetch('https://script.google.com/macros/s/AKfycbxFz5GMiiO9yxl6xjlKH6o-h9kbJOWNT97SWbj2f0bMs_Xs8Aw3qQTXkWPWC_pF8s0i/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'quick_lead', name: name, phone: phone, source: 'website-banner' })
-                });
-                form.style.display = 'none';
-                confirm.style.display = 'block';
-            } catch (err) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Get My Estimate';
-                alert('Something went wrong. Please call/text 817-523-9753.');
-            }
-        });
-    })();
-    </script>
-/* ---- Quick Estimate Banner ---- */
-document.getElementById('qe-submit').addEventListener('click', async () => {
-    const name = document.getElementById('qe-name').value.trim();
-    const phone = document.getElementById('qe-phone').value.trim();
-    if (!name || !phone) {
-        alert('Please enter both your name and phone number.');
-        return;
-    }
-    const btn = document.getElementById('qe-submit');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-    // Show confirmation immediately, then swap form
-    document.getElementById('qe-confirm').style.display = 'block';
-    document.getElementById('qe-form').style.display = 'none';
-    // Fire and forget
-    fetch(APP_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'quick_lead',
-            name: name,
-            phone: phone,
-            source: document.title || 'website-banner'
-        })
-    }).catch(() => {});
-});</body>
-</html>
+            <div class

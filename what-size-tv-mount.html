@@ -232,32 +232,37 @@
                             <a href="index.html" class="btn-primary">Book Now</a>
                         </div>
         </div>
-    </div>
-/* ---- Quick Estimate Banner ---- */
-document.getElementById('qe-submit').addEventListener('click', async () => {
-    const name = document.getElementById('qe-name').value.trim();
-    const phone = document.getElementById('qe-phone').value.trim();
-    if (!name || !phone) {
-        alert('Please enter both your name and phone number.');
-        return;
-    }
-    const btn = document.getElementById('qe-submit');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-    // Show confirmation immediately, then swap form
-    document.getElementById('qe-confirm').style.display = 'block';
-    document.getElementById('qe-form').style.display = 'none';
-    // Fire and forget
-    fetch(APP_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'quick_lead',
-            name: name,
-            phone: phone,
-            source: document.title || 'website-banner'
-        })
-    }).catch(() => {});
-});</body>
-</html>
+            </div>
+
+            <script>
+            (function() {
+                const form = document.getElementById('qe-form');
+                const confirm = document.getElementById('qe-confirm');
+                const submitBtn = document.getElementById('qe-submit');
+                if (!form) return;
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const name = document.getElementById('qe-name').value.trim();
+                    const phone = document.getElementById('qe-phone').value.trim();
+                    if (!name || !phone) return;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                    try {
+                        const res = await fetch('https://script.google.com/macros/s/AKfycbxFz5GMiiO9yxl6xjlKH6o-h9kbJOWNT97SWbj2f0bMs_Xs8Aw3qQTXkWPWC_pF8s0i/exec', {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'quick_lead', name: name, phone: phone, source: 'website-banner' })
+                        });
+                        form.style.display = 'none';
+                        confirm.style.display = 'block';
+                    } catch (err) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Get My Estimate';
+                        alert('Something went wrong. Please call/text 817-523-9753.');
+                    }
+                });
+            })();
+        </script>
+        </body>
+        </html>
