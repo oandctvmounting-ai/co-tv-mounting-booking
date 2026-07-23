@@ -65,7 +65,11 @@
         .quick-estimate-banner {
             background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
             border-bottom: 2px solid var(--gold);
-            padding: 16px 20px;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,35,102,0.12);
         }
         .qe-content { max-width: 800px; margin: 0 auto; }
         .qe-tagline {
@@ -92,6 +96,7 @@
             flex: 1;
             min-width: 160px;
             max-width: 250px;
+            transition: border-color var(--transition);
         }
         .qe-form input:focus {
             outline: none;
@@ -102,15 +107,7 @@
             flex: 0 0 auto;
             padding: 12px 28px;
             font-size: 0.95rem;
-            background: var(--gold);
-            color: var(--royal-blue);
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
         }
-        .qe-form .btn:hover { background: #c4a030; }
         .qe-confirmation {
             text-align: center;
             margin-top: 10px;
@@ -120,6 +117,9 @@
         }
         @media (max-width: 560px) {
             .qe-form { flex-direction: column; }
+            .qe-form input { max-width: 100%; width: 100%; }
+            .qe-form .btn { width: 100%; }
+        }
             .qe-form input { max-width: 100%; width: 100%; }
             .qe-form .btn { width: 100%; }
         }
@@ -168,7 +168,7 @@
             <div class="qe-form" id="qe-form">
                 <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
                 <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
-                <button type="button" id="qe-submit" class="btn">Get Free Estimate</button>
+                <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
             </div>
             <div class="qe-confirmation" id="qe-confirm" style="display:none;">
                 <span>✅ Got it! We'll text you within 5 minutes.</span>
