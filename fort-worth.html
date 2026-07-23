@@ -55,10 +55,69 @@
         .related-link { padding: 10px 18px; background: var(--gold-light); border-radius: 8px; color: var(--royal-blue); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); }
         .related-link:hover { background: var(--royal-blue); color: var(--white); }
         @media (max-width: 640px) { .hero-title { font-size: 1.6rem; } .content { padding: 24px 16px; } }
+            /* Quick Estimate Banner */
+        .quick-estimate-banner {
+            background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,35,102,0.12);
+        }
+        .qe-content { max-width: 800px; margin: 0 auto; }
+        .qe-tagline {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--royal-blue);
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+        }
+        .qe-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .qe-form input {
+            padding: 12px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            flex: 1;
+            min-width: 160px;
+            max-width: 250px;
+            transition: border-color var(--transition);
+        }
+        .qe-form input:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 3px rgba(0,35,102,0.08);
+        }
+        .qe-form .btn {
+            flex: 0 0 auto;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+        }
+        .qe-confirmation {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #1a7a1a;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 560px) {
+            .qe-form { flex-direction: column; }
+            .qe-form input { max-width: 100%; width: 100%; }
+            .qe-form .btn { width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <div class="quick-estimate-banner" id="quick-banner">
+        <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
             <div class="qe-tagline">Want a free estimate in minutes?</div>
             <div class="qe-form" id="qe-form">
@@ -70,7 +129,8 @@
                 <span>✅ Got it! We'll text you within 5 minutes.</span>
             </div>
         </div>
-    </div><div class="container">
+    </div>
+<div class="container">
         <header>
             <h1 class="hero-title">TV Mounting in Fort Worth, TX</h1>
             <p class="hero-subtitle">Professional installation — serving Cultural District, Sundance Square, TCU area, Near Southside, Arlington Heights, West 7th</p>
@@ -182,6 +242,5 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
             source: document.title || 'website-banner'
         })
     }).catch(() => {});
-
-</body>
+});</body>
 </html>

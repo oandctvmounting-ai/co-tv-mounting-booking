@@ -99,8 +99,7 @@
         .qe-form button { padding: 12px 24px; background: var(--royal-blue); color: var(--white); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
         .qe-form button:hover { background: var(--gold); color: var(--royal-blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
         .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--text-muted); }
-        .qe-confirm strong { color: var(--royal-blue); }
-        @media (max-width: 640px) { .article-header h1 { font-size: 1.7rem; } .article-content { padding: 24px 16px; } header { padding: 32px 16px 24px; } .article-content h2 { font-size: 1.4rem; } table { font-size: 0.85rem; } th, td { padding: 10px 12px; } }
+        .qe-confirm strong { color: var(--royal-blue); }@media (max-width: 640px) { .article-header h1 { font-size: 1.7rem; } .article-content { padding: 24px 16px; } header { padding: 32px 16px 24px; } .article-content h2 { font-size: 1.4rem; } table { font-size: 0.85rem; } th, td { padding: 10px 12px; } }
     </style>
 </head>
     <!-- Quick Estimate Banner -->
@@ -112,7 +111,7 @@
                 <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
                 <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
             </div>
-            <div class="qe-confirmation" id="qe-confirmation" style="display:none;">
+            <div class="qe-confirmation" id="qe-confirm" style="display:none;">
                 <span>✅ Got it! We'll text you within 5 minutes.</span>
             </div>
         </div>
@@ -238,7 +237,7 @@
     <script>
     (function() {
         const form = document.getElementById('qe-form');
-        const confirm = document.getElementById('qe-confirmation');
+        const confirm = document.getElementById('qe-confirm');
         const submitBtn = document.getElementById('qe-submit');
         if (!form) return;
         form.addEventListener('submit', async function(e) {
@@ -277,7 +276,7 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
     btn.textContent = 'Sending...';
     btn.disabled = true;
     // Show confirmation immediately, then swap form
-    document.getElementById('qe-confirmation').style.display = 'block';
+    document.getElementById('qe-confirm').style.display = 'block';
     document.getElementById('qe-form').style.display = 'none';
     // Fire and forget
     fetch(APP_SCRIPT_URL, {
@@ -291,6 +290,5 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
             source: document.title || 'website-banner'
         })
     }).catch(() => {});
-});
-</body>
+});</body>
 </html>

@@ -99,12 +99,11 @@
         .qe-form button { padding: 12px 24px; background: var(--royal-blue); color: var(--white); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
         .qe-form button:hover { background: var(--gold); color: var(--royal-blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
         .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--text-muted); }
-        .qe-confirm strong { color: var(--royal-blue); }
-        @media (max-width: 640px) { .article-header h1 { font-size: 1.7rem; } .article-content { padding: 24px 16px; } header { padding: 32px 16px 24px; } .article-content h2 { font-size: 1.4rem; } table { font-size: 0.85rem; } th, td { padding: 10px 12px; } }
+        .qe-confirm strong { color: var(--royal-blue); }@media (max-width: 640px) { .article-header h1 { font-size: 1.7rem; } .article-content { padding: 24px 16px; } header { padding: 32px 16px 24px; } .article-content h2 { font-size: 1.4rem; } table { font-size: 0.85rem; } th, td { padding: 10px 12px; } }
     </style>
 </head>
 <body>
-    <div class="quick-estimate-banner" id="quick-banner">
+        <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
             <div class="qe-tagline">Want a free estimate in minutes?</div>
             <div class="qe-form" id="qe-form">
@@ -116,7 +115,8 @@
                 <span>✅ Got it! We'll text you within 5 minutes.</span>
             </div>
         </div>
-    </div><div class="container">
+    </div>
+<div class="container">
         <header>
             <div class="article-header">
                 <h1>What Size TV Mount Do I Need? Fixed vs Tilt vs Full Motion — Complete Guide</h1>
@@ -259,6 +259,5 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
             source: document.title || 'website-banner'
         })
     }).catch(() => {});
-
-</body>
+});</body>
 </html>
