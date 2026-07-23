@@ -58,6 +58,17 @@
     </style>
 </head>
 <body>
+    <div class="quick-estimate-banner">
+        <div class="qe-content">
+            <div class="qe-tagline">Get a Free Instant Estimate — No Call Required</div>
+            <form class="qe-form" id="qe-form">
+                <input type="text" id="qe-name" placeholder="Your Name" required>
+                <input type="tel" id="qe-phone" placeholder="Phone Number" required>
+                <button type="submit" id="qe-submit">Get My Estimate</button>
+            </form>
+            <div class="qe-confirm" id="qe-confirm"><strong>Thanks! We'll text you within 15 minutes.</strong></div>
+        </div>
+    </div>
     <div class="container">
         <header>
             <h1 class="hero-title">TV Mounting in Irving, TX</h1>
@@ -113,5 +124,36 @@
             </div>
         </div>
     </div>
+
+    <script>
+    (function() {
+        const form = document.getElementById('qe-form');
+        const confirm = document.getElementById('qe-confirm');
+        const submitBtn = document.getElementById('qe-submit');
+        if (!form) return;
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('qe-name').value.trim();
+            const phone = document.getElementById('qe-phone').value.trim();
+            if (!name || !phone) return;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            try {
+                const res = await fetch('https://script.google.com/macros/s/AKfycbxFz5GMiiO9yxl6xjlKH6o-h9kbJOWNT97SWbj2f0bMs_Xs8Aw3qQTXkWPWC_pF8s0i/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'quick_lead', name: name, phone: phone, source: 'website-banner' })
+                });
+                form.style.display = 'none';
+                confirm.style.display = 'block';
+            } catch (err) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Get My Estimate';
+                alert('Something went wrong. Please call/text 817-523-9753.');
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
