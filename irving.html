@@ -58,18 +58,19 @@
     </style>
 </head>
 <body>
-    <div class="quick-estimate-banner">
+    <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
-            <div class="qe-tagline">Get a Free Instant Estimate — No Call Required</div>
-            <form class="qe-form" id="qe-form">
-                <input type="text" id="qe-name" placeholder="Your Name" required>
-                <input type="tel" id="qe-phone" placeholder="Phone Number" required>
-                <button type="submit" id="qe-submit">Get My Estimate</button>
-            </form>
-            <div class="qe-confirm" id="qe-confirm"><strong>Thanks! We'll text you within 15 minutes.</strong></div>
+            <div class="qe-tagline">Want a free estimate in minutes?</div>
+            <div class="qe-form" id="qe-form">
+                <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
+                <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
+                <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
+            </div>
+            <div class="qe-confirmation" id="qe-confirm" style="display:none;">
+                <span>✅ Got it! We'll text you within 5 minutes.</span>
+            </div>
         </div>
-    </div>
-    <div class="container">
+    </div><div class="container">
         <header>
             <h1 class="hero-title">TV Mounting in Irving, TX</h1>
             <p class="hero-subtitle">Professional installation — serving Las Colinas, Valley Ranch, Mandalay Canal, Heritage District</p>
@@ -155,5 +156,32 @@
         });
     })();
     </script>
+/* ---- Quick Estimate Banner ---- */
+document.getElementById('qe-submit').addEventListener('click', async () => {
+    const name = document.getElementById('qe-name').value.trim();
+    const phone = document.getElementById('qe-phone').value.trim();
+    if (!name || !phone) {
+        alert('Please enter both your name and phone number.');
+        return;
+    }
+    const btn = document.getElementById('qe-submit');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    // Show confirmation immediately, then swap form
+    document.getElementById('qe-confirm').style.display = 'block';
+    document.getElementById('qe-form').style.display = 'none';
+    // Fire and forget
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'quick_lead',
+            name: name,
+            phone: phone,
+            source: document.title || 'website-banner'
+        })
+    }).catch(() => {});
+
 </body>
 </html>
