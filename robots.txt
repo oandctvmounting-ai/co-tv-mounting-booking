@@ -1,0 +1,13 @@
+# robots.txt for C&O TV Mounting
+User-agent: *
+Allow: /
+
+Sitemap: https://oandctvmounting-ai.github.io/co-tv-mounting-booking/sitemap.xml
+
+# Disallow test/admin pages
+Disallow: /test.html
+Disallow: /test2.html
+Disallow: /test-write.html
+Disallow: /new_design.html
+Disallow: /partner-dashboard.html
+Disallow: /my-referrals.html
