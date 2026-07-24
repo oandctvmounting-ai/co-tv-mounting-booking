@@ -238,10 +238,64 @@
             z-index: 1000;
         }
         .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-    </style>
+                    transform: translateX(-50%) translateY(0);
+                    opacity: 1;
+                }
+
+                /* Quick Estimate Banner */
+                .quick-estimate-banner {
+                    background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
+                    border-bottom: 2px solid var(--gold);
+                    padding: 12px 20px;
+                    position: sticky;
+                    top: 0;
+                    z-index: 100;
+                    box-shadow: 0 4px 12px rgba(0,35,102,0.12);
+                }
+                .qe-content {
+                    max-width: 720px;
+                    margin: 0 auto;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                }
+                .qe-tagline {
+                    font-size: 0.85rem;
+                    font-weight: 700;
+                    color: var(--royal-blue);
+                    white-space: nowrap;
+                }
+                .qe-form {
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                }
+                .qe-form input {
+                    padding: 8px 12px;
+                    border: 1.5px solid #d0d5e0;
+                    border-radius: 6px;
+                    font-size: 0.85rem;
+                    width: 140px;
+                }
+                .qe-form .btn-gold {
+                    padding: 8px 16px;
+                    font-size: 0.85rem;
+                    width: auto;
+                }
+                .qe-confirmation {
+                    display: none;
+                    align-items: center;
+                    gap: 6px;
+                }
+                .qe-confirmation span {
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    color: #1a7a3a;
+                }
+            </style>
 </head>
 <body>
     <div class="quick-estimate-banner" id="quick-banner">
