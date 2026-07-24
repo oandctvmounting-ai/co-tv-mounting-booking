@@ -59,22 +59,47 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
-            color: var(--text-dark);
-            line-height: 1.6;
-            padding: 12px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: 16px;
-            box-shadow: var(--shadow-strong);
-            overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
+                    font-family: 'Inter', sans-serif;
+                    background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
+                    color: var(--text-dark);
+                    line-height: 1.6;
+                    padding: 12px;
+                    min-height: 100vh;
+                }
+                .bg-video {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  overflow: hidden;
+                  z-index: -2;
+                }
+                .bg-video video {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+                .bg-video::after {
+                  content: "";
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  background: rgba(0,0,0,0.35);
+                  z-index: 1;
+                }
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                    max-width: 100%;
+                    margin: 0 auto;
+                    background: var(--white);
+                    border-radius: 16px;
+                    box-shadow: var(--shadow-strong);
+                    overflow: hidden;
+                    border: 1px solid rgba(212, 175, 55, 0.2);
+                    position: relative;
+                }
         header {
             background: var(--royal-blue);
             color: var(--white);
@@ -299,6 +324,12 @@
 </style>
 </head>
 <body>
+    <div class="bg-video">
+      <video muted loop autoplay playsinline>
+        <source src="videos/mount-loop.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
     <!-- Quick Estimate Banner -->
     <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
