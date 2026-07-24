@@ -264,30 +264,6 @@
                     }
                 });
             })();
-        </script>
+        });</script>
         </body>
         </html>
-    if (!name || !phone) {
-        alert('Please enter both your name and phone number.');
-        return;
-    }
-    const btn = document.getElementById('qe-submit');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-    // Show confirmation immediately, then swap form
-    document.getElementById('qe-confirm').style.display = 'block';
-    document.getElementById('qe-form').style.display = 'none';
-    // Fire and forget
-    fetch(APP_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'quick_lead',
-            name: name,
-            phone: phone,
-            source: document.title || 'website-banner'
-        })
-    }).catch(() => {});
-});</body>
-</html>
