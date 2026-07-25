@@ -254,29 +254,29 @@
                     font-size: 0.98rem;
                     background: var(--white);
                     color: var(--text-dark);
+                    min-height: 60px;
                 }
                 .option-card > span:first-child {
-                    display: inline-block;
-                    width: 2.2em;
-                    text-align: center;
-                    font-size: 1.8rem;
-                    line-height: 1;
+                    display: inline-flex;
+                    align-items: center;
+                    font-size: 1.4rem;
+                    margin-right: 8px;
                 }
                 .option-card:hover {
                     border-color: var(--gold);
                     background: var(--gold-light);
-                    transform: translateY(-4px);
-                    box-shadow: 0 8px 24px rgba(212,175,55,0.2);
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 20px rgba(212,175,55,0.15);
                 }
                 .option-card:hover::after {
-                    opacity: 0.8;
+                    opacity: 0.6;
                 }
                 .option-card::after {
                     content: "✓";
                     position: absolute;
-                    top: 8px;
+                    top: 10px;
                     right: 12px;
-                    font-size: 1.4rem;
+                    font-size: 1.2rem;
                     color: var(--gold);
                     opacity: 0;
                     transition: opacity 0.2s ease;
