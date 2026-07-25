@@ -809,6 +809,11 @@ function renderStep1() {
 
 /* ---------- Step 2 render ---------- */
 function renderStep2() {
+    // Guard against invalid state.primary
+    if (!state.primary || !SERVICES[state.primary]) {
+        // Default to first service
+        state.primary = Object.keys(SERVICES)[0];
+    }
     const title = document.getElementById('step2-title');
     title.innerText = `Configure: ${SERVICES[state.primary].name}`;
     const c = document.getElementById('step2-content');
