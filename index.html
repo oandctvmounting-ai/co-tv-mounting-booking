@@ -709,7 +709,7 @@ function renderStep1() {
         const s = SERVICES[key];
         const div = document.createElement('div');
         div.className = 'option-card';
-        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class=\"price-tag\">Select</span>`;
+        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class="price-tag">Select</span>`;
         div.onclick = () => {
             console.log('Option clicked:', key);
             state.primary = key;
