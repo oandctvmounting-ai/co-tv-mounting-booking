@@ -791,17 +791,20 @@ let state = {
     travelDistance: null   // miles from Irving, updated when address changes
 };
 function renderStep1() {
+    console.log('renderStep1 called');
     const wrap = document.getElementById('service-options');
     wrap.innerHTML = '';
     for (const key in SERVICES) {
         const s = SERVICES[key];
         const div = document.createElement('div');
         div.className = 'option-card';
-        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class="price-tag">Select</span>`;
+        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class='price-tag'>Select</span>`;
         div.onclick = () => {
+            console.log('Option clicked:', key);
             state.primary = key;
             document.querySelectorAll('#service-options .option-card').forEach(c => c.classList.remove('selected'));
             div.classList.add('selected');
+            console.log('state.primary after click:', state.primary);
         };
         wrap.appendChild(div);
     }
@@ -809,9 +812,11 @@ function renderStep1() {
 
 /* ---------- Step 2 render ---------- */
 function renderStep2() {
+    console.log('renderStep2 called, state.primary:', state.primary);
     // Guard against invalid state.primary
     if (!state.primary || !SERVICES[state.primary]) {
         // Default to first service
+        console.log('state.primary invalid, defaulting to first service');
         state.primary = Object.keys(SERVICES)[0];
     }
     const title = document.getElementById('step2-title');
@@ -841,6 +846,16 @@ function renderStep2() {
                                 <span style="display:flex; align-items:center; gap:12px; font-size:1.1rem;">${s.icon} ${s.name}</span>
                                 <span style="padding:14px 28px; background:var(--gold); color:var(--royal-blue); border-radius:999px; font-weight:900; font-size:0.95rem; box-shadow:0 4px 16px rgba(212,175,55,0.4); transition:all 0.2s ease;">${isAdded ? '✓ Added' : '+ Add Service'}</span>
                             </div>
+                            <div class="addon-body">${configHtml(key, 'a')}</div>
+                        </div>`;
+        }
+    html += `</div>`;
+    c.innerHTML = html;
+    if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
+    // addon TV blocks (if tv was added as an add-on)
+    state.addons.forEach(k => { if (k === 'tv' && state.primary !== 'tv') renderTvs('a'); });
+    calculateTotal();
+}
                             <div class="addon-body">${configHtml(key, 'a')}</div>
                         </div>`;
         }
