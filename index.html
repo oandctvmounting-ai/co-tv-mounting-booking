@@ -857,16 +857,6 @@ function renderStep2() {
     state.addons.forEach(k => { if (k === 'tv' && state.primary !== 'tv') renderTvs('a'); });
     calculateTotal();
 }
-                            <div class="addon-body">${configHtml(key, 'a')}</div>
-                        </div>`;
-        }
-    html += `</div>`;
-    c.innerHTML = html;
-    if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
-    // addon TV blocks (if tv was added as an add-on)
-    state.addons.forEach(k => { if (k === 'tv' && state.primary !== 'tv') renderTvs('a'); });
-    calculateTotal();
-}
 
 /* Build config UI for a service. prefix 'p' = primary, 'a' = addon (unique IDs) */
 function configHtml(key, prefix) {
