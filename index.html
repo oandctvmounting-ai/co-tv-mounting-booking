@@ -349,6 +349,28 @@
             text-transform:uppercase; letter-spacing:0.6px; margin:28px 0 14px;
             border-bottom:2px solid rgba(212,175,55,0.5); padding-bottom:8px;
         }
+        /* "Your Main Service" sits on top of the looped hero video band.
+           White text + strong text-shadow keeps it legible against the dark
+           video overlay without changing everything else's royal-blue look. */
+        .section-label.section-label-on-video {
+            color: var(--white) !important;
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.85), 0 0 14px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+        }
+        /* Push the rest of Step 2 content (TV #N, Mount Type, TV Size, Wall Type,
+           addons) clear of the looped hero video band. ~30vh gives a comfortable
+           break: high enough to escape the video on standard desktop viewports,
+           not so high it leaves a dead zone on shorter pages. */
+        .step2-below-video {
+            margin-top: 30vh;
+        }
+        @media (max-width: 768px) {
+            /* On mobile the video band feels tighter; smaller margin avoids
+               leaving too much empty vertical space on tall portrait phones. */
+            .step2-below-video {
+                margin-top: 18vh;
+            }
+        }
         .section-label.required {
             background: var(--gold-light);
             border: 2px solid var(--gold);
@@ -938,8 +960,12 @@ function renderStep2() {
     const c = document.getElementById('step2-content');
     let html = '';
 
-    // Primary service config
-    html += `<span class="section-label">Your Main Service</span>`;
+    // Primary service config -- "Your Main Service" label sits on the hero video band,
+    // so it gets white text + shadow to read against the dark overlay. The rest of Step 2
+    // (TV #N, Mount Type, TV Size, Wall Type) renders inside .step2-below-video which has
+    // a top margin pushing it clear of the looped video region.
+    html += `<span class="section-label section-label-on-video">Your Main Service</span>`;
+    html += `<div class="step2-below-video">`;
     html += configHtml(state.primary, 'p');
 
     // Add-on services
@@ -964,6 +990,7 @@ function renderStep2() {
                         </div>`;
         }
     html += `</div>`;
+    html += `</div>`;  // close .step2-below-video (wraps the rest of Step 2 content below video)
     c.innerHTML = html;
     if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
     // addon TV blocks (if tv was added as an add-on)
