@@ -703,17 +703,19 @@ let state = {
     travelDistance: null   // miles from Irving, updated when address changes
 };
 function renderStep1() {
+    console.log('renderStep1 called');
     const wrap = document.getElementById('service-options');
-    wrap.innerHTML = '';
     for (const key in SERVICES) {
         const s = SERVICES[key];
         const div = document.createElement('div');
         div.className = 'option-card';
-        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class="price-tag">Select</span>`;
+        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class=\"price-tag\">Select</span>`;
         div.onclick = () => {
+            console.log('Option clicked:', key);
             state.primary = key;
             document.querySelectorAll('#service-options .option-card').forEach(c => c.classList.remove('selected'));
             div.classList.add('selected');
+            console.log('state.primary after click:', state.primary);
         };
         wrap.appendChild(div);
     }
