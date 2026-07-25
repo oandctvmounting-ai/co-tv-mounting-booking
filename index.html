@@ -1427,13 +1427,7 @@ function submitBooking() {
                 throw new Error(res.error || 'could not create checkout');
             }
         })
-   try {
-       renderStep1();
-       calculateTotal();
-       checkPaidRedirect();
-   } catch (e) {
-       console.error("Init error:", e);
-   }
+        .catch(err => {
             btn.disabled = false;
             btn.innerText = 'Book & Pay $50 Deposit';
             alert('Could not start payment: ' + err.message + '\nWe saved your info and will reach out.');
