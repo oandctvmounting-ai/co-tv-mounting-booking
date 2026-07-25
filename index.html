@@ -252,15 +252,15 @@
                     align-items: center;
                     font-weight: 700;
                     font-size: 0.98rem;
-                    background: var(--white);
-                    color: var(--text-dark);
-                    min-height: 60px;
-                }
+                                background: var(--white);
+                                color: var(--text-dark);
+                                min-height: 50px;
+                            }
                 .option-card > span:first-child {
                     display: inline-flex;
                     align-items: center;
-                    font-size: 1.4rem;
-                    margin-right: 8px;
+                                font-size: 1.2rem;
+                                margin-right: 8px;
                 }
                 .option-card:hover {
                     border-color: var(--gold);
@@ -277,10 +277,11 @@
                     top: 10px;
                     right: 12px;
                     font-size: 1.2rem;
-                    color: var(--gold);
-                    opacity: 0;
-                    transition: opacity 0.2s ease;
-                }
+                                pointer-events: none;
+                                opacity: 0;
+                                transition: opacity 0.2s ease;
+                                color: var(--white);
+                            }
                 .option-card.selected {
                     border-color: var(--royal-blue);
                     background: var(--royal-blue);
