@@ -1176,7 +1176,7 @@ function applyPromo() {
 function showStep(n) {
     document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
     document.getElementById('step-' + n).classList.add('active');
-    document.querySelectorAll('.step-dot').forEach((d, i) => d.classList.toggle('active', i < n));
+    document.querySelectorAll('.step').forEach((d, i) => d.classList.toggle('active', i < n));
     document.querySelectorAll('.step-labels span').forEach((l, i) => l.classList.toggle('active', i === (n - 1)));
 }
 function nextStep(n) {
