@@ -119,6 +119,43 @@
             border-radius: 2px;
         }
 
+        /* Hero warranty badge — sits directly under the tagline in the royal-blue header.
+           Gold-bordered pill on royal blue: high contrast, on-brand, prime real estate
+           for the differentiator vs. licensed contractor competitors. */
+        .hero-warranty-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 8px 16px;
+            background: var(--gold);
+            color: var(--royal-blue);
+            border: 2px solid #fff;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+        .hero-warranty-badge strong {
+            font-weight: 800;
+            color: var(--royal-blue);
+        }
+        .hero-warranty-icon {
+            width: 18px;
+            height: 18px;
+            stroke: var(--royal-blue);
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+        @media (max-width: 480px) {
+            .hero-warranty-badge {
+                font-size: 0.78rem;
+                padding: 7px 12px;
+                gap: 6px;
+            }
+        }
+
         /* Quick Estimate Banner */
         .quick-estimate-banner { background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%); border-bottom: 2px solid var(--gold); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,35,102,0.12); }
         .qe-content { max-width: 800px; margin: 0 auto; }
@@ -507,6 +544,13 @@
     <header>
         <h1>C&O TV Mounting</h1>
         <p>Premium Installations. Flawless Execution.</p>
+        <div class="hero-warranty-badge" aria-label="24-Month Workmanship Warranty">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hero-warranty-icon">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round"/>
+                <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <strong>24-Month Workmanship Warranty</strong> on every install
+        </div>
     </header>
 
     <div class="progress-bar">
