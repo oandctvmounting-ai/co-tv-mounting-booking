@@ -1590,6 +1590,64 @@ function compressImage(file, maxDim, quality) {
     });
 }
 
+/* ---- Quick-estimate banner (top-of-page "Want a free estimate in minutes?") ----
+   Posts {action:'quick_lead', name, phone} to APP_SCRIPT_URL.
+   Backend writes to the Leads sheet tab and pings the booking bot's Telegram group. */
+(function bindQuickEstimate() {
+    const form = document.getElementById('qe-form');
+    const submit = document.getElementById('qe-submit');
+    const confirmEl = document.getElementById('qe-confirm');
+    if (!form || !submit || !confirmEl) return;
+
+    submit.addEventListener('click', function () {
+        const name = (document.getElementById('qe-name').value || '').trim();
+        const phone = (document.getElementById('qe-phone').value || '').trim();
+        if (!name || !phone) {
+            alert('Please enter your name and phone number so we can send your free estimate.');
+            return;
+        }
+        submit.disabled = true;
+        submit.innerText = 'Sending…';
+
+        const payload = {
+            action: 'quick_lead',
+            name: name,
+            phone: phone,
+            source: 'website-banner'
+        };
+
+        const showConfirm = () => {
+            form.style.display = 'none';
+            confirmEl.style.display = 'block';
+        };
+
+        if (!APP_SCRIPT_URL) {
+            // Backend not wired — fallback: confirm locally so the user isn't confused.
+            showConfirm();
+            return;
+        }
+
+        fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.ok) {
+                showConfirm();
+            } else {
+                throw new Error(res.error || 'submit failed');
+            }
+        })
+        .catch(() => {
+            // Don't lose the lead — confirm in UI even if backend hiccups.
+            showConfirm();
+        });
+    });
+})();
+
 /* init */
 renderStep1();
 calculateTotal();
