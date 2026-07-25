@@ -331,6 +331,165 @@
                     color: var(--white);
                 }
                 .option-card.selected .price-tag { color: var(--gold); }
+        /* ============================================================
+           Service cards (Step 1 tile grid). Bigger layout than the
+           generic .option-card — icon up top, name + from-price,
+           subtitle (why pick this), helper line (what's included),
+           and a CTA pill at the bottom.
+
+           On hover: lift + gold border + icon rotates a few degrees.
+           When selected: royal-blue background flips everything to
+           white-on-blue + gold CTA arrow.
+           ============================================================ */
+        .service-card {
+            position: relative;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            padding: 18px 16px 14px !important;
+            min-height: 190px;
+            background: var(--white);
+            color: var(--royal-blue);
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .service-card__head {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 8px;
+        }
+        .service-card__icon {
+            font-size: 2rem;
+            line-height: 1;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--gold-light);
+            transition: transform 0.25s ease;
+        }
+        .service-card:hover .service-card__icon {
+            transform: rotate(-6deg) scale(1.05);
+        }
+        .service-card__name {
+            font-size: 1.02rem;
+            font-weight: 800;
+            color: var(--royal-blue);
+            line-height: 1.25;
+            margin-bottom: 4px;
+        }
+        .service-card__from {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted, #555);
+            margin-bottom: 8px;
+            letter-spacing: 0.2px;
+        }
+        .service-card__from strong {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--royal-blue);
+            letter-spacing: 0;
+        }
+        .service-card__subtitle {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--royal-blue);
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+        .service-card__service-area {
+            font-size: 0.74rem;
+            color: var(--text-muted, #555);
+            line-height: 1.35;
+            margin-bottom: 10px;
+            flex: 1 1 auto;
+        }
+        .service-card__cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--gold-light);
+            color: var(--royal-blue);
+            font-weight: 800;
+            font-size: 0.84rem;
+            border-radius: 8px;
+            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+        .service-card__cta span {
+            font-size: 1.05rem;
+            transition: transform 0.18s ease;
+        }
+        .service-card:hover .service-card__cta {
+            background: var(--gold);
+            transform: translateX(2px);
+        }
+        .service-card:hover .service-card__cta span {
+            transform: translateX(3px);
+        }
+
+        /* "Most popular" ribbon — top-right diagonal gold tag. Only renders
+           on the TV Mounting tile via .service-card--popular. */
+        .popular-ribbon {
+            position: absolute;
+            top: 11px;
+            right: -32px;
+            width: 130px;
+            text-align: center;
+            background: var(--gold);
+            color: var(--royal-blue);
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            padding: 4px 0;
+            transform: rotate(35deg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        /* Selected state for service cards — overrides the .option-card.selected
+           defaults that won't quite fit our wrapping markup. */
+        .service-card.selected {
+            background: var(--royal-blue);
+            color: var(--white);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(0, 35, 102, 0.35);
+        }
+        .service-card.selected .service-card__name,
+        .service-card.selected .service-card__from strong,
+        .service-card.selected .service-card__subtitle {
+            color: var(--white);
+        }
+        .service-card.selected .service-card__icon {
+            background: var(--gold);
+        }
+        .service-card.selected .service-card__cta {
+            background: var(--gold);
+            color: var(--royal-blue);
+        }
+        .service-card.selected .service-card__service-area,
+        .service-card.selected .service-card__from {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Disable the default ▾ ::after on service cards (we shipped our own CTA pill) */
+        .service-card::after { display: none !important; }
+
+        /* Mobile: slightly smaller min-height + tighter padding so 2-col grid doesn't
+           render as 1-col on narrow phones. */
+        @media (max-width: 520px) {
+            .service-card { min-height: 165px; padding: 14px 12px 12px !important; }
+            .service-card__name { font-size: 0.95rem; }
+            .service-card__icon { width: 38px; height: 38px; font-size: 1.6rem; }
+        }
         .price-tag { font-weight: 700; color: var(--royal-blue); font-size:1rem; }
         .mount-grid { grid-template-columns: repeat(3, 1fr); }
         .mount-card {
@@ -1017,17 +1176,42 @@ let state = {
 function renderStep1() {
     console.log('renderStep1 called');
     const wrap = document.getElementById('service-options');
+
+    /* Per-service price & helper line. Prices mirror the pricing engine
+       in TV/BLINDS/MIRRORS/SOUNDBAR/FIREPLACE/LED so "from $X" matches
+       what Step 2 computes. Subtitle answers the real-world "why pick
+       this" question a DFW customer has before clicking. */
+    const SERVICE_DETAILS = {
+        tv:        { fromPrice: 90,  subtitle: 'Any wall · any size',                   popular: true,  helper: 'TV brackets, hardware & leveling included' },
+        fireplace:{ fromPrice: 150, subtitle: 'Heat-shield + secure anchor',           popular: false, helper: 'Above or beside mantel; gas/electric' },
+        blinds:    { fromPrice: 55,  subtitle: 'Per window · inside mount',            popular: false, helper: 'Cordless, motorized, blackout options' },
+        mirrors:   { fromPrice: 10,  subtitle: 'Heavy-duty anchors included',           popular: false, helper: 'Mirrors, portraits, gallery walls' },
+        led:       { fromPrice: 55,  subtitle: 'Bias TV lights or whole-room LEDs',     popular: false, helper: 'Code-compliant install · dimmable' },
+        soundbar:  { fromPrice: 45,  subtitle: 'Clean wire run + clean mount',          popular: false, helper: 'Sonos, Bose, Vizio, any brand' }
+    };
+
     for (const key in SERVICES) {
         const s = SERVICES[key];
+        const d = SERVICE_DETAILS[key] || {};
         const div = document.createElement('div');
-        div.className = 'option-card';
-        div.innerHTML = `<span>${s.icon} ${s.name}</span><span class="price-tag">Select</span>`;
+        div.className = 'option-card service-card' + (d.popular ? ' service-card--popular' : '');
+        div.innerHTML = `
+            ${d.popular ? '<div class="popular-ribbon">★ Most Popular</div>' : ''}
+            <div class="service-card__head">
+                <div class="service-card__icon">${s.icon}</div>
+            </div>
+            <div class="service-card__name">${s.name}</div>
+            <div class="service-card__from">from <strong>$${d.fromPrice}</strong></div>
+            <div class="service-card__subtitle">${d.subtitle || ''}</div>
+            <div class="service-card__service-area">${d.helper || ''}</div>
+            <div class="service-card__cta">Select <span aria-hidden="true">→</span></div>
+        `;
         div.onclick = () => {
             console.log('Option clicked:', key);
             state.primary = key;
             document.querySelectorAll('#service-options .option-card').forEach(c => c.classList.remove('selected'));
             div.classList.add('selected');
-            console.log('state.primary after click:', state.primary);
+            console.log('state.primary after click:', key);
         };
         wrap.appendChild(div);
     }
