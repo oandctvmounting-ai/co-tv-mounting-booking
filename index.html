@@ -394,6 +394,93 @@
             box-shadow:0 2px 8px rgba(212,175,55,0.15);
         }
         .service-area-note strong { color:var(--royal-blue); }
+        /* ============================================================
+           City cards (formerly plain inline links) -- #7 polish.
+           Each card is a clickable <a class="city-card"> with a royal-blue
+           top accent, gold left border on hover, and a stacked city-name /
+           city-desc layout. Sits inside the existing .service-areas section
+           padding so no layout shift vs. the prior grid.   */
+        .city-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .city-card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            padding: 18px 20px;
+            background: var(--white);
+            color: var(--royal-blue);
+            text-decoration: none;
+            border-radius: 12px;
+            border: 1.5px solid #e8e8e8;
+            border-top: 4px solid var(--royal-blue);
+            box-shadow: 0 2px 8px rgba(0, 35, 102, 0.06);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .city-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 6px; height: 100%;
+            background: var(--gold);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.2s ease;
+        }
+        .city-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0, 35, 102, 0.14);
+            border-top-color: var(--gold);
+            background: linear-gradient(180deg, #fafbfd 0%, var(--white) 100%);
+        }
+        .city-card:hover::before {
+            transform: scaleY(1);
+        }
+        .city-name {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 0.2px;
+            color: var(--royal-blue);
+        }
+        .city-desc {
+            font-size: 0.84rem;
+            color: var(--text-muted, #555);
+            line-height: 1.45;
+        }
+        @media (max-width: 600px) {
+            .city-card { padding: 14px 16px; }
+            .city-name { font-size: 1rem; }
+            .city-desc { font-size: 0.8rem; }
+        }
+        /* ============================================================
+           FAQ chevron polish -- #8.
+           Replaces the unicode "▾" glyphs with a CSS-drawn downward
+           caret that renders crisp at any DPI. The existing rotate
+           transforms on .faq-q .chev and .faq-main-chev still work
+           (we just animate the underlying shape, not a glyph reset).
+           Color is royal-blue instead of plain gold for better contrast
+           on cream question backgrounds. */
+        .chev, .faq-main-chev, .addon-main-chev {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-right: 2.5px solid var(--royal-blue);
+            border-bottom: 2.5px solid var(--royal-blue);
+            transform: rotate(45deg);
+            margin-left: 4px;
+            transition: transform 0.3s ease, border-color 0.2s ease;
+            vertical-align: middle;
+        }
+        .faq-item.open .faq-q .chev { transform: rotate(-135deg) translateY(-2px); }
+        .faq-q:hover .chev { border-color: var(--gold); }
         /* === Step 3: Details page polish === */
         .input-group {
             margin-bottom: 20px;
@@ -702,59 +789,59 @@
     <div class="faq">
         <button class="faq-main-toggle" onclick="toggleFaqMain()">
             <span>Frequently Asked Questions</span>
-            <span class="faq-main-chev">▾</span>
+            <span class="faq-main-chev"></span>
         </button>
         <div class="faq-content" id="faq-content">
             <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is there a travel fee? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is there a travel fee? <span class="chev"></span></button>
             <div class="faq-a">Yes — a $25 travel fee applies only for jobs beyond 20 miles from Irving, TX. Within 20 miles, there's no travel fee.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I pay a deposit? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do I pay a deposit? <span class="chev"></span></button>
             <div class="faq-a">A $50 deposit is required only for jobs beyond 25 miles from Irving. Within 25 miles, you simply pay on completion.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are the wires hidden? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are the wires hidden? <span class="chev"></span></button>
             <div class="faq-a">Yes — we offer both internal (in-wall) and external (raceway) wire concealment so your setup looks clean.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What's included in the install? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What's included in the install? <span class="chev"></span></button>
             <div class="faq-a">Professional mounting, leveling, secure anchoring to your wall type, and a clean finish. Add-ons like wire concealment and over-fireplace mounting are available.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What areas do you serve? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What areas do you serve? <span class="chev"></span></button>
             <div class="faq-a">The entire Dallas–Fort Worth metroplex and all surrounding areas — Dallas, Fort Worth, Plano, Irving, Arlington and more.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How long does an install take? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How long does an install take? <span class="chev"></span></button>
             <div class="faq-a">Most TV mounts take 1–2 hours. Larger setups (over-fireplace, multi-TV, in-wall wiring) may take longer.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you mount over fireplaces? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you mount over fireplaces? <span class="chev"></span></button>
             <div class="faq-a">Yes — we mount above fireplaces with proper heat shielding and secure anchoring.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What types of walls can you mount on? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What types of walls can you mount on? <span class="chev"></span></button>
             <div class="faq-a">Drywall, brick, stone, concrete, tile, wood, metal studs — we bring the right hardware for any surface.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you provide the mount? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you provide the mount? <span class="chev"></span></button>
             <div class="faq-a">Yes — we carry fixed, tilt, and full-motion mounts for all TV sizes. You can also supply your own.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can you hide wires inside the wall? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can you hide wires inside the wall? <span class="chev"></span></button>
             <div class="faq-a">Yes — in-wall wire concealment is available (code-compliant, requires wall cavity access).</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What if I need to cancel or reschedule? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What if I need to cancel or reschedule? <span class="chev"></span></button>
             <div class="faq-a">No penalty — just let us know as early as possible so we can fill the slot.</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are you licensed & insured? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Are you licensed & insured? <span class="chev"></span></button>
             <div class="faq-a">We carry a <strong>24-month workmanship warranty</strong>. (Texas does not license TV mounting; we are not a state-licensed contractor.)</div>
         </div>
         <div class="faq-item">
-            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you remove old mounts? <span class="chev">▾</span></button>
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you remove old mounts? <span class="chev"></span></button>
             <div class="faq-a">Yes — we can remove your existing mount and patch the holes for a small fee.</div>
         </div>
                 </div>
@@ -808,17 +895,17 @@
         <div style="padding: 48px 20px; background: var(--white);">
             <h2 style="font-family: 'Playfair Display', serif; color: var(--royal-blue); text-align: center;">We Serve All of DFW</h2>
             <p style="text-align: center; font-size: 1.1rem; color: var(--text-dark); max-width: 800px; margin: 0 auto 24px;">From Dallas to Fort Worth, Plano to Arlington and everywhere in between—our expert team brings professional TV mounting, fireplace installs, and smart home solutions to your doorstep.</p>
-            <div style="display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); text-align: center;">
-                            <div><a href="dallas.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Dallas</a><br>Downtown, Uptown, Oak Cliff, Lakewood, Preston Hollow, and more</div>
-                            <div><a href="fort-worth.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Fort Worth</a><br>Cultural District, Sundance Square, TCU, River Trail, and surrounding areas</div>
-                            <div><a href="plano.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Plano</a><br>Downtown Plano, Legacy West, Shops at Legacy, and all Plano neighborhoods</div>
-                            <div><a href="arlington.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Arlington</a><br>AT&T Stadium, Globe Life Field, Entertainment District, and Arlington proper</div>
-                            <div><a href="irving.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Irving</a><br>Las Colinas, Mandalay Canyon, Irving Convention Center, and DFW Airport vicinity</div>
-                            <div><a href="richardson.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Richardson</a><br>Telecom Corridor, CityLine, Richardson Heights, and surrounding communities</div>
-                            <div><a href="mckinney.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">McKinney</a><br>Historic Downtown McKinney, Adriatica, Stonebridge Ranch, and greater McKinney area</div>
-                            <div><a href="frisco.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Frisco</a><br>The Star, Frisco Square, PGA Headquarters, and all of Frisco's growing communities</div>
-                            <div><a href="garland.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Garland</a><br>Downtown Garland, Firewheel Town Center, and eastern Dallas County communities</div>
-                            <div><a href="mesquite.html" style="color: var(--royal-blue); text-decoration: none; font-weight: 700; font-size: 1.05rem;">Mesquite</a><br>Town East Mall, Paschal, and Mesquite's established neighborhoods</div>
+            <div class="city-grid">
+                            <a href="dallas.html" class="city-card"><span class="city-name">Dallas</span><span class="city-desc">Downtown, Uptown, Oak Cliff, Lakewood, Preston Hollow, and more</span></a>
+                            <a href="fort-worth.html" class="city-card"><span class="city-name">Fort Worth</span><span class="city-desc">Cultural District, Sundance Square, TCU, River Trail, and surrounding areas</span></a>
+                            <a href="plano.html" class="city-card"><span class="city-name">Plano</span><span class="city-desc">Downtown Plano, Legacy West, Shops at Legacy, and all Plano neighborhoods</span></a>
+                            <a href="arlington.html" class="city-card"><span class="city-name">Arlington</span><span class="city-desc">AT&T Stadium, Globe Life Field, Entertainment District, and Arlington proper</span></a>
+                            <a href="irving.html" class="city-card"><span class="city-name">Irving</span><span class="city-desc">Las Colinas, Mandalay Canyon, Irving Convention Center, and DFW Airport vicinity</span></a>
+                            <a href="richardson.html" class="city-card"><span class="city-name">Richardson</span><span class="city-desc">Telecom Corridor, CityLine, Richardson Heights, and surrounding communities</span></a>
+                            <a href="mckinney.html" class="city-card"><span class="city-name">McKinney</span><span class="city-desc">Historic Downtown McKinney, Adriatica, Stonebridge Ranch, and greater McKinney area</span></a>
+                            <a href="frisco.html" class="city-card"><span class="city-name">Frisco</span><span class="city-desc">The Star, Frisco Square, PGA Headquarters, and all of Frisco's growing communities</span></a>
+                            <a href="garland.html" class="city-card"><span class="city-name">Garland</span><span class="city-desc">Downtown Garland, Firewheel Town Center, and eastern Dallas County communities</span></a>
+                            <a href="mesquite.html" class="city-card"><span class="city-name">Mesquite</span><span class="city-desc">Town East Mall, Paschal, and Mesquite's established neighborhoods</span></a>
                         </div>
         </div>
     </div>
@@ -973,7 +1060,7 @@ function renderStep2() {
     // Main addon toggle
     html += `<button class="addon-main-toggle" onclick="toggleAddonMain()">
         <span>Add More Services <span class="addon-count">(${state.addons.size} selected)</span></span>
-        <span class="addon-main-chev">▾</span>
+        <span class="addon-main-chev"></span>
     </button>
     <div class="addon-main-content" id="addon-main-content">`;
     for (const key in SERVICES) {
