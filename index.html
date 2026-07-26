@@ -802,18 +802,50 @@
     (function bindHeroVideo() {
         var v = document.getElementById('hero-video');
         if (!v) return;
-        var reset = function () { try { v.currentTime = 0; v.play().catch(function(){}); } catch (e) {} };
+        // Force muted property on the DOM (some mobile browsers ignore the HTML attribute
+        // when the source file has no audio track -- setting it via JS guarantees it).
+        v.muted = true;
+        v.defaultMuted = true;
+        var tryPlay = function () { v.play().catch(function(){}); };
+        var reset = function () { try { v.currentTime = 0; tryPlay(); } catch (e) {} };
         // Force re-evaluation after metadata loads -- some browsers need a play()
         // call after the source is decoded before they'll honor `loop`.
-        v.addEventListener('loadedmetadata', function () { v.play().catch(function(){}); });
-        v.addEventListener('canplay', function () { v.play().catch(function(){}); });
+        v.addEventListener('loadedmetadata', tryPlay);
+        v.addEventListener('canplay', tryPlay);
+        v.addEventListener('canplaythrough', tryPlay);
         // Cover browsers that ignore `loop` attr even when same-origin.
         v.addEventListener('ended', reset);
         // Defensive: if the video pauses for any reason (visibility, tab
         // throttling), restart it on the next user-visible tick.
         document.addEventListener('visibilitychange', function () {
-            if (!document.hidden && v.paused) { v.play().catch(function(){}); }
+            if (!document.hidden && v.paused) { tryPlay(); }
         });
+
+        /* === MOBILE AUTOPLAY POLICY WORKAROUND ===
+           Mobile Safari and mobile Chrome block video.play() until the
+           user has interacted with the page. The canplay listener above
+           silently rejects on first load. This kick-off listener fires
+           play() on the FIRST user interaction of any kind (touch, tap,
+           scroll, click) -- at which point mobile browsers allow the
+           play to succeed, the video starts, and the `ended` + `loop`
+           handlers keep it looping forever after.
+
+           Once play succeeds once, the listener removes itself so it
+           doesn't keep firing on every scroll/touch. */
+        var mobileKickoff = function () {
+            tryPlay();
+            if (!v.paused || v.currentTime > 0) {
+                document.removeEventListener('touchstart', mobileKickoff, true);
+                document.removeEventListener('click', mobileKickoff, true);
+                document.removeEventListener('scroll', mobileKickoff, true);
+                document.removeEventListener('pointerdown', mobileKickoff, true);
+            }
+        };
+        document.addEventListener('touchstart', mobileKickoff, true);
+        document.addEventListener('click', mobileKickoff, true);
+        document.addEventListener('scroll', mobileKickoff, true);
+        // Also try on first pointer-down (covers newer mobile + stylus)
+        document.addEventListener('pointerdown', mobileKickoff, true);
     })();
     </script>
     <!-- Quick Estimate Banner -->
