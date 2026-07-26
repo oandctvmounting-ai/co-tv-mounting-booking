@@ -661,10 +661,12 @@
             border: 2px solid #e8e8e8;
             border-radius: 14px;
             transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0,35,102,0.06), 0 4px 12px rgba(0,35,102,0.04);
         }
         .input-group:hover {
             border-color: var(--gold);
-            box-shadow: 0 4px 20px rgba(212,175,55,0.12);
+            box-shadow: 0 4px 8px rgba(0,35,102,0.08), 0 12px 28px rgba(0,35,102,0.12);
+            transform: translateY(-1px);
         }
         .input-group label {
             display: block;
@@ -731,7 +733,8 @@
         input::placeholder { color: #aaa; }
         .total-box {
             margin-top: 18px; padding: 18px; background: var(--royal-blue); color: var(--white);
-            border_radius: 12px; text-align:center; border: 2px solid var(--gold);
+            border-radius: 12px; text-align:center; border: 2px solid var(--gold);
+            box-shadow: 0 4px 8px rgba(0,35,102,0.08), 0 12px 28px rgba(0,35,102,0.20);
         }
         .total-label { font-size:0.75rem; opacity:0.85; text-transform:uppercase; letter-spacing:1px; font-weight: 600; }
         .total-amount { font-family:'Playfair Display', serif; font-size:2.2rem; color:var(--gold); display:block; margin-top: 4px; font-weight: 700; }
@@ -746,8 +749,58 @@
         .btn-next:hover { background:#001a4d; transform:translateY(-1px); box-shadow: 0 4px 14px rgba(0,35,102,0.25); }
         .btn-back { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
         .btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
-                .btn-submit { background:var(--gold); color:var(--royal-blue); font-weight: 800; }
-                .btn-submit:hover { background:#c4a030; transform:translateY(-1px); }
+                .btn-submit { background:var(--gold); color:var(--royal-blue); font-weight: 800; box-shadow: 0 4px 14px rgba(212,175,55,0.3); }
+                .btn-submit:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 8px 22px rgba(212,175,55,0.4); }
+
+                /* === Step 2 add-on blocks (configured inline by renderStep2)
+                   .addon-block -- sticky shadow card matching the Step 1 service
+                   card treatment. Hover lifts with deeper shadow + gold border. */
+                .addon-block {
+                    background: var(--white);
+                    border-radius: 14px;
+                    margin-bottom: 14px;
+                    box-shadow: 0 1px 3px rgba(0,35,102,0.06), 0 4px 12px rgba(0,35,102,0.04);
+                    transition: box-shadow 0.2s ease, transform 0.2s ease;
+                }
+                .addon-block:hover {
+                    box-shadow: 0 4px 8px rgba(0,35,102,0.08), 0 12px 28px rgba(0,35,102,0.12);
+                    transform: translateY(-1px);
+                }
+
+                /* === Step heading polish (Step 2, 3, 4 h2 + step-sub)
+                   Matches the Step 1 "What can we install for you?" tile heading style:
+                   Royal-blue h2 with thin gold underline accent + larger sub. */
+                .form-step h2 {
+                    color: var(--royal-blue);
+                    font-weight: 800;
+                    font-size: 1.45rem;
+                    letter-spacing: 0.2px;
+                    padding-bottom: 10px;
+                    border-bottom: 3px solid var(--gold);
+                    display: inline-block;
+                    margin-bottom: 6px;
+                }
+                .form-step p.step-sub {
+                    color: var(--text-muted, #444);
+                    font-size: 1rem;
+                    margin-bottom: 20px;
+                    font-weight: 500;
+                }
+
+                /* === Step 4 deposit note — pulsing hero card matches the Step 1
+                   warranty ribbon treatment, now with shadow + stronger pulse. */
+                .deposit-note {
+                    background: var(--royal-blue);
+                    color: var(--gold);
+                    border: 3px solid var(--gold);
+                    border-radius: 12px;
+                    padding: 16px;
+                    text-align: center;
+                    font-weight: 900;
+                    font-size: 1.15rem;
+                    box-shadow: 0 4px 14px rgba(0, 35, 102, 0.3), 0 1px 0 gold inset;
+                    animation: pulse 2s infinite;
+                }
 
                 /* === VIDEO OVERLAY TEXT READABILITY FIXES === */
                                 .bg-video::after { background: rgba(0,0,0,0.45) !important; }
@@ -988,7 +1041,7 @@
         <div class="form-step" id="form-step-4">
             <h2>Finalize Booking</h2>
         <p class="step-sub">Pick a time and we'll lock it in.</p>
-        <div style="margin-bottom:18px; padding:16px; background:var(--royal-blue); color:var(--gold); border-radius:12px; text-align:center; font-weight:900; font-size:1.15rem; border:3px solid var(--gold); box-shadow:0 4px 20px rgba(0,35,102,0.3); animation:pulse 2s infinite;">
+        <div class="deposit-note" style="margin-bottom:18px">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:28px; height:28px; vertical-align:middle; margin-right:8px; stroke:var(--gold);">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                 <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
