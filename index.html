@@ -419,6 +419,22 @@
             margin-bottom: 10px;
             flex: 1 1 auto;
         }
+        .service-card__min-note {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.12);
+            border-left: 3px solid var(--gold);
+            padding: 6px 10px;
+            margin: -4px 0 10px;
+            border-radius: 4px;
+            letter-spacing: 0.2px;
+        }
+        .service-card.selected .service-card__min-note {
+            color: var(--white);
+            background: rgba(212, 175, 55, 0.25);
+            border-left-color: var(--gold);
+        }
         .service-card__cta {
             display: inline-flex;
             align-items: center;
@@ -751,6 +767,15 @@
         .btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
                 .btn-submit { background:var(--gold); color:var(--royal-blue); font-weight: 800; box-shadow: 0 4px 14px rgba(212,175,55,0.3); }
                 .btn-submit:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 8px 22px rgba(212,175,55,0.4); }
+                .btn-submit.below-min,
+                .btn-submit:disabled {
+                    background: #aaa !important;
+                    color: #666 !important;
+                    cursor: not-allowed !important;
+                    box-shadow: none !important;
+                    transform: none !important;
+                    opacity: 0.65;
+                }
 
                 /* === Step 2 add-on blocks (configured inline by renderStep2)
                    .addon-block -- sticky shadow card matching the Step 1 service
@@ -992,6 +1017,9 @@
             <span class="total-amount" id="display-total">$0</span>
             <span class="total-note">Final price confirmed before work</span>
             <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
+            <div id="min-booking-hint" style="display:none; margin-top:14px; padding:12px 14px; background:rgba(212,175,55,0.15); border:1.5px solid var(--gold); border-radius:8px; font-size:0.92rem; font-weight:700; color:var(--royal-blue); line-height:1.4;">
+                ⭐ Booking minimum is <strong>$90</strong> (equivalent of one entry TV mount). Add another service to qualify for booking.
+            </div>
         </div>
         <div class="input-group" style="margin-top:18px">
             <label>Promo Code (optional)</label>
@@ -1255,7 +1283,13 @@ const BLINDS  = { small: 55, medium: 70, large: 85 };   // per window
 const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
 const SOUNDBAR = 45;                                    // each
 const FIREPLACE = 150;                                  // electronic fireplace mounting/installation (standalone base)
-const LED = { tv: 55, house: 100 };                   // tv lights | inside-house LEDs (we provide lights)
+const LED = { tv: 55, house: 100 };                    // tv lights | inside-house LEDs (we provide lights)
+
+// Booking minimum — single source of truth for the gate. Equivalent to one
+// entry-level TV mount (TV fixed-mount base = $30 + 55" size = $90). Solo
+// low-ticket services (single mirror, one LED, one soundbar) fall under this
+// and must be paired with add-ons until the booking crosses $90.
+const MIN_BOOKING_TOTAL = 90;
 
 const TRAVEL_FEE = 25;
 const DEPOSIT_REQUIRED_MILES = 25;
@@ -1301,14 +1335,16 @@ function renderStep1() {
     /* Per-service price & helper line. Prices mirror the pricing engine
        in TV/BLINDS/MIRRORS/SOUNDBAR/FIREPLACE/LED so "from $X" matches
        what Step 2 computes. Subtitle answers the real-world "why pick
-       this" question a DFW customer has before clicking. */
+       this" question a DFW customer has before clicking.
+       underMinNote flags solo jobs that would land under the $90 booking
+       minimum -- those four tiles get a 'Add another service to book' cue. */
     const SERVICE_DETAILS = {
-        tv:        { fromPrice: 90,  subtitle: 'Any wall · any size',                   popular: true,  helper: 'TV brackets, hardware & leveling included' },
-        fireplace:{ fromPrice: 150, subtitle: 'Heat-shield + secure anchor',           popular: false, helper: 'Above or beside mantel; gas/electric' },
-        blinds:    { fromPrice: 55,  subtitle: 'Per window · inside mount',            popular: false, helper: 'Cordless, motorized, blackout options' },
-        mirrors:   { fromPrice: 10,  subtitle: 'Heavy-duty anchors included',           popular: false, helper: 'Mirrors, portraits, gallery walls' },
-        led:       { fromPrice: 55,  subtitle: 'Bias TV lights or whole-room LEDs',     popular: false, helper: 'Code-compliant install · dimmable' },
-        soundbar:  { fromPrice: 45,  subtitle: 'Clean wire run + clean mount',          popular: false, helper: 'Sonos, Bose, Vizio, any brand' }
+        tv:        { fromPrice: 90,  subtitle: 'Any wall · any size',                   popular: true,  helper: 'TV brackets, hardware & leveling included', underMinNote: false },
+        fireplace:{ fromPrice: 150, subtitle: 'Heat-shield + secure anchor',           popular: false, helper: 'Above or beside mantel; gas/electric',       underMinNote: false },
+        blinds:    { fromPrice: 55,  subtitle: 'Per window · inside mount',            popular: false, helper: 'Cordless, motorized, blackout options',      underMinNote: true  },
+        mirrors:   { fromPrice: 10,  subtitle: 'Heavy-duty anchors included',           popular: false, helper: 'Mirrors, portraits, gallery walls',         underMinNote: true  },
+        led:       { fromPrice: 55,  subtitle: 'Bias TV lights or whole-room LEDs',     popular: false, helper: 'Code-compliant install · dimmable',        underMinNote: true  },
+        soundbar:  { fromPrice: 45,  subtitle: 'Clean wire run + clean mount',          popular: false, helper: 'Sonos, Bose, Vizio, any brand',             underMinNote: true  }
     };
 
     for (const key in SERVICES) {
@@ -1325,6 +1361,7 @@ function renderStep1() {
             <div class="service-card__from">from <strong>$${d.fromPrice}</strong></div>
             <div class="service-card__subtitle">${d.subtitle || ''}</div>
             <div class="service-card__service-area">${d.helper || ''}</div>
+            ${d.underMinNote ? '<div class="service-card__min-note">+ Add another service to book (min $90)</div>' : ''}
             <div class="service-card__cta">Select <span aria-hidden="true">→</span></div>
         `;
         div.onclick = () => {
@@ -1674,8 +1711,28 @@ function calculateTotal() {
             disp.innerHTML = '$' + range.min + ' – $' + range.max;
             const note = document.getElementById('instant-note');
             if (note) note.style.display = 'inline';
+            // When customer is below the booking minimum, flag the button and
+            // surface a hint. Button gets disabled (visually + functionally via
+            // submitBooking hard guard). The hint explains how to qualify.
+            const btn = document.getElementById('submit-btn');
+            const minHint = document.getElementById('min-booking-hint');
+            if (btn) {
+                if (range.max < MIN_BOOKING_TOTAL && range.max > 0) {
+                    btn.disabled = true;
+                    btn.classList.add('below-min');
+                    if (minHint) minHint.style.display = 'block';
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('below-min');
+                    if (minHint) minHint.style.display = 'none';
+                }
+            }
         } else {
             disp.innerText = '$0';
+            const btn0 = document.getElementById('submit-btn');
+            const minHint0 = document.getElementById('min-booking-hint');
+            if (btn0) { btn0.disabled = false; btn0.classList.remove('below-min'); }
+            if (minHint0) minHint0.style.display = 'none';
         }
         const pa = document.getElementById('promo-applied');
         if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
@@ -1885,6 +1942,22 @@ const LEAD_SOURCE = captureLeadSource();
 /* ---------- Submit ---------- */
 function submitBooking() {
     const total = calculateTotal();
+
+    // Hard backstop on the $90 booking minimum. calculateTotal already
+    // disables the submit btn via DOM, this catches anyone who edited it
+    // in DevTools (or if the customer navigates to Step 4 with the max
+    // estimate still under $90 because of the deposit-vs-instant-range math).
+    if (total < MIN_BOOKING_TOTAL) {
+        const shortfall = MIN_BOOKING_TOTAL - total;
+        alert(
+          'Our minimum service call is $90 (equivalent to one entry TV mount).\n\n' +
+          'Your current total is $' + total + ' — $' + shortfall + ' short.\n\n' +
+          'Please add another service (soundbar, LED lights, a mirror, etc.) to reach $90, or pick TV Mounting as your main service.'
+        );
+        goToStep2();
+        return;
+    }
+
     const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
     const primary = state.primary ? (state.primary === 'led'
         ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
