@@ -32,11 +32,13 @@
  *       -> { ok:true, referralCode: 'REF-...' }
  *   { (legacy booking payload) }  -> appends row + Telegram alert (unchanged)
  */
-
 const BOOKINGS_SHEET_ID = '1sOEzOQF0vFpx4l1tAxGSDS6vnLZ8j2AVUeifdcKxE5w';
 
 // ===== Telegram alert config =====
-const TELEGRAM_BOT_TOKEN='***';
+// Token is stored in Script Properties (Project Settings -> Script Properties)
+// under the key TELEGRAM_BOT_TOKEN -- same secure-store pattern as the Square
+// tokens below. Never hardcode the token in source.
+function tgBotToken() { return PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN'); }
 const TELEGRAM_OWNER_CHAT = '6217602404';
 const TELEGRAM_GROUP_CHAT = '-5510113560';
 
@@ -372,13 +374,14 @@ function doPost(e) {
       ]);
       // Telegram alert to group chat only (owner already gets booking alerts)
       try {
-        if (TELEGRAM_BOT_TOKEN && TELEGRAM_BOT_TOKEN !== '***') {
+        const token = tgBotToken();
+        if (token) {
           const leadMsg = '🔔 NEW LEAD — C&O TV Mounting\n' +
             'Name: ' + (data.name || '?') + '\n' +
             'Phone: ' + (data.phone || '?') + '\n' +
             'Source: ' + (data.source || 'website-banner') + '\n' +
             'Action: Follow up immediately for a free estimate.';
-          const tgUrl = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
+          const tgUrl = 'https://api.telegram.org/bot' + token + '/sendMessage';
           UrlFetchApp.fetch(tgUrl, { method: 'post', contentType: 'application/json',
             payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: leadMsg }) });
         }
@@ -445,7 +448,8 @@ function doGet() {
 }
 
 function sendTelegramAlert(data, tvDetails) {
-  if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === '***') return;
+  const token = tgBotToken();
+  if (!token) return;
   const total = (data.total != null ? '$' + data.total : '');
   const deposit = data.deposit ? ('\nDeposit: $' + data.deposit) : '';
   const promo = data.promo ? ('\nPromo: ' + data.promo) : '';
@@ -456,9 +460,9 @@ function sendTelegramAlert(data, tvDetails) {
     (data.primary || '?') + ((data.addons && data.addons.length) ? ' + ' + data.addons.join(', ') : '') + '\n' +
     (tvDetails ? tvDetails + '\n' : '') +
     'Est. Total: ' + total + deposit + promo;
-  const url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
-  const payload = JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: msg });
-  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', payload: payload });
+  const url = 'https://api.telegram.org/bot' + token + '/sendMessage';
+  UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+    payload: JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: msg }) });
   UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
     payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: msg }) });
 }
