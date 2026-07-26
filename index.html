@@ -788,11 +788,34 @@
 </head>
 <body>
     <div class="bg-video">
-      <video muted loop autoplay playsinline>
-        <source src="https://raw.githubusercontent.com/oandctvmounting-ai/co-tv-mounting-booking/gh-pages/videos/mount-loop-v2.mp4" type="video/mp4">
+      <video id="hero-video" muted loop autoplay playsinline preload="auto">
+        <source src="videos/mount-loop-v2.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
     </div>
+    <script>
+    /* Belt-and-suspenders loop handler.
+       HTML `loop` attr is supported everywhere but a few browser/engine
+       combos (Safari under aggressive power-save, Firefox with cross-origin
+       sources) silently drop it -- leaving the video frozen on last frame.
+       This wired-up handler guarantees the video loops regardless. */
+    (function bindHeroVideo() {
+        var v = document.getElementById('hero-video');
+        if (!v) return;
+        var reset = function () { try { v.currentTime = 0; v.play().catch(function(){}); } catch (e) {} };
+        // Force re-evaluation after metadata loads -- some browsers need a play()
+        // call after the source is decoded before they'll honor `loop`.
+        v.addEventListener('loadedmetadata', function () { v.play().catch(function(){}); });
+        v.addEventListener('canplay', function () { v.play().catch(function(){}); });
+        // Cover browsers that ignore `loop` attr even when same-origin.
+        v.addEventListener('ended', reset);
+        // Defensive: if the video pauses for any reason (visibility, tab
+        // throttling), restart it on the next user-visible tick.
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden && v.paused) { v.play().catch(function(){}); }
+        });
+    })();
+    </script>
     <!-- Quick Estimate Banner -->
     <div class="quick-estimate-banner" id="quick-banner">
         <div class="qe-content">
