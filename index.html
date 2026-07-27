@@ -322,6 +322,145 @@
         .options-grid .service-card:nth-child(5) { animation-delay: 0.40s; }
         .options-grid .service-card:nth-child(6) { animation-delay: 0.48s; }
 
+        /* === STEP 2 PRICE FLASH === */
+        @keyframes priceFlash {
+            0%   { color: var(--gold); transform: scale(1); }
+            25%  { color: #fff;        transform: scale(1.25); }
+            50%  { color: var(--gold); transform: scale(1); }
+            75%  { color: #fff;        transform: scale(1.15); }
+            100% { color: var(--gold); transform: scale(1); }
+        }
+        .total-amount.flash { animation: priceFlash 0.7s ease-out; }
+
+        /* === STEP 3 SMOOTH CHECK ON VALIDATED FIELD === */
+        .input-group { position: relative; }
+        .input-group .valid-check {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            margin-top: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #2ecc71;
+            color: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .input-group.valid .valid-check {
+            opacity: 1;
+            transform: scale(1);
+            animation: checkPulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .input-group.valid input,
+        .input-group.valid select {
+            border-color: #2ecc71 !important;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18) !important;
+        }
+        @keyframes checkPulse {
+            0%   { transform: scale(0); }
+            60%  { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+
+        /* === STEP 4 SUCCESS MESSAGE SLIDE-UP & FADE-IN === */
+        .booking-success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 35, 102, 0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .booking-success-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .booking-success-card {
+            background: linear-gradient(180deg, var(--royal-blue) 0%, #001a4d 100%);
+            border: 3px solid var(--gold);
+            border-radius: 18px;
+            padding: 40px 36px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transform: translateY(60px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s,
+                        opacity   0.4s ease 0.1s;
+        }
+        .booking-success-overlay.show .booking-success-card {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        .booking-success-card .check-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #2ecc71;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .booking-success-card .check-circle svg {
+            width: 44px;
+            height: 44px;
+            stroke-dasharray: 60;
+            stroke-dashoffset: 60;
+            animation: drawCheck 0.6s ease-out 0.4s forwards;
+        }
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+        .booking-success-card h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold) !important;
+            text-shadow: none !important;
+            font-size: 1.8rem;
+            margin: 12px 0;
+        }
+        .booking-success-card p {
+            color: #fff !important;
+            text-shadow: none !important;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 8px 0;
+        }
+        .booking-success-card button {
+            margin-top: 24px;
+            padding: 12px 32px;
+            background: var(--gold) !important;
+            color: var(--royal-blue) !important;
+            border: none;
+            border-radius: 999px;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
+        }
+        .booking-success-card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(212, 175, 55, 0.6);
+        }
+
         /* === ANIMATION 2: Progress bar liquid fill === */
         .progress-bar::after {
             content: '';
@@ -1176,15 +1315,18 @@
         <div class="input-group">
             <label>Full Name</label>
             <input type="text" id="cust-name" placeholder="Enter your name">
+            <span class="valid-check" aria-hidden="true">✓</span>
         </div>
         <div class="input-group">
             <label>Service Address</label>
-            <div class="service-area-note">📍 We proudly serve the entire <strong>DFW metroplex &amp; all surrounding areas!</strong></div>
+            <div class="service-area-note">📍 We proudly serve the entire <strong>DFW metroplex & all surrounding areas!</strong></div>
             <input type="text" id="cust-address" placeholder="Street, City, TX (e.g. 123 Main St, Irving, TX 75061)">
+            <span class="valid-check" aria-hidden="true">✓</span>
         </div>
         <div class="input-group">
             <label>Phone Number</label>
             <input type="tel" id="cust-phone" placeholder="(555) 000-0000">
+            <span class="valid-check" aria-hidden="true">✓</span>
         </div>
         <div class="input-group">
             <label>Wall / Space Photo (helps us prepare)</label>
@@ -1838,6 +1980,7 @@ function calculateTotal() {
     }
 
     const disp = document.getElementById('display-total');
+    const finalDisp = document.getElementById('final-total');
     if (disp) {
         // Show instant range if we have selections
         const range = getInstantRange();
@@ -1870,6 +2013,19 @@ function calculateTotal() {
         }
         const pa = document.getElementById('promo-applied');
         if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
+        // === PRICE FLASH ANIMATION (Step 2 + Step 4) ===
+        // Replay the flash every time the total changes (skip the very first render)
+        if (!calculateTotal.firstRendered) {
+            calculateTotal.firstRendered = true;
+        } else {
+            [disp, finalDisp].forEach(el => {
+                if (!el) return;
+                el.classList.remove('flash');
+                // Force reflow so the animation restarts even on rapid changes
+                void el.offsetWidth;
+                el.classList.add('flash');
+            });
+        }
     }
     return total;
 }
@@ -2183,14 +2339,22 @@ function submitBooking() {
     .then(r => r.json())
     .then(res => {
         if (res.ok) {
-            alert('✓ Booking sent! We\'ll confirm shortly.\n\n' + summarize(payload));
+            if (window.showBookingSuccess) {
+                showBookingSuccess('✓ Booking Sent!');
+            } else {
+                alert('✓ Booking sent! We\'ll confirm shortly.\n\n' + summarize(payload));
+            }
         } else {
             throw new Error(res.error || 'submit failed');
         }
     })
     .catch(err => {
         queueLocal(payload);
-        alert('Saved locally (couldn\'t reach server). We\'ll retry sync.\n\n' + summarize(payload));
+        if (window.showBookingSuccess) {
+            showBookingSuccess('Saved Locally — Will Retry');
+        } else {
+            alert('Saved locally (couldn\'t reach server). We\'ll retry sync.\n\n' + summarize(payload));
+        }
     });
 }
 
@@ -2330,6 +2494,78 @@ function compressImage(file, maxDim, quality) {
 renderStep1();
 calculateTotal();
 checkPaidRedirect();
+
+/* === STEP 3 SMOOTH CHECK ON VALIDATED FIELDS ===
+   When the user pauses typing in a required field for >500ms with valid content,
+   the input gets the .valid class → green border, green focus ring, and a small
+   green ✓ scale-pops in on the right side. Subtle but it makes the form feel
+   responsive. */
+(function bindSmoothValidation() {
+    var fields = ['cust-name', 'cust-address', 'cust-phone'];
+    fields.forEach(function (id) {
+        var input = document.getElementById(id);
+        if (!input) return;
+        var group = input.closest('.input-group');
+        var timer = null;
+        var validate = function () {
+            var v = (input.value || '').trim();
+            var ok = v.length >= 3;
+            if (ok) {
+                group.classList.add('valid');
+                if (group._checkJustAdded) {
+                    // Replay the bounce if the value was already valid then re-edited
+                    var check = group.querySelector('.valid-check');
+                    if (check) {
+                        check.style.animation = 'none';
+                        void check.offsetWidth;
+                        check.style.animation = '';
+                    }
+                }
+                group._checkJustAdded = true;
+            } else {
+                group.classList.remove('valid');
+            }
+        };
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(validate, 500);
+        });
+        input.addEventListener('blur', function () {
+            clearTimeout(timer);
+            validate();
+        });
+    });
+})();
+
+/* === STEP 4 SUCCESS OVERLAY ===
+   Replaces the alert() with a slide-up modal containing a checkmark-draw
+   animation and the booking summary. Shows after a successful booking. */
+(function bindBookingSuccess() {
+    // Build the overlay element once
+    var overlay = document.createElement('div');
+    overlay.className = 'booking-success-overlay';
+    overlay.id = 'booking-success-overlay';
+    overlay.innerHTML = '<div class="booking-success-card">' +
+        '<div class="check-circle"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+        '<h2 id="booking-success-heading">Booking Confirmed!</h2>' +
+        '<p>We\'ll send a confirmation text shortly.<br>Questions? Call <strong>817-523-9753</strong>.</p>' +
+        '<button type="button" id="booking-success-close">Done</button>' +
+        '</div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#booking-success-close').addEventListener('click', function () {
+        overlay.classList.remove('show');
+    });
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) overlay.classList.remove('show');
+    });
+    // Expose so submitBooking can call it instead of alert()
+    window.showBookingSuccess = function (msg) {
+        if (msg) {
+            document.getElementById('booking-success-heading').innerText = msg;
+        }
+        overlay.classList.add('show');
+    };
+})();
 </script>
 </body>
 </html>
