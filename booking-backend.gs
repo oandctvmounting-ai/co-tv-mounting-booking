@@ -372,7 +372,8 @@ function doPost(e) {
         data.source || 'website-banner',
         'new'
       ]);
-      // Telegram alert to group chat only (owner already gets booking alerts)
+      // Telegram alert to BOTH owner personal chat AND group chat
+      // (matches booking alert behavior in sendTelegramAlert)
       try {
         const token = tgBotToken();
         if (token) {
@@ -382,6 +383,8 @@ function doPost(e) {
             'Source: ' + (data.source || 'website-banner') + '\n' +
             'Action: Follow up immediately for a free estimate.';
           const tgUrl = 'https://api.telegram.org/bot' + token + '/sendMessage';
+          UrlFetchApp.fetch(tgUrl, { method: 'post', contentType: 'application/json',
+            payload: JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: leadMsg }) });
           UrlFetchApp.fetch(tgUrl, { method: 'post', contentType: 'application/json',
             payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: leadMsg }) });
         }
