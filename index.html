@@ -2077,6 +2077,9 @@ function applyPromo() {
 
 /* ---------- Navigation ---------- */
 function showStep(n) {
+    // Scroll to top first
+    window.scrollTo(0, 0);
+    
     // Fade out current active step
     const current = document.querySelector('.form-step.active');
     const next = document.getElementById('form-step-' + n);
