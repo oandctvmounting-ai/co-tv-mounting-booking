@@ -59,13 +59,16 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-                    font-family: 'Inter', sans-serif;
-                    background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
-                    color: var(--text-dark);
-                    line-height: 1.6;
-                    padding: 12px;
-                    min-height: 100vh;
-                }
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 12px;
+            min-height: 100vh;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.page-loaded { opacity: 1; }
                 .bg-video {
                   position: fixed;
                   top: 0;
@@ -2609,6 +2612,57 @@ checkPaidRedirect();
         }
         overlay.classList.add('show');
     };
+})();
+
+// Page load fade-in
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('page-loaded');
+});
+
+// Simple top progress bar on navigation
+(function() {
+    const bar = document.createElement('div');
+    bar.id = 'page-progress';
+    bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--royal-blue),var(--gold));z-index:9999;transform:scaleX(0);transform-origin:left;transition:transform 0.2s ease;pointer-events:none;';
+    document.body.appendChild(bar);
+    
+    let progress = 0;
+    const start = () => {
+        progress = 0;
+        bar.style.transform = 'scaleX(0)';
+        const tick = () => {
+            if (progress < 0.9) {
+                progress += Math.random() * 0.1 + 0.05;
+                bar.style.transform = 'scaleX(' + Math.min(progress, 0.9) + ')';
+                requestAnimationFrame(tick);
+            }
+        };
+        tick();
+    };
+    const finish = () => {
+        bar.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        bar.style.transform = 'scaleX(1)';
+        setTimeout(() => { bar.style.opacity = '0'; }, 300);
+        setTimeout(() => { bar.remove(); }, 600);
+    };
+    
+    // On link clicks (same-origin)
+    document.addEventListener('click', function(e) {
+        const a = e.target.closest('a[href]');
+        if (a && a.href && a.origin === location.origin && !a.target) {
+            start();
+        }
+    });
+    
+    // On form submissions
+    document.addEventListener('submit', function(e) {
+        start();
+    });
+    
+    // On back/forward
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted) finish();
+    });
 })();
 </script>
 </body>
