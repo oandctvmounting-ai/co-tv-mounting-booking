@@ -295,8 +295,18 @@
         .addon-main-chev { transition:transform 0.3s ease; color:var(--gold); font-size:1.25rem; }
         .addon-main-content { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; }
         .addon-main-content.open { max-height:2000px; padding-top: 12px; }
-        .form-step { display: none; padding: 24px 20px; animation: fadeIn 0.4s ease-out; }
-        .form-step.active { display: block; }
+        .form-step { 
+            display: none; 
+            padding: 24px 20px; 
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.35s ease, transform 0.35s ease, display 0.35s ease;
+        }
+        .form-step.active { 
+            display: block; 
+            opacity: 1;
+            transform: translateY(0);
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
@@ -2067,8 +2077,37 @@ function applyPromo() {
 
 /* ---------- Navigation ---------- */
 function showStep(n) {
-    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-    document.getElementById('form-step-' + n).classList.add('active');
+    // Fade out current active step
+    const current = document.querySelector('.form-step.active');
+    const next = document.getElementById('form-step-' + n);
+    
+    if (current && current !== next) {
+        current.style.opacity = '0';
+        current.style.transform = 'translateY(-12px)';
+        
+        // Wait for fade out, then switch
+        setTimeout(() => {
+            current.classList.remove('active');
+            current.style.display = 'none';
+            current.style.opacity = '';
+            current.style.transform = '';
+            
+            // Fade in next step
+            next.classList.add('active');
+            next.style.display = 'block';
+            // Force reflow
+            void next.offsetWidth;
+            next.style.opacity = '1';
+            next.style.transform = 'translateY(0)';
+        }, 350);
+    } else if (next && !current) {
+        next.classList.add('active');
+        next.style.display = 'block';
+        void next.offsetWidth;
+        next.style.opacity = '1';
+        next.style.transform = 'translateY(0)';
+    }
+    
     document.querySelectorAll('.step').forEach((d, i) => d.classList.toggle('active', i < n));
     document.querySelectorAll('.step-labels span').forEach((l, i) => l.classList.toggle('active', i === (n - 1)));
     var pb = document.querySelector('.progress-bar');
