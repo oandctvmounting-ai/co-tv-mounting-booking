@@ -1316,8 +1316,8 @@
         </div>
         <div class="nav-buttons">
                     <button class="btn-next" onclick="nextStep(2)">Continue</button>
-                    <button class="btn-next" style="background:var(--gold); color:var(--royal-blue);" onclick="window.open('gallery.html','_blank')">View Gallery</button>
-                    <button class="btn-next" style="background:var(--gold-light); color:var(--royal-blue); border:2px solid var(--gold);" onclick="window.open('referral.html','_blank')">Referral Partner Portal</button>
+                    <a href="gallery.html" target="_blank" class="btn-next" style="background:var(--gold); color:var(--royal-blue); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">View Gallery</a>
+                    <a href="referral.html" target="_blank" class="btn-next" style="background:var(--gold-light); color:var(--royal-blue); border:2px solid var(--gold); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Referral Partner Portal</a>
                 </div>
     </div>
 
@@ -2661,12 +2661,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1500);
     };
     
-    // On same-origin link clicks (not _blank, not external)
+    // On same-origin link clicks (including _blank)
     document.addEventListener('click', function(e) {
         const a = e.target.closest('a[href]');
-        if (a && a.href && a.origin === location.origin && !a.target) {
+        if (a && a.href && a.origin === location.origin) {
             e.preventDefault();
-            showStatic(() => window.location.href = a.href);
+            showStatic(() => {
+                if (a.target === '_blank') {
+                    window.open(a.href, '_blank');
+                } else {
+                    window.location.href = a.href;
+                }
+            });
         }
     });
     
