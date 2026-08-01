@@ -337,33 +337,7 @@
         .options-grid .service-card:nth-child(5) { animation-delay: 0.40s; }
         .options-grid .service-card:nth-child(6) { animation-delay: 0.48s; }
 
-        /* === CRT TV STATIC TRANSITION === */
-        @keyframes crtPowerOn {
-            0% { opacity: 0; transform: scale(1.02); filter: brightness(0) contrast(0); }
-            10% { opacity: 1; filter: brightness(2) contrast(3); }
-            20% { filter: brightness(1.5) contrast(2); }
-            40% { filter: brightness(1.2) contrast(1.5); }
-            60% { filter: brightness(1.1) contrast(1.2); }
-            80% { filter: brightness(1.05) contrast(1.1); }
-            100% { opacity: 1; transform: scale(1); filter: brightness(1) contrast(1); }
-        }
-        @keyframes staticNoise {
-            0% { background-position: 0 0; opacity: 0.8; }
-            10% { background-position: 100px 50px; opacity: 0.6; }
-            20% { background-position: -50px 100px; opacity: 0.9; }
-            30% { background-position: 150px -30px; opacity: 0.5; }
-            40% { background-position: -80px 80px; opacity: 0.7; }
-            50% { background-position: 60px -60px; opacity: 0.4; }
-            60% { background-position: -120px 40px; opacity: 0.8; }
-            70% { background-position: 90px -90px; opacity: 0.6; }
-            80% { background-position: -40px 120px; opacity: 0.5; }
-            90% { background-position: 110px -10px; opacity: 0.7; }
-            100% { background-position: 0 0; opacity: 0.8; }
-        }
-        @keyframes scanlines {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(300%); }
-        }
+        /* === CRT TV STATIC (page navigation only) === */
         .crt-overlay {
             position: fixed;
             inset: 0;
@@ -379,13 +353,11 @@
                 ),
                 url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
             background-size: 100% 4px, 256px 256px;
-            animation: staticNoise 0.15s steps(1) infinite, scanlines 3s linear infinite;
             opacity: 0;
             transition: opacity 0.1s;
         }
         .crt-overlay.active {
             opacity: 1;
-            animation: crtPowerOn 1.5s ease-out forwards, staticNoise 0.15s steps(1) infinite, scanlines 3s linear infinite;
         }
         @media (prefers-reduced-motion: reduce) {
             .crt-overlay { display: none; }
@@ -1292,9 +1264,6 @@
         </div>
     </div>
 
-<!-- CRT TV Static Transition Overlay -->
-<div class="crt-overlay" id="crt-overlay" aria-hidden="true"></div>
-
 <div class="container">
     <header>
         <h1>C&O TV Mounting</h1>
@@ -2140,49 +2109,36 @@ function showStep(n) {
     // Scroll to top first
     window.scrollTo(0, 0);
     
-    // CRT TV static transition
-    const crt = document.getElementById('crt-overlay');
-    if (crt) {
-        crt.classList.add('active');
-    }
-    
     // Fade out current active step
     const current = document.querySelector('.form-step.active');
     const next = document.getElementById('form-step-' + n);
     
-    // Wait for CRT effect to peak (~400ms), then switch steps
-    setTimeout(() => {
-        if (current && current !== next) {
-            current.style.opacity = '0';
-            current.style.transform = 'translateY(-12px)';
+    if (current && current !== next) {
+        current.style.opacity = '0';
+        current.style.transform = 'translateY(-12px)';
+        
+        // Wait for fade out, then switch
+        setTimeout(() => {
+            current.classList.remove('active');
+            current.style.display = 'none';
+            current.style.opacity = '';
+            current.style.transform = '';
             
-            setTimeout(() => {
-                current.classList.remove('active');
-                current.style.display = 'none';
-                current.style.opacity = '';
-                current.style.transform = '';
-                
-                next.classList.add('active');
-                next.style.display = 'block';
-                void next.offsetWidth;
-                next.style.opacity = '1';
-                next.style.transform = 'translateY(0)';
-            }, 350);
-        } else if (next && !current) {
+            // Fade in next step
             next.classList.add('active');
             next.style.display = 'block';
+            // Force reflow
             void next.offsetWidth;
             next.style.opacity = '1';
             next.style.transform = 'translateY(0)';
-        }
-        
-        // Remove CRT overlay after animation completes
-        if (crt) {
-            setTimeout(() => {
-                crt.classList.remove('active');
-            }, 1100); // 1.5s total - 400ms already elapsed
-        }
-    }, 400);
+        }, 350);
+    } else if (next && !current) {
+        next.classList.add('active');
+        next.style.display = 'block';
+        void next.offsetWidth;
+        next.style.opacity = '1';
+        next.style.transform = 'translateY(0)';
+    }
     
     document.querySelectorAll('.step').forEach((d, i) => d.classList.toggle('active', i < n));
     document.querySelectorAll('.step-labels span').forEach((l, i) => l.classList.toggle('active', i === (n - 1)));
@@ -2688,6 +2644,33 @@ checkPaidRedirect();
 document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('page-loaded');
 });
+
+// CRT TV Static on page navigation (same-origin links)
+(function() {
+    const crt = document.createElement('div');
+    crt.className = 'crt-overlay';
+    crt.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(crt);
+    
+    const showStatic = () => {
+        crt.classList.add('active');
+        // Remove after 1.5s
+        setTimeout(() => crt.classList.remove('active'), 1500);
+    };
+    
+    // On same-origin link clicks (not _blank, not external)
+    document.addEventListener('click', function(e) {
+        const a = e.target.closest('a[href]');
+        if (a && a.href && a.origin === location.origin && !a.target) {
+            showStatic();
+        }
+    });
+    
+    // On form submissions
+    document.addEventListener('submit', function(e) {
+        showStatic();
+    });
+})();
 
 // Simple top progress bar on navigation
 (function() {
