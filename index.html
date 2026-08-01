@@ -2652,23 +2652,28 @@ document.addEventListener('DOMContentLoaded', function() {
     crt.setAttribute('aria-hidden', 'true');
     document.body.appendChild(crt);
     
-    const showStatic = () => {
+    const showStatic = (callback) => {
         crt.classList.add('active');
         // Remove after 1.5s
-        setTimeout(() => crt.classList.remove('active'), 1500);
+        setTimeout(() => {
+            crt.classList.remove('active');
+            if (callback) callback();
+        }, 1500);
     };
     
     // On same-origin link clicks (not _blank, not external)
     document.addEventListener('click', function(e) {
         const a = e.target.closest('a[href]');
         if (a && a.href && a.origin === location.origin && !a.target) {
-            showStatic();
+            e.preventDefault();
+            showStatic(() => window.location.href = a.href);
         }
     });
     
     // On form submissions
     document.addEventListener('submit', function(e) {
-        showStatic();
+        e.preventDefault();
+        showStatic(() => e.target.submit());
     });
 })();
 
