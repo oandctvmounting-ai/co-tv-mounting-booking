@@ -2654,11 +2654,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const showStatic = (callback) => {
         crt.classList.add('active');
-        // Remove after 1s
+        // Remove after 0.7s
         setTimeout(() => {
             crt.classList.remove('active');
             if (callback) callback();
-        }, 1000);
+        }, 700);
     };
     
     // On same-origin link clicks
