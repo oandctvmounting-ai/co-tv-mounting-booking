@@ -1065,18 +1065,24 @@
         .total-label { font-size:0.75rem; opacity:0.85; text-transform:uppercase; letter-spacing:1px; font-weight: 600; }
         .total-amount { font-family:'Playfair Display', serif; font-size:2.2rem; color:var(--gold); display:block; margin-top: 4px; font-weight: 700; }
         .total-note { font-size:0.75rem; opacity:0.7; margin-top:4px; }
-        .nav-buttons { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:24px; }
-        button {
-            flex:1; padding:14px 20px; border_radius:10px; font-weight:700; cursor:pointer;
-            transition: all var(--transition); font-family:'Inter', sans-serif; font-size:0.95rem;
-            border: none;
+        .nav-buttons { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:24px; }
+        .nav-btn { 
+            flex:1; min-width: 140px; max-width: 200px; padding:14px 24px; border-radius:12px; 
+            font-weight:700; cursor:pointer; transition: all var(--transition); 
+            font-family:'Inter', sans-serif; font-size:0.95rem; border: none;
+            display:inline-flex; align-items:center; justify-content:center; gap:8px;
+            text-decoration:none;
         }
-        .btn-next { background: var(--royal-blue); color: var(--white); }
-        .btn-next:hover { background:#001a4d; transform:translateY(-1px); box-shadow: 0 4px 14px rgba(0,35,102,0.25); }
-        .btn-back { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
-        .btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
-                .btn-submit { background:var(--gold); color:var(--royal-blue); font-weight: 800; box-shadow: 0 4px 14px rgba(212,175,55,0.3); }
-                .btn-submit:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 8px 22px rgba(212,175,55,0.4); }
+        .nav-btn-primary { background: var(--royal-blue); color: var(--white); }
+        .nav-btn-primary:hover { background:#001a4d; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,102,0.3); }
+        .nav-btn-gold { background: var(--gold); color: var(--royal-blue); }
+        .nav-btn-gold:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
+        .nav-btn-outline { background: var(--gold-light); color: var(--royal-blue); border:2px solid var(--gold); }
+        .nav-btn-outline:hover { background:var(--gold); transform:translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.35); }
+        .nav-btn-back { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
+        .nav-btn-back:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
+        .btn-submit { background:var(--gold); color:var(--royal-blue); font-weight: 800; box-shadow: 0 4px 14px rgba(212,175,55,0.3); }
+        .btn-submit:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 8px 22px rgba(212,175,55,0.4); }
                 .btn-submit.below-min,
                 .btn-submit:disabled {
                     background: #aaa !important;
@@ -1315,9 +1321,9 @@
             📺 TV Mounting <strong>from $90</strong> &nbsp;|&nbsp; Wire Concealment <strong>from $35</strong> &nbsp;|&nbsp; Over Fireplace <strong>+ $30</strong>
         </div>
         <div class="nav-buttons">
-                    <button class="btn-next" onclick="nextStep(2)">Continue</button>
-                    <a href="gallery.html" class="btn-next" style="background:var(--gold); color:var(--royal-blue); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">View Gallery</a>
-                    <a href="referral.html" class="btn-next" style="background:var(--gold-light); color:var(--royal-blue); border:2px solid var(--gold); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Referral Partner Portal</a>
+                    <button class="nav-btn nav-btn-primary" onclick="nextStep(2)">Continue</button>
+                    <a href="gallery.html" class="nav-btn nav-btn-gold">View Gallery</a>
+                    <a href="referral.html" class="nav-btn nav-btn-outline">Referral Partner Portal</a>
                 </div>
     </div>
 
@@ -1339,13 +1345,13 @@
             <label>Promo Code (optional)</label>
             <div style="display:flex; gap:10px">
                 <input type="text" id="promo-input" placeholder="e.g. WELCOME10" style="text-transform:uppercase" oninput="state.promoInput=this.value.trim()">
-                <button type="button" class="btn-next" style="flex:0 0 110px" onclick="applyPromo()">Apply</button>
+                <button type="button" class="nav-btn nav-btn-gold" style="flex:0 0 110px" onclick="applyPromo()">Apply</button>
             </div>
             <div id="promo-msg" style="font-size:0.8rem; margin-top:6px"></div>
         </div>
         <div class="nav-buttons">
-            <button class="btn-back" onclick="prevStep(1)">Back</button>
-            <button class="btn-next" onclick="nextStep(3)">Continue</button>
+            <button class="nav-btn nav-btn-back" onclick="prevStep(1)">Back</button>
+            <button class="nav-btn nav-btn-primary" onclick="nextStep(3)">Continue</button>
         </div>
     </div>
 
@@ -1377,8 +1383,8 @@
             </div>
         </div>
         <div class="nav-buttons">
-            <button class="btn-back" onclick="prevStep(2)">Back</button>
-            <button class="btn-next" onclick="goToStep4()">Continue</button>
+            <button class="nav-btn nav-btn-back" onclick="prevStep(2)">Back</button>
+            <button class="nav-btn nav-btn-primary" onclick="goToStep4()">Continue</button>
         </div>
     </div>
 
@@ -1405,7 +1411,7 @@
             <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
         </div>
         <div class="nav-buttons">
-            <button class="btn-back" onclick="prevStep(3)">Back</button>
+            <button class="nav-btn nav-btn-back" onclick="prevStep(3)">Back</button>
             <button class="btn-submit" id="submit-btn" onclick="submitBooking()">Book Now</button>
         </div>
     </div>
@@ -1748,7 +1754,7 @@ function renderStep2() {
 function configHtml(key, prefix) {
     if (key === 'tv') {
         let h = `<div id="${prefix}_tvs"></div>`;
-        h += `<button type="button" class="btn-next" style="margin-top:8px; background:var(--gold); color:var(--royal-blue)" onclick="addTv('${prefix}')">+ Add another TV</button>`;
+        h += `<button type="button" class="nav-btn nav-btn-gold" style="margin-top:8px" onclick="addTv('${prefix}')">+ Add another TV</button>`;
         return h;
     }
     if (key === 'blinds') {
