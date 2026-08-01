@@ -1316,8 +1316,8 @@
         </div>
         <div class="nav-buttons">
                     <button class="btn-next" onclick="nextStep(2)">Continue</button>
-                    <a href="gallery.html" target="_blank" class="btn-next" style="background:var(--gold); color:var(--royal-blue); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">View Gallery</a>
-                    <a href="referral.html" target="_blank" class="btn-next" style="background:var(--gold-light); color:var(--royal-blue); border:2px solid var(--gold); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Referral Partner Portal</a>
+                    <a href="gallery.html" class="btn-next" style="background:var(--gold); color:var(--royal-blue); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">View Gallery</a>
+                    <a href="referral.html" class="btn-next" style="background:var(--gold-light); color:var(--royal-blue); border:2px solid var(--gold); text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Referral Partner Portal</a>
                 </div>
     </div>
 
@@ -2661,18 +2661,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1500);
     };
     
-    // On same-origin link clicks (including _blank)
+    // On same-origin link clicks
     document.addEventListener('click', function(e) {
         const a = e.target.closest('a[href]');
         if (a && a.href && a.origin === location.origin) {
-            e.preventDefault();
-            showStatic(() => {
-                if (a.target === '_blank') {
-                    window.open(a.href, '_blank');
-                } else {
-                    window.location.href = a.href;
-                }
-            });
+            if (a.target === '_blank') {
+                // New tab: don't block, just show CRT briefly
+                showStatic();
+            } else {
+                // Same page: delay navigation
+                e.preventDefault();
+                showStatic(() => window.location.href = a.href);
+            }
         }
     });
     
