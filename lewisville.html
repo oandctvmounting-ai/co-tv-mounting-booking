@@ -55,9 +55,62 @@
         .related-link { padding: 10px 18px; background: var(--gold-light); border-radius: 8px; color: var(--royal-blue); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); }
         .related-link:hover { background: var(--royal-blue); color: var(--white); }
         @media (max-width: 640px) { .hero-title { font-size: 1.6rem; } .content { padding: 24px 16px; } }
+    /* === SEO PAGE ENHANCEMENTS (auto-injected) === */
+        /* Page-load fade-in */
+        body { opacity: 0; transition: opacity 0.3s ease; }
+        body.page-loaded { opacity: 1; }
+        /* Fixed looped hero video — stays visible behind all content while scrolling */
+        .bg-video {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -2;
+        }
+        .bg-video video { width: 100%; height: 100%; object-fit: cover; }
+        .bg-video::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.35); z-index: 1;
+        }
+        /* Container must sit above the video */
+        .container { position: relative; z-index: 2; }
+        /* CRT TV static transition on navigation */
+        .crt-overlay {
+            position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+            background:
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 100% 4px, 256px 256px;
+            opacity: 0; transition: opacity 0.05s ease;
+        }
+        .crt-overlay.active { opacity: 1; }
+        /* nav-btn system (unified button styles) */
+        .nav-btn {
+            flex:1; min-width:140px; max-width:200px; padding:14px 24px; border-radius:12px;
+            font-weight:700; cursor:pointer; transition: all 0.2s ease;
+            font-family:'Inter',sans-serif; font-size:0.95rem; border:none;
+            display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none;
+        }
+        .nav-btn-primary { background: var(--royal-blue); color: var(--white); }
+        .nav-btn-primary:hover { background:#001a4d; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,102,0.3); }
+        .nav-btn-gold { background: var(--gold); color: var(--royal-blue); }
+        .nav-btn-gold:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
+        .nav-btn-back { background:#f8f8f8; color:#666; border:1.5px solid #e0e0e0; }
+        .nav-btn-back:hover { background:#eee; color:#1A1A1A; border-color:#ccc; }
+        @media (prefers-reduced-motion: reduce) {
+            .crt-overlay { display: none; }
+            body { opacity: 1 !important; transition: none !important; }
+        }
+        @media (max-width: 600px) {
+            .bg-video::after { background: rgba(0,0,0,0.45) !important; }
+        }
+/* === END SEO PAGE ENHANCEMENTS === */
     </style>
 </head>
 <body>
+    <div class="bg-video">
+      <video id="hero-video" muted loop autoplay playsinline preload="auto">
+        <source src="videos/mount-loop-final.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
     <div class="container">
         <header>
             <h1 class="hero-title">TV Mounting in Lewisville, TX</h1>
@@ -113,5 +166,78 @@
             </div>
         </div>
     </div>
+<script>
+    /* Belt-and-suspenders looped hero video handler (matches index.html) */
+    (function bindHeroVideo() {
+        var v = document.getElementById('hero-video');
+        if (!v) return;
+        v.muted = true; v.defaultMuted = true;
+        var tryPlay = function () { v.play().catch(function(){}); };
+        var reset = function () { try { v.currentTime = 0; tryPlay(); } catch (e) {} };
+        v.addEventListener('loadedmetadata', tryPlay);
+        v.addEventListener('canplay', tryPlay);
+        v.addEventListener('canplaythrough', tryPlay);
+        v.addEventListener('ended', reset);
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden && v.paused) { tryPlay(); }
+        });
+        var mobileKickoff = function () {
+            tryPlay();
+            if (!v.paused || v.currentTime > 0) {
+                document.removeEventListener('touchstart', mobileKickoff, true);
+                document.removeEventListener('click', mobileKickoff, true);
+                document.removeEventListener('scroll', mobileKickoff, true);
+                document.removeEventListener('pointerdown', mobileKickoff, true);
+            }
+        };
+        document.addEventListener('touchstart', mobileKickoff, true);
+        document.addEventListener('click', mobileKickoff, true);
+        document.addEventListener('scroll', mobileKickoff, true);
+        document.addEventListener('pointerdown', mobileKickoff, true);
+    })();
+    /* Page-load fade-in */
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('page-loaded');
+    });
+    /* CRT TV static on same-origin navigation */
+    (function() {
+        const crt = document.createElement('div');
+        crt.className = 'crt-overlay'; crt.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(crt);
+        const showStatic = (callback) => {
+            crt.classList.add('active');
+            setTimeout(() => { crt.classList.remove('active'); if (callback) callback(); }, 300);
+        };
+        document.addEventListener('click', function(e) {
+            const a = e.target.closest('a[href]');
+            if (a && a.href && a.origin === location.origin) {
+                if (a.target === '_blank') { showStatic(); }
+                else { e.preventDefault(); showStatic(() => window.location.href = a.href); }
+            }
+        });
+        document.addEventListener('submit', function(e) { e.preventDefault(); showStatic(() => e.target.submit()); });
+    })();
+    /* Top progress bar on navigation */
+    (function() {
+        const bar = document.createElement('div');
+        bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--royal-blue),var(--gold));z-index:9999;transform:scaleX(0);transform-origin:left;transition:transform 0.2s ease;pointer-events:none;';
+        document.body.appendChild(bar);
+        let p = 0;
+        const start = () => {
+            p = 0; bar.style.transform = 'scaleX(0)';
+            const tick = () => { if (p < 0.9) { p += Math.random()*0.1+0.05; bar.style.transform = 'scaleX('+Math.min(p,0.9)+')'; requestAnimationFrame(tick); } };
+            tick();
+        };
+        const finish = () => {
+            bar.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+            bar.style.transform = 'scaleX(1)';
+            setTimeout(() => bar.style.opacity='0', 300);
+            setTimeout(() => bar.remove(), 600);
+        };
+        document.addEventListener('click', e => { const a=e.target.closest('a[href]'); if(a&&a.href&&a.origin===location.origin&&!a.target) start(); });
+        document.addEventListener('submit', start);
+        window.addEventListener('pageshow', e => { if(e.persisted) finish(); });
+    })();
+    </script>
 </body>
 </html>
