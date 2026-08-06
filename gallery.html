@@ -26,7 +26,6 @@
         :root {
             --royal-blue: #002366;
             --gold: #D4AF37;
-            --gold-light: #F9F4E8;
             --white: #FFFFFF;
             --off-white: #F8F9FA;
             --text-dark: #1A1A1A;
@@ -61,7 +60,6 @@
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
-        header p { opacity: 0.9; font-weight: 300; }
 
         /* Quick Estimate Banner */
         .quick-estimate-banner { background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%); border-bottom: 2px solid var(--gold); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,35,102,0.12); }
@@ -73,209 +71,121 @@
         .qe-form button { padding: 12px 24px; background: var(--royal-blue); color: var(--white); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
         .qe-form button:hover { background: var(--gold); color: var(--royal-blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
         .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--text-muted); }
-        .qe-confirm strong { color: var(--royal-blue); }
-        @media (max-width: 560px) {
+        .qe-confirm strong { color: var(--royal-blue); }@media (max-width: 560px) {
             .qe-form { flex-direction: column; }
             .qe-form input { max-width: 100%; width: 100%; }
             .qe-form .btn { width: 100%; }
         }
 
-        /* Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            padding: 20px 20px 10px;
-            border-bottom: 1px solid rgba(212,175,55,0.2);
-        }
-        .filter-btn {
-            padding: 10px 20px;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: 2px solid transparent;
-            background: var(--off-white);
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
-        }
-        .filter-btn:hover {
-            border-color: var(--gold);
-            color: var(--royal-blue);
-            background: var(--gold-light);
-        }
-        .filter-btn.active {
-            background: var(--royal-blue);
-            color: var(--white);
-            border-color: var(--royal-blue);
-        }
-        .filter-btn.active:hover {
-            background: #001a4d;
-            border-color: #001a4d;
-            color: var(--white);
-        }
-
-        /* Gallery */
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             padding: 30px;
         }
         .gallery-item {
-            background: var(--white);
-            border-radius: 16px;
+            background: var(--off-white);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
-        .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(0,35,102,0.15);
-        }
-        .gallery-item.hidden {
-            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .gallery-item img {
             width: 100%;
-            height: 220px;
-            object-fit: cover;
+            height: auto;
             display: block;
         }
-        .gallery-caption {
-            padding: 16px;
-            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, var(--white) 100%);
-        }
-        .gallery-caption .service-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-        .gallery-caption .service-tag.tv { background: var(--gold-light); color: var(--royal-blue); }
-        .gallery-caption .service-tag.fireplace { background: #FFF3E0; color: #E65100; }
-        .gallery-caption .service-tag.soundbar { background: #E8F5E9; color: #2E7D32; }
-        .gallery-caption .service-tag.blinds { background: #F3E5F5; color: #7B1FA2; }
-        .gallery-caption .service-tag.mirrors { background: #E3F2FD; color: #1565C0; }
-        .gallery-caption .service-tag.led { background: #FFF8E1; color: #F57F17; }
-        .gallery-caption .service-tag.wire { background: #E0F2F1; color: #00695C; }
-        .gallery-caption h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--royal-blue); margin-bottom: 4px; }
-        .gallery-caption p { font-size: 0.85rem; color: var(--text-muted); }
-
-        /* Lightbox */
-        .lightbox {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: rgba(0,0,0,0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .lightbox.open {
-            opacity: 1;
-            visibility: visible;
-        }
-        .lightbox img {
-            max-width: 90vw;
-            max-height: 85vh;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-        .lightbox.open img { transform: scale(1); }
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s ease;
-        }
-        .lightbox-close:hover { background: rgba(255,255,255,0.2); }
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s ease;
-        }
-        .lightbox-nav:hover { background: rgba(255,255,255,0.2); }
-        .lightbox-prev { left: 20px; }
-        .lightbox-next { right: 20px; }
-        .lightbox-caption {
-            position: absolute;
-            bottom: -80px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: var(--white);
-            max-width: 90vw;
-            padding: 12px 20px;
-            pointer-events: none;
-        }
-        .lightbox-caption h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 4px; }
-        .lightbox-caption p { font-size: 0.95rem; opacity: 0.8; }
-
         .back-link {
             display: block;
             text-align: center;
-            margin: 20px 0 40px;
+            margin: 20px 0;
             color: var(--royal-blue);
             text-decoration: none;
             font-weight: 600;
         }
-        .back-link:hover { text-decoration: underline; }
-
-        /* SEO Enhancements */
-        body { opacity: 0; transition: opacity 0.3s ease; }
-        body.page-loaded { opacity: 1; }
-        .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -2; }
-        .bg-video video { width: 100%; height: 100%; object-fit: cover; }
-        .bg-video::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); z-index: 1; }
-        .container { position: relative; z-index: 2; }
-        .crt-overlay { position: fixed; inset: 0; z-index: 9999; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px), url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); background-size: 100% 4px, 256px 256px; opacity: 0; transition: opacity 0.05s ease; }
-        .crt-overlay.active { opacity: 1; }
-        .nav-btn { flex:1; min-width:140px; max-width:200px; padding:14px 24px; border-radius:12px; font-weight:700; cursor:pointer; transition: all 0.2s ease; font-family:'Inter',sans-serif; font-size:0.95rem; border:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
-        .nav-btn-primary { background: var(--royal-blue); color: var(--white); }
-        .nav-btn-primary:hover { background:#001a4d; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,102,0.3); }
-        .nav-btn-gold { background: var(--gold); color: var(--royal-blue); }
-        .nav-btn-gold:hover { background:#c4a030; transform:translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
-        .nav-btn-back { background:#f8f8f8; color:#666; border:1.5px solid #e0e0e0; }
-        .nav-btn-back:hover { background:#eee; color:#1A1A1A; border-color:#ccc; }
-        @media (prefers-reduced-motion: reduce) {
-            .crt-overlay { display: none; }
-            body { opacity: 1 !important; transition: none !important; }
+        .back-link:hover {
+            text-decoration: underline;
         }
-        @media (max-width:
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>C&O TV Mounting</h1>
+        <p>Our Work Gallery</p>
+    </header>
+
+    <!-- Quick Estimate Banner -->
+    <div class="quick-estimate-banner" id="quick-banner">
+        <div class="qe-content">
+            <div class="qe-tagline">Want a free estimate in minutes?</div>
+            <div class="qe-form" id="qe-form">
+                <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
+                <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
+                <button type="button" id="qe-submit">Get Free Estimate</button>
+            </div>
+            <div class="qe-confirm" id="qe-confirm" style="display:none;">
+                <span>✅ Got it! We'll text you within 5 minutes.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="gallery">
+        <!-- Images 1-12 -->
+        <figure class="gallery-item"><img src="images/img01.jpg" alt="TV mounted on light wall"></figure>
+        <figure class="gallery-item"><img src="images/img02.jpg" alt="TV on dark wall with blue screen"></figure>
+        <figure class="gallery-item"><img src="images/img03.jpg" alt="TV installation"></figure>
+        <figure class="gallery-item"><img src="images/img04.jpg" alt="TV setup"></figure>
+        <figure class="gallery-item"><img src="images/img05.jpg" alt="TV mount"></figure>
+        <figure class="gallery-item"><img src="images/img06.jpg" alt="TV mounting"></figure>
+        <figure class="gallery-item"><img src="images/img07.jpg" alt="TV installed"></figure>
+        <figure class="gallery-item"><img src="images/img08.jpg" alt="TV on wall"></figure>
+        <figure class="gallery-item"><img src="images/img09.jpg" alt="TV mount example"></figure>
+        <figure class="gallery-item"><img src="images/img10.jpg" alt="TV installation"></figure>
+        <figure class="gallery-item"><img src="images/img11.jpg" alt="TV mounted"></figure>
+        <figure class="gallery-item"><img src="images/img12.jpg" alt="TV setup"></figure>
+        <figure class="gallery-item"><img src="images/img13.jpg" alt="TV mounting project"></figure>
+        <figure class="gallery-item"><img src="images/img14.jpg" alt="TV mounted on wall"></figure>
+        <figure class="gallery-item"><img src="images/img15.jpg" alt="TV installation in living room"></figure>
+        <figure class="gallery-item"><img src="images/img16.jpg" alt="TV mounted above fireplace"></figure>
+        <figure class="gallery-item"><img src="images/img17.jpg" alt="TV mounting project"></figure>
+        <figure class="gallery-item"><img src="images/img_0c79606db11b.jpg" alt="TV mounting project"></figure>
+        <figure class="gallery-item"><img src="images/img_c5a61a577d46.jpg" alt="TV installation"></figure>
+        <figure class="gallery-item"><img src="images/img_92f56c1527e1.jpg" alt="TV mounted on wall"></figure>
+        <figure class="gallery-item"><img src="images/img18.jpg" alt="TV mounting project"></figure>
+        <figure class="gallery-item"><img src="images/img19.jpg" alt="TV installation"></figure>
+        </div>
+    <a href="index.html" class="back-link">&larr; Back to Booking Page</a>
+</div>
+
+<script>
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxFz5GMiiO9yxl6xjlKH6o-h9kbJOWNT97SWbj2f0bMs_Xs8Aw3qQTXkWPWC_pF8s0i/exec';
+
+document.getElementById('qe-submit').addEventListener('click', async () => {
+    const name = document.getElementById('qe-name').value.trim();
+    const phone = document.getElementById('qe-phone').value.trim();
+    if (!name || !phone) {
+        alert('Please enter both your name and phone number.');
+        return;
+    }
+    const btn = document.getElementById('qe-submit');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    // Show confirmation immediately, then swap form
+    document.getElementById('qe-confirm').style.display = 'block';
+    document.getElementById('qe-form').style.display = 'none';
+    // Fire and forget
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'quick_lead',
+            name: name,
+            phone: phone,
+            source: 'gallery-page'
+        })
+    }).catch(() => {});
+});
+</script>
+</body>
+</html>
