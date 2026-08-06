@@ -232,21 +232,20 @@
             font-weight: 700;
         }
         header p { font-weight: 300; opacity: 0.9; font-size: 0.9rem; letter-spacing: 0.2px; }
-        /* Progress bar with icons */
+        /* Progress bar with numbered circles */
                 .progress-bar {
                     display: flex;
                     justify-content: space-between;
-                    padding: 16px 20px;
-                    background: var(--gold-light);
+                    padding: 10px 40px;
+                    background: transparent;
                     position: relative;
-                    border-bottom: 2px solid rgba(212,175,55,0.15);
                 }
                 .progress-bar::before {
                     content: '';
                     position: absolute;
                     top: 50%;
-                    left: 20px;
-                    right: 20px;
+                    left: 60px;
+                    right: 60px;
                     height: 3px;
                     background: rgba(212, 175, 55, 0.2);
                     z-index: 0;
@@ -254,30 +253,48 @@
                     border-radius: 2px;
                 }
                 .step {
-                    width: 48px;
-                    height: 48px;
+                    width: 36px;
+                    height: 36px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     position: relative;
+                    z-index: 1;
                 }
-                .step svg {
-                                    width: 24px;
-                                    height: 24px;
-                                    transition: stroke 0.3s;
+                .step-circle {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: 'Inter', sans-serif;
+                    font-weight: 800;
+                    font-size: 0.85rem;
+                    background: var(--white);
+                    color: #ccc;
+                    border: 2px solid #ddd;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+                }
+                                .step-1.active .step-circle,
+                                .step-2.active .step-circle,
+                                .step-3.active .step-circle,
+                                .step-4.active .step-circle {
+                                    background: var(--royal-blue);
+                                    color: var(--white);
+                                    border-color: var(--royal-blue);
+                                    box-shadow: 0 2px 10px rgba(0,35,102,0.25);
                                 }
-                                .step-1 svg { stroke: #ddd; }
-                                .step-2 svg { stroke: #ddd; }
-                                .step-3 svg { stroke: #ddd; }
-                                .step-4 svg { stroke: #ddd; }
-                                .step-1.active svg { stroke: var(--royal-blue); }
-                                .step-2.active svg { stroke: var(--royal-blue); }
-                                .step-3.active svg { stroke: var(--royal-blue); }
-                                .step-4.active svg { stroke: var(--royal-blue); }
-                                .step-1.completed svg { stroke: var(--gold); }
-                                .step-2.completed svg { stroke: var(--gold); }
-                                .step-3.completed svg { stroke: var(--gold); }
-                                .step-4.completed svg { stroke: var(--gold); }
+                                .step-1.completed .step-circle,
+                                .step-2.completed .step-circle,
+                                .step-3.completed .step-circle,
+                                .step-4.completed .step-circle {
+                                    background: var(--gold);
+                                    color: var(--royal-blue);
+                                    border-color: var(--gold);
+                                    box-shadow: 0 2px 10px rgba(212,175,55,0.3);
+                                }
         .serving-line {
             text-align:center; padding:12px 16px 6px;
             font-size:0.78rem; color:var(--text-muted); font-weight:600;
@@ -578,7 +595,7 @@
             content: '';
             position: absolute;
             top: 50%;
-            left: 20px;
+            left: 60px;
             height: 3px;
             width: 0;
             background: linear-gradient(90deg, var(--gold) 0%, #F9F4E8 50%, var(--gold) 100%);
@@ -588,22 +605,22 @@
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
         }
-        .progress-bar[data-step="2"]::after { width: calc(33.33% - 30px); }
-        .progress-bar[data-step="3"]::after { width: calc(66.66% - 30px); }
-        .progress-bar[data-step="4"]::after { width: calc(100% - 40px); }
+        .progress-bar[data-step="2"]::after { width: calc(33.33% - 40px); }
+        .progress-bar[data-step="3"]::after { width: calc(66.66% - 40px); }
+        .progress-bar[data-step="4"]::after { width: calc(100% - 60px); }
 
         /* Floating step-number badge above active step */
         .step-num-badge {
             position: absolute;
-            top: -28px;
+            top: -24px;
             left: 50%;
             transform: translateX(-50%) translateY(6px);
             background: var(--royal-blue);
             color: var(--gold);
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 800;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 999px;
             border: 1.5px solid var(--gold);
             white-space: nowrap;
@@ -1365,22 +1382,22 @@
         </div>
     </header>
 
-    <div class="progress-bar" data-step="1">
+    <div class="progress-bar cf" data-step="1">
             <div class="step step-1 active" id="step-1">
                 <div class="step-num-badge">1 of 4</div>
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="16" rx="2"/><rect x="4" y="8" width="4" height="4"/><rect x="12" y="8" width="4" height="4"/></svg>
+                <div class="step-circle"><span>1</span></div>
             </div>
             <div class="step step-2" id="step-2">
                 <div class="step-num-badge">2 of 4</div>
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12H19M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="step-circle"><span>2</span></div>
             </div>
             <div class="step step-3" id="step-3">
                 <div class="step-num-badge">3 of 4</div>
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L15 9l3 3-6 4-6-4 3-3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="1" fill="currentColor"/></svg>
+                <div class="step-circle"><span>3</span></div>
             </div>
             <div class="step step-4" id="step-4">
                 <div class="step-num-badge">4 of 4</div>
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="step-circle"><span>4</span></div>
             </div>
         </div>
     <!-- Step labels removed — only the icon progress bar above is used -->
