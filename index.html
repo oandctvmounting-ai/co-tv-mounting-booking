@@ -1597,53 +1597,39 @@
     </div>
 </div>
 
-<!-- Sticky Mobile CTA Bar -->
-<div class="mobile-sticky-cta">
-    <a href="tel:8175239753" class="mobile-sticky-phone">📞 Call Now</a>
-    <a href="#" onclick="document.querySelector('.quick-estimate-banner').scrollIntoView({behavior:'smooth'}); return false;" class="mobile-sticky-book">📋 Free Quote</a>
+<!-- Sticky Mobile Phone Button -->
+<div class="mobile-sticky-phone-btn">
+    <a href="tel:8175239753" aria-label="Call C&O TV Mounting">📞</a>
 </div>
 <style>
-.mobile-sticky-cta {
+.mobile-sticky-phone-btn {
     display: none;
     position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--royal-blue);
-    padding: 10px 16px;
-    gap: 10px;
+    bottom: 24px;
+    right: 24px;
     z-index: 9999;
-    border-top: 3px solid var(--gold);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
-    justify-content: center;
-    align-items: center;
 }
-.mobile-sticky-cta a {
-    display: inline-flex;
+.mobile-sticky-phone-btn a {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 0.95rem;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    flex: 1;
-    max-width: 180px;
-}
-.mobile-sticky-phone {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     background: var(--gold);
     color: var(--royal-blue);
-    border: 2px solid var(--gold);
+    font-size: 1.6rem;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(212,175,55,0.5), 0 6px 24px rgba(0,35,102,0.2);
+    border: 3px solid var(--royal-blue);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.mobile-sticky-phone:hover { background: var(--gold-dark); }
-.mobile-sticky-book {
-    background: var(--white);
-    color: var(--royal-blue);
-    border: 2px solid var(--gold);
+.mobile-sticky-phone-btn a:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(212,175,55,0.6), 0 8px 32px rgba(0,35,102,0.3);
 }
-.mobile-sticky-book:hover { background: var(--gold-light); }
 @media (max-width: 768px) {
-    .mobile-sticky-cta { display: flex; }
+    .mobile-sticky-phone-btn { display: block; }
 }
 </style>
 
