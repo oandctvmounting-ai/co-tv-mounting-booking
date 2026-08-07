@@ -24,87 +24,79 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
+            --black: #0a0a0a;
             --royal-blue: #002366;
+            --royal-blue-dark: #001a4a;
             --gold: #D4AF37;
-            --white: #FFFFFF;
-            --off-white: #F8F9FA;
-            --text-dark: #1A1A1A;
-            --text-muted: #666666;
+            --gold-dark: #b8962e;
+            --gold-light: #F9F4E8;
+            --white: #fff;
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(212,175,55,0.25);
+            --text-light: rgba(255,255,255,0.88);
+            --text-muted: rgba(255,255,255,0.55);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--off-white);
-            color: var(--text-dark);
-            line-height: 1.6;
+            background: var(--black);
+            color: var(--text-light);
+            line-height: 1.7;
             padding: 20px;
+            min-height: 100vh;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--white);
+            max-width: 1200px; margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,35,102,0.1);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
             overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            border: 1px solid var(--glass-border);
         }
         header {
-            background: var(--royal-blue);
+            background: linear-gradient(135deg, var(--royal-blue-dark) 0%, var(--royal-blue) 100%);
             color: var(--white);
             padding: 30px 20px;
             text-align: center;
-            border-bottom: 4px solid var(--gold);
+            border-bottom: 3px solid var(--gold);
+            position: relative;
         }
-        header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        header::after {
+            content: ''; position: absolute; bottom: 0; left: 50%;
+            transform: translateX(-50%); width: 80px; height: 3px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+            border-radius: 2px;
         }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 10px; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 30px; }
+        .gallery-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px; overflow: hidden;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .gallery-item:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.1); }
+        .gallery-item img { width: 100%; height: auto; display: block; }
+        .back-link {
+            display: block; text-align: center; margin: 20px 0 40px;
+            color: var(--gold); text-decoration: none; font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover { color: var(--white); text-decoration: underline; }
 
         /* Quick Estimate Banner */
-        .quick-estimate-banner { background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%); border-bottom: 2px solid var(--gold); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,35,102,0.12); }
+        .quick-estimate-banner { background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--glass-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .qe-content { max-width: 800px; margin: 0 auto; }
-        .qe-tagline { text-align: center; font-weight: 800; font-size: 1.05rem; color: var(--royal-blue); margin-bottom: 10px; letter-spacing: 0.2px; }
+        .qe-tagline { text-align: center; font-weight: 700; font-size: 1rem; color: var(--gold); margin-bottom: 10px; }
         .qe-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-        .qe-form input { padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; flex: 1; min-width: 140px; }
-        .qe-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.2); }
-        .qe-form button { padding: 12px 24px; background: var(--royal-blue); color: var(--white); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
-        .qe-form button:hover { background: var(--gold); color: var(--royal-blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.4); }
-        .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--text-muted); }
-        .qe-confirm strong { color: var(--royal-blue); }@media (max-width: 560px) {
-            .qe-form { flex-direction: column; }
-            .qe-form input { max-width: 100%; width: 100%; }
-            .qe-form .btn { width: 100%; }
-        }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 30px;
-        }
-        .gallery-item {
-            background: var(--off-white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin: 20px 0;
-            color: var(--royal-blue);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        .qe-form input { padding: 12px 14px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 10px; background: rgba(255,255,255,0.05); color: var(--white); font-family: 'Inter',sans-serif; font-size: 0.95rem; flex: 1; min-width: 140px; transition: all 0.2s ease; }
+        .qe-form input::placeholder { color: rgba(255,255,255,0.35); }
+        .qe-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
+        .qe-form button { padding: 12px 24px; background: linear-gradient(135deg, var(--gold-dark), var(--gold)); color: var(--black); border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+        .qe-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.3); }
+        .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--gold); }
+        @media (max-width: 560px) { .qe-form { flex-direction: column; } .qe-form input { width: 100%; } .qe-form button { width: 100%; } }
     </style>
 </head>
 <body>
