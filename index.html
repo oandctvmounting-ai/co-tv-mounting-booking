@@ -85,7 +85,7 @@
         .bg-video video { width: 100%; height: 100%; object-fit: cover; }
         .bg-video::after {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.85) 50%, rgba(10,10,10,0.95) 100%);
+            background: linear-gradient(180deg, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.5) 50%, rgba(10,10,10,0.7) 100%);
             z-index: 1;
         }
 
@@ -211,8 +211,10 @@
         .service-card__min-note { font-size: 0.75rem; color: var(--gold-dark); margin-top: 4px; }
         .popular-ribbon { position: absolute; top: -1px; right: -1px; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 0 14px 0 8px; }
 
+        .mount-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
         @media (min-width: 600px) {
             .options-grid { grid-template-columns: repeat(2, 1fr); }
+            .mount-grid { grid-template-columns: repeat(3, 1fr) !important; }
         }
         @media (min-width: 900px) {
             .options-grid { grid-template-columns: repeat(3, 1fr); }
@@ -310,12 +312,13 @@
         .step2-below-video { margin-top: 16px; }
 
         /* Mount cards */
-        .mount-card { border: 1.5px solid rgba(255,255,255,0.1); border-radius: 14px; overflow: hidden; cursor: pointer; transition: var(--transition); background: var(--glass); backdrop-filter: blur(10px); }
+        .mount-card { border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; cursor: pointer; transition: var(--transition); background: var(--glass); backdrop-filter: blur(10px); display: flex; flex-direction: column; }
         .mount-card:hover { border-color: var(--glass-border-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
         .mount-card.selected { border-color: var(--gold); box-shadow: 0 8px 24px rgba(212,175,55,0.15); }
-        .mount-card img { width: 100%; height: 120px; object-fit: cover; }
-        .mount-card-title { padding: 10px 12px; font-weight: 600; font-size: 0.9rem; color: var(--white); }
-        .mount-card-price { padding: 0 12px 12px; font-weight: 700; color: var(--gold); font-size: 0.85rem; }
+        .mount-card img { width: 100%; height: 70px; object-fit: cover; }
+        .mount-card-title { padding: 6px 10px; font-weight: 600; font-size: 0.8rem; color: var(--white); }
+        .mount-card-price { padding: 0 10px 8px; font-weight: 700; color: var(--gold); font-size: 0.75rem; }
+        .mount-name { padding: 6px 10px; font-weight: 600; font-size: 0.8rem; color: var(--white); display: block; }
 
         /* Addon blocks */
         .addon-block { margin-bottom: 12px; }
@@ -446,19 +449,15 @@
 
     <div class="progress-bar cf" data-step="1">
             <div class="step step-1 active" id="step-1">
-                <div class="step-num-badge">1 of 4</div>
                 <div class="step-circle"><span>1</span></div>
             </div>
             <div class="step step-2" id="step-2">
-                <div class="step-num-badge">2 of 4</div>
                 <div class="step-circle"><span>2</span></div>
             </div>
             <div class="step step-3" id="step-3">
-                <div class="step-num-badge">3 of 4</div>
                 <div class="step-circle"><span>3</span></div>
             </div>
             <div class="step step-4" id="step-4">
-                <div class="step-num-badge">4 of 4</div>
                 <div class="step-circle"><span>4</span></div>
             </div>
         </div>
@@ -657,13 +656,13 @@
         <div style="padding: 32px 24px; text-align: center; background: rgba(10,10,10,0.6); border-top: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 16px;">
                 <div style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--glass); border: 1px solid var(--glass-border-strong); backdrop-filter: blur(10px); border-radius: 999px; font-weight: 700; color: var(--black); font-size: 0.85rem; box-shadow: 0 2px 8px rgba(212,175,55,0.15); transition: transform 0.2s ease, box-shadow 0.2s ease;">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 20px; height: 20px; stroke: var(--royal-blue); stroke-width: 1.5;">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 20px; height: 20px; stroke: var(--gold); stroke-width: 1.5;">
                         <path d="M12 2l2.39 1.74 2.95-.02 1.0 2.8 2.4 1.74-.92 2.8.92 2.8-2.4 1.74-1.0 2.8-2.95-.02L12 22l-2.39-1.74-2.95.02-1.0-2.8-2.4-1.74.92-2.8-.92-2.8 2.4-1.74 1.0-2.8 2.95.02L12 2z" stroke-linejoin="round"/>
                         <path d="M8.5 12.2l2.3 2.3 4.7-4.9" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                    Trusted Across the DFW Metroplex
+                    <span style="color:var(--white);">Trusted Across</span> the DFW Metroplex
                 </div>
-                <div style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--royal-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 999px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(212,175,55,0.15); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--royal-blue); color: var(--gold); border: 2px solid var(--gold); border-radius: 999px; font-weight: 700; font-size: 0.85rem; color: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: transform 0.2s ease, box-shadow 0.2s ease; backdrop-filter: blur(10px);">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 20px; height: 20px; stroke: var(--gold); stroke-width: 1.5;">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round"/>
                         <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -671,10 +670,10 @@
                     <strong>24-Month Workmanship Warranty</strong>
                 </div>
             </div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
-                            <strong>Secure payments via Square</strong> — Deposits (when required) accept Apple Pay, Google Pay, debit & credit cards.
+            <div style="font-size: 0.8rem; color: rgba(255,255,255,0.75); line-height: 1.6;">
+                            <strong style="color:var(--gold);">Secure payments via Square</strong> — Deposits (when required) accept Apple Pay, Google Pay, debit & credit cards.
                         </div>
-                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(212,175,55,0.3);">
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--glass-border);">
                             <a href="tel:8175239753" style="display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: var(--black); padding: 14px 28px; border-radius: 999px; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px; text-decoration: none; box-shadow: 0 4px 16px rgba(212,175,55,0.4); border: 3px solid var(--royal-blue); transition: all 0.2s ease;">
                                 <span style="font-size: 1.3em;">📞</span>
                                 <span>Text/Call: <strong>817-523-9753</strong></span>
@@ -941,9 +940,9 @@ function renderStep2() {
             const isAdded = state.addons.has(key);
             const open = isAdded ? ' open' : '';
             html += `<div class="addon-block${open}" data-svc="${key}">
-                            <div class="addon-head" onclick="toggleAddon('${key}')" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px; background:${isAdded ? 'var(--royal-blue)' : 'var(--white)'}; color:${isAdded ? 'var(--white)' : 'var(--text-dark)'}; border:2px solid ${isAdded ? 'var(--royal-blue)' : '#e8e8e8'}; border-radius:14px; cursor:pointer; transition:all 0.2s ease; font-weight:700; font-size:1.05rem;">
+                            <div class="addon-head" onclick="toggleAddon('${key}')" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; background:${isAdded ? 'var(--royal-blue)' : 'var(--glass)'}; color:${isAdded ? 'var(--white)' : 'var(--white)'}; border:1.5px solid ${isAdded ? 'var(--royal-blue)' : 'rgba(255,255,255,0.1)'}; border-radius:14px; cursor:pointer; transition:all 0.2s ease; font-weight:600; font-size:0.95rem;">
                                 <span style="display:flex; align-items:center; gap:12px; font-size:1.1rem;">${s.icon} ${s.name}</span>
-                                <span style="padding:14px 28px; background:var(--gold); color:var(--royal-blue); border-radius:999px; font-weight:900; font-size:0.95rem; box-shadow:0 4px 16px rgba(212,175,55,0.4); transition:all 0.2s ease;">${isAdded ? '✓ Added' : '+ Add Service'}</span>
+                                <span style="padding:10px 20px; background:var(--gold); color:var(--black); border-radius:8px; font-weight:700; font-size:0.8rem; box-shadow:0 4px 12px rgba(212,175,55,0.25); transition:all 0.2s ease;">${isAdded ? '✓ Added' : '+ Add Service'}</span>
                             </div>
                             <div class="addon-body">${configHtml(key, 'a')}</div>
                         </div>`;
@@ -1020,7 +1019,7 @@ function mountCards(group) {
             const title = MOUNT_TITLE[k] || k;
             const photo = MOUNT_PHOTO[k] || '';
             return `<div class="option-card mount-card" data-group="${group}" onclick="pickOption('${group}','${k}', this)">
-                ${photo ? `<img src="${photo}" alt="${title}" style="width:100%; height:auto; border-radius:10px; background:var(--gold-light);">` : (MOUNT_SVG[k] || '')}
+                ${photo ? `<img src="${photo}" alt="${title}" style="width:100%; height:80px; object-fit:cover; border-radius:8px;">` : (MOUNT_SVG[k] || '')}
                 <span class="mount-name">${title}</span>
                 <span class="price-tag">$${v} base</span>
             </div>`;
@@ -1039,7 +1038,7 @@ function renderTvs(prefix) {
             ? `<button type="button" class="btn-back" style="flex:0 0 auto; padding:8px 14px; margin-left:auto" onclick="removeTv('${prefix}', ${i})">Remove</button>` : '';
         return `<div class="addon-block open" style="margin-bottom:14px">
             <div class="addon-head" style="cursor:default; margin-bottom:8px">
-                <span style="font-weight:600; color:var(--royal-blue)">${label}</span>
+                <span style="font-weight:600; color:var(--gold)">${label}</span>
                 ${removeBtn}
             </div>
             <div class="options-grid">
@@ -1417,10 +1416,10 @@ function renderFinalPricing() {
     const note = document.getElementById('final-travel-note');
     if (note) {
         if (state.travelDistance !== null && state.travelDistance > TRAVEL_FEE_MAX_DISTANCE) {
-            note.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue); text-align:left">
-                <span class="total-label" style="color:var(--royal-blue)">Travel Fee Applies (${state.travelDistance.toFixed(0)} mi from Irving)</span>
-                <span class="total-amount" style="color:var(--royal-blue); font-size:1.4rem">$${TRAVEL_FEE}.00</span>
-                <span class="total-note" style="color:var(--royal-blue)">Included in your final price — applies to jobs beyond ${TRAVEL_FEE_MAX_DISTANCE} miles from Irving, TX</span>
+            note.innerHTML = `<div class="total-box" style="background:rgba(212,175,55,0.1); color:var(--gold); border-color:var(--gold); text-align:left">
+                <span class="total-label" style="color:var(--gold)">Travel Fee Applies (${state.travelDistance.toFixed(0)} mi from Irving)</span>
+                <span class="total-amount" style="color:var(--gold); font-size:1.4rem">$${TRAVEL_FEE}.00</span>
+                <span class="total-note" style="color:var(--text-muted)">Included in your final price — applies to jobs beyond ${TRAVEL_FEE_MAX_DISTANCE} miles from Irving, TX</span>
             </div>`;
         } else if (state.travelDistance !== null) {
             note.innerHTML = `<div class="total-box" style="background:#e6f4ea; color:#1e7e34; border-color:#1e7e34; text-align:left">
@@ -1472,7 +1471,7 @@ async function updateTravelDistance() {
 async function evaluateDeposit() {
     const area = document.getElementById('deposit-area');
     const addr = document.getElementById('cust-address').value;
-    area.innerHTML = `<div class="total-box" style="background:var(--royal-blue)">
+    area.innerHTML = `<div class="total-box" style="background:rgba(0,35,102,0.3); border-color:var(--gold);">
         <span class="total-label"><span class="spinner"></span>Checking distance from Irving…</span></div>`;
     document.getElementById('submit-btn').innerText = 'Book Now';
 
@@ -1484,10 +1483,10 @@ async function evaluateDeposit() {
         const d = haversine(IRVING.lat, IRVING.lon, parseFloat(data[0].lat), parseFloat(data[0].lon));
         state.travelDistance = d;   // keep travel-fee engine in sync with deposit geocode
         if (d > DEPOSIT_REQUIRED_MILES) {
-            area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
-                <span class="total-label" style="color:var(--royal-blue)">Deposit Required (${d.toFixed(0)} mi from Irving)</span>
-                <span class="total-amount" style="color:var(--royal-blue)">$50.00</span>
-                <span class="total-note" style="color:var(--royal-blue)">Secures your slot for jobs beyond 25 miles</span></div>`;
+            area.innerHTML = `<div class="total-box" style="background:rgba(212,175,55,0.1); color:var(--gold); border-color:var(--gold)">
+                <span class="total-label" style="color:var(--gold)">Deposit Required (${d.toFixed(0)} mi from Irving)</span>
+                <span class="total-amount" style="color:var(--gold)">$50.00</span>
+                <span class="total-note" style="color:var(--gold)">Secures your slot for jobs beyond 25 miles</span></div>`;
             document.getElementById('submit-btn').innerText = 'Book & Pay $50 Deposit';
         } else {
             area.innerHTML = `<div class="total-box" style="background:#e6f4ea; color:#1e7e34; border-color:#1e7e34">
@@ -1502,10 +1501,10 @@ async function evaluateDeposit() {
     }
 }
 function unknownDeposit(area) {
-    area.innerHTML = `<div class="total-box" style="background:var(--gold-light); color:var(--royal-blue); border-color:var(--royal-blue)">
-        <span class="total-label" style="color:var(--royal-blue)">Deposit</span>
-        <span class="total-amount" style="color:var(--royal-blue); font-size:1.3rem">Confirmed by text</span>
-        <span class="total-note" style="color:var(--royal-blue)">We'll verify distance & deposit when we confirm</span></div>`;
+    area.innerHTML = `<div class="total-box" style="background:rgba(212,175,55,0.1); color:var(--gold); border-color:var(--gold)">
+        <span class="total-label" style="color:var(--gold)">Deposit</span>
+        <span class="total-amount" style="color:var(--gold); font-size:1.3rem">Confirmed by text</span>
+        <span class="total-note" style="color:var(--gold)">We'll verify distance & deposit when we confirm</span></div>`;
     document.getElementById('submit-btn').innerText = 'Book Now';
 }
 
