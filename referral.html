@@ -22,18 +22,19 @@
       "priceRange": "$$"
     }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --black: #0a0a0a;
+            --black-soft: #141414;
             --royal-blue: #002366;
             --gold: #D4AF37;
             --gold-light: #F9F4E8;
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(212,175,55,0.3);
             --white: #FFFFFF;
-            --off-white: #F8F9FA;
-            --text-dark: #1A1A1A;
-            --text-muted: #666666;
-            --shadow: 0 10px 30px rgba(0,35,102,0.1);
-            --shadow-strong: 0 20px 40px rgba(0,35,102,0.15);
+            --text-light: rgba(255,255,255,0.85);
+            --text-muted: rgba(255,255,255,0.5);
             --radius: 16px;
             --radius-sm: 10px;
             --transition: 0.2s ease;
@@ -41,373 +42,652 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf1 100%);
-            color: var(--text-dark);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: var(--text-light);
             line-height: 1.6;
-            padding: 12px;
             min-height: 100vh;
         }
-        .container {
-            max-width: 720px;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: 16px;
-            box-shadow: var(--shadow-strong);
-            overflow: hidden;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+        .topbar {
+            text-align: center; padding: 16px 20px;
+            background: rgba(0,35,102,0.9); border-bottom: 2px solid var(--gold);
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px);
         }
-        header {
-            background: var(--royal-blue);
-            color: var(--white);
-            padding: 24px 16px 20px;
+        .topbar a {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--gold); color: var(--royal-blue);
+            padding: 10px 28px; border-radius: 10px; font-weight: 800;
+            font-size: 0.95rem; text-decoration: none;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3); transition: all var(--transition);
+        }
+        .topbar a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
+
+        /* HERO */
+        .hero {
             text-align: center;
-            position: relative;
+            padding: 48px 24px 40px;
+            max-width: 760px; margin: 0 auto;
         }
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: var(--gold);
-            border-radius: 2px;
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(212,175,55,0.12); border: 1px solid var(--gold);
+            color: var(--gold); font-size: 0.8rem; font-weight: 700;
+            padding: 8px 18px; border-radius: 999px; white-space: nowrap;
+            letter-spacing: 0.5px; margin-bottom: 24px; text-transform: uppercase;
         }
-        header h1 {
+        .hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            margin-bottom: 4px;
-            letter-spacing: 0.3px;
-            font-weight: 700;
+            font-size: 2.4rem; line-height: 1.15; color: var(--white);
+            margin-bottom: 12px; font-weight: 700;
         }
-        header p { font-weight: 300; opacity: 0.9; font-size: 0.9rem; letter-spacing: 0.2px; }
-        .section {
-            padding: 28px 24px 12px;
+        .hero h1 .gold { color: var(--gold); }
+        .hero p {
+            font-size: 1.05rem; color: var(--text-muted); max-width: 580px;
+            margin: 0 auto 32px; font-weight: 300;
+        }
+        @media (max-width: 560px) {
+            .hero { padding: 32px 16px 28px; }
+            .hero h1 { font-size: 1.7rem; }
+            .hero p { font-size: 0.95rem; }
+        }
+
+        /* STATS BAR */
+        .stats-bar {
+            display: flex; justify-content: center; gap: 12px;
+            flex-wrap: wrap; max-width: 680px; margin: 0 auto 8px;
+        }
+        .stat-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm); padding: 18px 22px;
+            backdrop-filter: blur(10px); text-align: center; min-width: 140px;
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem; color: var(--gold); font-weight: 700;
+        }
+        .stat-label {
+            font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-top: 4px; white-space: nowrap;
+        }
+
+        /* EARNINGS CALCULATOR */
+        .calc-section {
+            max-width: 760px; margin: 0 auto; padding: 32px 24px;
+        }
+        .calc-box {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius); padding: 28px;
+            backdrop-filter: blur(12px); text-align: center;
+        }
+        .calc-box h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem; color: var(--white); margin-bottom: 20px;
+        }
+        .calc-slider-wrap { max-width: 420px; margin: 0 auto 20px; }
+        .calc-slider-label {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px;
+        }
+        .calc-slider-label .jobs-count {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; color: var(--gold); font-weight: 700;
+        }
+        .calc-slider {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 6px; border-radius: 3px;
+            background: rgba(212,175,55,0.2); outline: none;
+        }
+        .calc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--gold); cursor: pointer;
+            box-shadow: 0 2px 8px rgba(212,175,55,0.4);
+        }
+        .calc-slider::-moz-range-thumb {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--gold); cursor: pointer; border: none;
+            box-shadow: 0 2px 8px rgba(212,175,55,0.4);
+        }
+        .calc-result {
+            display: flex; justify-content: center; gap: 8px; align-items: baseline;
+            margin-top: 16px;
+        }
+        .calc-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem; color: var(--gold); font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .calc-period { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; }
+        .calc-breakdown {
+            font-size: 0.78rem; color: var(--text-muted); margin-top: 8px;
+        }
+
+        /* BENEFITS */
+        .benefits-section {
+            max-width: 760px; margin: 0 auto; padding: 16px 24px 32px;
+        }
+        .benefits-section h2 {
+            font-family: 'Playfair Display', serif;
+            text-align: center; color: var(--white); font-size: 1.3rem;
+            margin-bottom: 24px;
+        }
+        .benefit-cards {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+        }
+        @media (max-width: 560px) { .benefit-cards { grid-template-columns: 1fr; } }
+        .benefit-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm); padding: 20px;
+            backdrop-filter: blur(10px); transition: all var(--transition);
+        }
+        .benefit-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+        .benefit-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; color: var(--gold); font-weight: 700;
+            line-height: 1; margin-bottom: 10px;
+        }
+        .benefit-card h3 {
+            color: var(--white); font-size: 0.95rem; font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .benefit-card p {
+            color: var(--text-muted); font-size: 0.82rem; line-height: 1.5;
+        }
+
+        /* BONUS BAR */
+        .bonus-bar {
+            max-width: 712px; margin: 0 auto 32px; padding: 0 24px;
+        }
+        .bonus-inner {
+            background: linear-gradient(135deg, #002366, #001a4d);
+            border: 1px solid var(--gold); border-radius: var(--radius-sm);
+            padding: 16px 20px; text-align: center;
+            color: var(--text-light); font-size: 0.88rem; font-weight: 600;
+        }
+        .bonus-inner strong { color: var(--gold); }
+        .bonus-inner .highlight { color: var(--white); font-weight: 800; }
+
+        /* FORM SECTION */
+        .form-section {
+            max-width: 760px; margin: 0 auto; padding: 0 24px 40px;
+        }
+        .form-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius); padding: 28px;
+            backdrop-filter: blur(12px);
+        }
+        .form-card h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--white); font-size: 1.35rem; text-align: center; margin-bottom: 6px;
+        }
+        .form-card .subtitle {
+            text-align: center; color: var(--text-muted); font-size: 0.85rem;
+            margin-bottom: 24px;
         }
         .section-label {
-            display:block; font-size:0.9rem; font-weight:800; color:var(--royal-blue);
-            text-transform:uppercase; letter-spacing:0.6px; margin:24px 0 12px;
-            border-bottom:2px solid rgba(212,175,55,0.5); padding-bottom:8px;
+            display: block; font-size: 0.85rem; font-weight: 800;
+            color: var(--gold); text-transform: uppercase; letter-spacing: 0.6px;
+            margin: 20px 0 12px; padding-bottom: 8px;
+            border-bottom: 1px solid rgba(212,175,55,0.25);
         }
         .section-label:first-of-type { margin-top: 0; }
         .input-group { margin-bottom: 16px; }
         .input-group label {
-            display:block; font-size:0.85rem; font-weight:700; color:var(--royal-blue);
-            margin-bottom: 6px; letter-spacing: 0.2px;
+            display: block; font-size: 0.82rem; font-weight: 700;
+            color: var(--gold-light); margin-bottom: 6px; letter-spacing: 0.2px;
         }
         .input-group input, .input-group select, .input-group textarea {
-            width:100%; padding:12px 14px; border:1.5px solid #e0e0e0; border-radius:8px;
-            font-family:'Inter', sans-serif; font-size:0.95rem; transition:all var(--transition);
-            background: var(--white);
+            width: 100%; padding: 12px 14px;
+            border: 1.5px solid rgba(212,175,55,0.2); border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            transition: all var(--transition);
+            background: rgba(0,0,0,0.4); color: var(--white);
         }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-            outline:none; border-color:var(--royal-blue); box-shadow:0 0 0 3px rgba(0,35,102,0.1);
+            outline: none; border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
         }
-        .input-group input::placeholder { color: #aaa; }
-        .input-group .hint {
-            font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;
-        }
+        .input-group input::placeholder { color: rgba(255,255,255,0.3); }
+        .input-group select option { background: var(--black-soft); color: var(--white); }
+        .input-group .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
         .btn {
-            padding:14px 20px; border-radius:10px; font-weight:700; cursor:pointer;
-            transition: all var(--transition); font-family:'Inter', sans-serif; font-size:0.95rem;
+            padding: 14px 20px; border-radius: 10px; font-weight: 700; cursor: pointer;
+            transition: all var(--transition); font-family: 'Inter', sans-serif; font-size: 0.95rem;
             border: none; width: 100%;
         }
         .btn-primary { background: var(--royal-blue); color: var(--white); }
-        .btn-primary:hover { background:#001a4d; transform:translateY(-1px); box-shadow: 0 4px 14px rgba(0,35,102,0.25); }
+        .btn-primary:hover { background: #001a4d; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,102,0.4); }
         .btn-gold { background: var(--gold); color: var(--royal-blue); }
-        .btn-gold:hover { background:#c4a030; transform:translateY(-1px); }
-        .btn-secondary { background:var(--off-white); color:var(--text-muted); border:1.5px solid #e0e0e0; }
-        .btn-secondary:hover { background:#eee; color: var(--text-dark); border-color: #ccc; }
-        .btn-outline { background: transparent; color: var(--royal-blue); border: 2px solid var(--royal-blue); }
-        .btn-outline:hover { background: var(--royal-blue); color: var(--white); }
+        .btn-gold:hover { background: #c4a030; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.3); }
+        .btn-secondary { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1.5px solid rgba(255,255,255,0.12); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+        .btn-outline { background: transparent; color: var(--gold); border: 2px solid var(--gold); }
+        .btn-outline:hover { background: var(--gold); color: var(--royal-blue); }
         .btn-row { display: flex; gap: 12px; margin-top: 24px; }
         .btn-row .btn { flex: 1; }
 
-        /* Benefits / Hook Box */
-        .benefits-box {
-            background: linear-gradient(135deg, #fafbfd 0%, #f0f4fa 100%);
-            border: 1.5px solid rgba(0,35,102,0.12);
-            border-radius: var(--radius);
-            padding: 28px 24px 20px;
-        }
-        .benefits-title {
-            font-family: 'Playfair Display', serif;
-            color: var(--royal-blue);
-            font-size: 1.3rem;
-            text-align: center;
-            margin-bottom: 20px;
-            letter-spacing: 0.3px;
-        }
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-        @media (max-width: 560px) {
-            .benefits-grid { grid-template-columns: 1fr; }
-        }
-        .benefit-card {
-            background: var(--white);
-            border-radius: var(--radius-sm);
-            padding: 16px 14px;
-            box-shadow: 0 2px 8px rgba(0,35,102,0.06);
-            border: 1px solid rgba(212,175,55,0.15);
-        }
-        .benefit-icon { font-size: 1.5rem; margin-bottom: 6px; }
-        .benefit-heading {
-            font-weight: 800;
-            font-size: 0.88rem;
-            color: var(--royal-blue);
-            margin-bottom: 4px;
-        }
-        .benefit-text {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-        .bonus-bar {
-            margin-top: 20px;
-            background: linear-gradient(135deg, #002366, #001a4d);
-            color: var(--gold);
-            padding: 14px 18px;
-            border-radius: var(--radius-sm);
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid var(--gold);
-        }
-        .bonus-bar strong { color: var(--white); }
+        /* NAV BUTTONS */
+        .nav-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+        .nav-btns .btn { width: auto; min-width: 200px; }
 
-        .success-state { display: none; text-align: center; padding: 40px 20px; }
+        /* SUCCESS */
+        .success-state { display: none; text-align: center; padding: 48px 20px; }
         .success-state.show { display: block; }
         .success-icon {
             width: 80px; height: 80px;
             background: linear-gradient(135deg, var(--gold), #e8c547);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 8px 24px rgba(212,175,55,0.4);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; box-shadow: 0 8px 32px rgba(212,175,55,0.4);
         }
         .success-icon svg { width: 40px; height: 40px; stroke: var(--royal-blue); }
-        .success-state h3 {
-            font-family: 'Playfair Display', serif;
-            color: var(--royal-blue);
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-        }
+        .success-state h3 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.5rem; margin-bottom: 8px; }
         .success-state p { color: var(--text-muted); margin-bottom: 24px; }
         .referral-code {
-            background: var(--royal-blue);
-            color: var(--gold);
-            padding: 16px 24px;
-            border-radius: 999px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            display: inline-block;
-            border: 3px solid var(--gold);
-            box-shadow: 0 4px 16px rgba(212,175,55,0.3);
-            margin-bottom: 16px;
+            background: var(--royal-blue); color: var(--gold); padding: 16px 28px;
+            border-radius: 999px; font-weight: 900; font-size: 1.1rem; letter-spacing: 2px;
+            display: inline-block; border: 3px solid var(--gold);
+            box-shadow: 0 4px 20px rgba(212,175,55,0.3); margin-bottom: 16px;
         }
-        .footer-link {
-            display: block;
-            text-align: center;
-            margin-top: 16px;
-            color: var(--royal-blue);
-            font-weight: 700;
-            text-decoration: none;
-        }
-        .footer-link:hover { color: var(--gold); }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--royal-blue);
-            color: var(--gold);
-            padding: 14px 24px;
-            border-radius: 999px;
-            font-weight: 700;
-            border: 2px solid var(--gold);
-            box-shadow: 0 8px 24px rgba(0,35,102,0.3);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        .toast.show {
-                    transform: translateX(-50%) translateY(0);
-                    opacity: 1;
-                }
+        .footer-link { display: block; text-align: center; margin-top: 16px; color: var(--gold); font-weight: 700; text-decoration: none; }
+        .footer-link:hover { color: var(--white); }
 
-                </style>
+        /* TOAST */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--royal-blue); color: var(--gold);
+            padding: 14px 24px; border-radius: 999px; font-weight: 700;
+            border: 2px solid var(--gold); box-shadow: 0 8px 24px rgba(0,35,102,0.3);
+            opacity: 0; transition: all 0.3s ease; z-index: 1000;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            max-width: 760px; margin: 0 auto; padding: 16px 24px 40px;
+        }
+        .how-it-works h2 {
+            font-family: 'Playfair Display', serif;
+            text-align: center; color: var(--white); font-size: 1.3rem; margin-bottom: 24px;
+        }
+        .steps-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        @media (max-width: 560px) { .steps-grid { grid-template-columns: 1fr; } }
+        .step-card {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm); padding: 20px; text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .step-num {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--gold); color: var(--royal-blue);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1rem; margin: 0 auto 12px;
+        }
+        .step-card h4 { color: var(--white); font-size: 0.88rem; font-weight: 700; margin-bottom: 4px; }
+        .step-card p { color: var(--text-muted); font-size: 0.78rem; line-height: 1.5; }
+
+        /* FAQ */
+        .faq-section {
+            max-width: 760px; margin: 0 auto; padding: 0 24px 40px;
+        }
+        .faq-section h2 {
+            font-family: 'Playfair Display', serif;
+            text-align: center; color: var(--white); font-size: 1.3rem; margin-bottom: 20px;
+        }
+        .faq-item {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm); padding: 16px 20px;
+            margin-bottom: 10px; backdrop-filter: blur(8px);
+            cursor: pointer; transition: all var(--transition);
+        }
+        .faq-item:hover { border-color: rgba(212,175,55,0.5); }
+        .faq-q {
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; color: var(--gold-light); font-size: 0.9rem;
+        }
+        .faq-q .toggle { color: var(--gold); font-size: 1.2rem; transition: transform 0.2s; }
+        .faq-item.open .toggle { transform: rotate(45deg); }
+        .faq-a { display: none; margin-top: 10px; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+        .faq-item.open .faq-a { display: block; }
+
+        /* CTA BAR */
+        .cta-bar {
+            max-width: 712px; margin: 0 auto 40px; padding: 0 24px;
+        }
+        .cta-inner {
+            background: linear-gradient(135deg, rgba(0,35,102,0.6), rgba(26,26,46,0.6));
+            border: 1px solid var(--gold); border-radius: var(--radius);
+            padding: 32px 24px; text-align: center; backdrop-filter: blur(12px);
+        }
+        .cta-inner h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold); font-size: 1.4rem; margin-bottom: 8px;
+        }
+        .cta-inner p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+        .cta-inner .btn { display: inline-flex; align-items: center; gap: 8px; width: auto; padding: 14px 32px; }
+    </style>
 </head>
 <body>
-    <div style="text-align:center; padding: 20px; background: var(--royal-blue); border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100;">
-            <a href="index.html" style="display:inline-block; background: var(--gold); color: var(--royal-blue); padding: 14px 40px; border-radius: 10px; font-weight: 800; font-size: 1.1rem; text-decoration: none; box-shadow: 0 4px 14px rgba(0,0,0,0.2); transition: transform 0.2s;">← Back to Home &amp; Book Now</a>
-        </div>
-<div class="container">
-    <header>
-        <h1>C&O TV Mounting</h1>
-        <p>Referral Partner Portal</p>
-    </header>
-
-    <div class="section" id="benefits-section">
-            <div class="benefits-box">
-                <h2 class="benefits-title">Why Partner With C&amp;O?</h2>
-                <div class="benefits-grid">
-                    <div class="benefit-card">
-                        <div class="benefit-icon">💰</div>
-                        <div class="benefit-heading">Earn $25–$75 Per Referral</div>
-                        <div class="benefit-text">Cash paid monthly for every completed job you send our way. TV mounts, fireplace installs, blinds — it all counts.</div>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon">⚡</div>
-                        <div class="benefit-heading">2-Hour Response Guarantee</div>
-                        <div class="benefit-text">Your client gets a call or text within 2 hours. They stay YOUR client — we’re just the tech behind the scenes.</div>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon">🔁</div>
-                        <div class="benefit-heading">Recurring Revenue, Zero Effort</div>
-                        <div class="benefit-text">Submit a name and address. We handle the rest. You collect the check. That's the whole model.</div>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon">🛡️</div>
-                        <div class="benefit-heading">Professional &amp; Reliable</div>
-                        <div class="benefit-text">All installs backed by a 24-month warranty — give your clients peace of mind. We treat every referral like it's our own business.</div>
-                    </div>
-                </div>
-                <div class="bonus-bar">
-                    🎯 <strong>Top Referrer Bonus:</strong> Send 10+ jobs a month and earn an extra <strong>$200</strong> on top of payouts. No cap.
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <a href="partner-dashboard.html" class="btn btn-primary">Go to Partner Dashboard →</a>
-        </div>
-        <div class="section">
-            <a href="my-referrals.html" class="btn btn-gold">View My Referrals →</a>
-        </div>
-
-        <form id="referral-form">
-        <div class="section-label">Your Info (Partner)</div>
-        <div class="row">
-            <div class="input-group">
-                <label>Full Name *</label>
-                <input type="text" id="partner-name" placeholder="John Smith" required>
-            </div>
-            <div class="input-group">
-                <label>Company / Trade *</label>
-                <input type="text" id="partner-company" placeholder="Smith Electrical / ABC Remodeling" required>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-group">
-                <label>Phone *</label>
-                <input type="tel" id="partner-phone" placeholder="(555) 000-0000" required>
-            </div>
-            <div class="input-group">
-                <label>Email *</label>
-                <input type="email" id="partner-email" placeholder="john@smithelectrical.com" required>
-            </div>
-        </div>
-
-        <div class="section-label">Client Info (The Referral)</div>
-        <div class="input-group">
-            <label>Client Name *</label>
-            <input type="text" id="client-name" placeholder="Jane Doe" required>
-        </div>
-        <div class="row">
-            <div class="input-group">
-                <label>Client Phone *</label>
-                <input type="tel" id="client-phone" placeholder="(555) 000-0000" required>
-            </div>
-            <div class="input-group">
-                <label>Client Email</label>
-                <input type="email" id="client-email" placeholder="jane@email.com">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>Service Address *</label>
-            <input type="text" id="client-address" placeholder="123 Main St, Irving, TX 75061" required>
-        </div>
-
-        <div class="section-label">Job Details</div>
-        <div class="input-group">
-            <label>What do they need? *</label>
-            <select id="job-service" required>
-                <option value="">Select service...</option>
-                <option value="TV Mounting">TV Mounting</option>
-                <option value="Electric Fireplace Install">Electric Fireplace Install</option>
-                <option value="Blinds & Shades">Blinds & Shades</option>
-                <option value="Mirrors & Portraits">Mirrors & Portraits</option>
-                <option value="LED Lighting">LED Lighting</option>
-                <option value="Soundbar Mounting">Soundbar Mounting</option>
-                <option value="Multiple Services">Multiple Services</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>Notes / Special Details</label>
-            <textarea id="job-notes" rows="3" placeholder="Over fireplace? Wire concealment? Timeline? Budget range?"></textarea>
-            <div class="hint">Helps us prep the quote and schedule the right tech.</div>
-        </div>
-
-        <div class="btn-row">
-            <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Cancel</button>
-            <button type="submit" class="btn btn-gold">Submit Referral</button>
-        </div>
-    </form>
-
-    <div class="success-state" id="success-state">
-        <div class="success-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <h3>Referral Submitted!</h3>
-        <p>Thanks for sending work our way. We'll review and reach out to your client within 2 hours.</p>
-        <div class="referral-code" id="referral-code-display">REF-XXXXXX</div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px;">Save this code — it tracks every job from this referral. Payouts sent monthly.</p>
-        <a href="index.html" class="footer-link">← Back to Booking</a>
+    <div class="topbar">
+        <a href="index.html">← Back to Home & Book Now</a>
     </div>
-</div>
 
-<div class="toast" id="toast"></div>
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-badge">💰 referral partner program</div>
+        <h1>Turn Your <span class="gold">Client Network</span><br>Into Monthly Cash</h1>
+        <p>You're already recommending TV mounting, fireplace installs, and home services. Now get <strong style="color:var(--gold)">$25–$75 per job</strong> for doing it.</p>
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-num">$25–$75</div>
+                <div class="stat-label">Per Completed Job</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">$200</div>
+                <div class="stat-label">Top Referrer Bonus</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">24 mo</div>
+                <div class="stat-label">Workmanship Warranty</div>
+            </div>
+        </div>
+    </div>
 
-<script>
-const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR4VnnJrI4eZrbSNds-LoRaEzNZ8oS04r8PfUOaDDiQHUIp3qTaoSn4jVZyn_5L1s/exec';
+    <!-- EARNINGS CALCULATOR -->
+    <div class="calc-section">
+        <div class="calc-box">
+            <h2>See Your Monthly Earnings</h2>
+            <div class="calc-slider-wrap">
+                <div class="calc-slider-label">
+                    <span style="font-size:0.85rem;color:var(--text-muted)">Jobs you refer per month</span>
+                    <span class="jobs-count" id="jobs-count">5</span>
+                </div>
+                <input type="range" min="1" max="30" value="5" class="calc-slider" id="calc-slider" aria-label="Jobs per month">
+            </div>
+            <div class="calc-result">
+                <span class="calc-amount" id="calc-amount">$250</span>
+                <span class="calc-period">/ month</span>
+            </div>
+            <div class="calc-breakdown" id="calc-breakdown">5 jobs × $50 avg = $250 base payout</div>
+        </div>
+    </div>
 
-function generateReferralCode(partnerName, company) {
-    const namePart = partnerName.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-    const companyPart = company.trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
-    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-    return `REF-${namePart}-${companyPart}-${random}`;
-}
+    <!-- HOW IT WORKS -->
+    <div class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h4>Submit a Referral</h4>
+                <p>Enter your client's name, phone, and what they need. Takes 60 seconds.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h4>We Handle the Rest</h4>
+                <p>We call within 2 hours, quote the job, and schedule the install. Your client stays yours.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h4>Get Paid Monthly</h4>
+                <p>Every completed job earns you $25–$75. Payouts sent via Square or Venmo every month.</p>
+            </div>
+        </div>
+    </div>
 
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
-}
+    <!-- BENEFITS -->
+    <div class="benefits-section">
+        <h2>Why Partner With C&O?</h2>
+        <div class="benefit-cards">
+            <div class="benefit-card">
+                <div class="benefit-num">$</div>
+                <h3>Earn $25–$75 Per Referral</h3>
+                <p>Cash paid monthly for every completed job you send our way. TV mounts, fireplace installs, blinds — it all counts.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-num">⚡</div>
+                <h3>2-Hour Response Guarantee</h3>
+                <p>Your client gets a call or text within 2 hours. They stay YOUR client — we're just the tech behind the scenes.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-num">↻</div>
+                <h3>Recurring Revenue, Zero Effort</h3>
+                <p>Submit a name and address. We handle the rest. You collect the check. That's the whole model.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-num">✓</div>
+                <h3>24-Month Workmanship Warranty</h3>
+                <p>All installs backed by a 24-month warranty — give your clients peace of mind. We treat every referral like it's our own business.</p>
+            </div>
+        </div>
+    </div>
 
-function showSuccess(referralCode) {
-    document.getElementById('referral-form').style.display = 'none';
-    document.getElementById('success-state').classList.add('show');
-    document.getElementById('referral-code-display').textContent = referralCode;
-    showToast('Referral submitted! Your code: ' + referralCode);
-}
+    <!-- BONUS BAR -->
+    <div class="bonus-bar">
+        <div class="bonus-inner">
+            🎯 <strong>Top Referrer Bonus:</strong> Send 10+ jobs a month and earn an extra <span class="highlight">$200</span> on top of payouts. No cap.
+        </div>
+    </div>
 
-document.getElementById('referral-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Submitting...';
-    submitBtn.disabled = true;
+    <!-- NAV BUTTONS -->
+    <div class="nav-btns">
+        <a href="partner-dashboard.html" class="btn btn-primary">Go to Partner Dashboard →</a>
+        <a href="my-referrals.html" class="btn btn-gold">View My Referrals →</a>
+    </div>
 
-    const
+    <!-- FORM -->
+    <div class="form-section">
+        <div class="form-card">
+            <h2>Submit a Referral</h2>
+            <p class="subtitle">Fill this out and we'll contact your client within 2 hours.</p>
+            <form id="referral-form">
+                <div class="section-label">Your Info (Partner)</div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="partner-name" placeholder="John Smith" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Company / Trade *</label>
+                        <input type="text" id="partner-company" placeholder="Smith Electrical / ABC Remodeling" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>Phone *</label>
+                        <input type="tel" id="partner-phone" placeholder="(555) 000-0000" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email *</label>
+                        <input type="email" id="partner-email" placeholder="john@smithelectrical.com" required>
+                    </div>
+                </div>
+
+                <div class="section-label">Client Info (The Referral)</div>
+                <div class="input-group">
+                    <label>Client Name *</label>
+                    <input type="text" id="client-name" placeholder="Jane Doe" required>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>Client Phone *</label>
+                        <input type="tel" id="client-phone" placeholder="(555) 000-0000" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Client Email</label>
+                        <input type="email" id="client-email" placeholder="jane@email.com">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Service Address *</label>
+                    <input type="text" id="client-address" placeholder="123 Main St, Irving, TX 75061" required>
+                </div>
+
+                <div class="section-label">Job Details</div>
+                <div class="input-group">
+                    <label>What do they need? *</label>
+                    <select id="job-service" required>
+                        <option value="">Select service...</option>
+                        <option value="TV Mounting">TV Mounting</option>
+                        <option value="Electric Fireplace Install">Electric Fireplace Install</option>
+                        <option value="Blinds & Shades">Blinds & Shades</option>
+                        <option value="Mirrors & Portraits">Mirrors & Portraits</option>
+                        <option value="LED Lighting">LED Lighting</option>
+                        <option value="Soundbar Mounting">Soundbar Mounting</option>
+                        <option value="Multiple Services">Multiple Services</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Notes / Special Details</label>
+                    <textarea id="job-notes" rows="3" placeholder="Over fireplace? Wire concealment? Timeline? Budget range?"></textarea>
+                    <div class="hint">Helps us prep the quote and schedule the right tech.</div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Cancel</button>
+                    <button type="submit" class="btn btn-gold">Submit Referral</button>
+                </div>
+            </form>
+
+            <div class="success-state" id="success-state">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-cap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Referral Submitted!</h3>
+                <p>Thanks for sending work our way. We'll review and reach out to your client within 2 hours.</p>
+                <div class="referral-code" id="referral-code-display">REF-XXXXXX</div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px;">Save this code — it tracks every job from this referral. Payouts sent monthly.</p>
+                <a href="index.html" class="footer-link">← Back to Booking</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+        <h2>Common Questions</h2>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-q">When do I get paid? <span class="toggle">+</span></div>
+            <div class="faq-a">Payouts are sent monthly via Square or Venmo. You earn $25–$75 for each completed job from your referral. Bonuses ($100 for 5+ jobs/quarter, $200 for 10+) are paid quarterly.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-q">Does my client know I referred them? <span class="toggle">+</span></div>
+            <div class="faq-a">That's up to you. Some partners introduce us directly. Others just send us the info and we contact the client on their behalf. Either way, we keep you in the loop.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-q">What services count? <span class="toggle">+</span></div>
+            <div class="faq-a">All C&O services: TV mounting, electric fireplace installation, blinds & shades, mirrors & portraits, LED lighting, and soundbar mounting. Multiple services on one job still count as one referral payout.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-q">Do I need to be a contractor? <span class="toggle">+</span></div>
+            <div class="faq-a">No. Anyone can be a referral partner — electricians, remodelers, interior designers, real estate agents, or just someone with a network. If you know people who need TV mounting, you can earn.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-q">How do I track my referrals? <span class="toggle">+</span></div>
+            <div class="faq-a">Every referral gets a unique code (like REF-SMITH-ELEC-ABC). Use the "View My Referrals" button to see real-time status: New → Contacted → Quoted → Booked → Paid.</div>
+        </div>
+    </div>
+
+    <!-- CTA BAR -->
+    <div class="cta-bar">
+        <div class="cta-inner">
+            <h2>Ready to Start Earning?</h2>
+            <p>It takes 60 seconds to submit your first referral.</p>
+            <a href="#" class="btn btn-gold" onclick="document.getElementById('referral-form').scrollIntoView({behavior:'smooth'}); return false;">Submit a Referral ↑</a>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR4VnnJrI4eZrbSNds-LoRaEzNZ8oS04r8PfUOaDDiQHUIp3qTaoSn4jVZyn_5L1s/exec';
+
+    // Earnings calculator
+    const slider = document.getElementById('calc-slider');
+    const jobsCount = document.getElementById('jobs-count');
+    const calcAmount = document.getElementById('calc-amount');
+    const calcBreakdown = document.getElementById('calc-breakdown');
+
+    function updateCalc() {
+        const jobs = parseInt(slider.value);
+        const avg = 50; // $50 avg payout
+        const base = jobs * avg;
+        const bonus = jobs >= 10 ? 200 : jobs >= 5 ? 100 : 0;
+        const total = base + bonus;
+        jobsCount.textContent = jobs;
+        calcAmount.textContent = '$' + total;
+        let breakdown = `${jobs} × $${avg} avg = $${base} base`;
+        if (bonus) breakdown += ` + $${bonus} bonus`;
+        calcBreakdown.textContent = breakdown;
+    }
+    slider.addEventListener('input', updateCalc);
+    updateCalc();
+
+    function generateReferralCode(partnerName, company) {
+        const namePart = partnerName.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+        const companyPart = company.trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+        const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+        return `REF-${namePart}-${companyPart}-${random}`;
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function showSuccess(referralCode) {
+        document.getElementById('referral-form').style.display = 'none';
+        document.getElementById('success-state').classList.add('show');
+        document.getElementById('referral-code-display').textContent = referralCode;
+        showToast('Referral submitted! Your code: ' + referralCode);
+    }
+
+    document.getElementById('referral-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+
+        const payload = {
+            action: 'referral',
+            partnerName: document.getElementById('partner-name').value.trim(),
+            partnerCompany: document.getElementById('partner-company').value.trim(),
+            partnerPhone: document.getElementById('partner-phone').value.trim(),
+            partnerEmail: document.getElementById('partner-email').value.trim(),
+            clientName: document.getElementById('client-name').value.trim(),
+            clientPhone: document.getElementById('client-phone').value.trim(),
+            clientEmail: document.getElementById('client-email').value.trim(),
+            clientAddress: document.getElementById('client-address').value.trim(),
+            jobService: document.getElementById('job-service').value,
+            jobNotes: document.getElementById('job-notes').value.trim()
+        };
+
+        const referralCode = generateReferralCode(payload.partnerName, payload.partnerCompany);
+        payload.referralCode = referralCode;
+
+        try {
+            await fetch(APP_SCRIPT_URL, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            showSuccess(referralCode);
+        } catch (err) {
+            console.error('Submit error:', err);
+            showToast('Submitted! Check email for confirmation.');
+            showSuccess(referralCode);
+        } finally {
+            submitBtn.textContent = 'Submit Referral';
+            submitBtn.disabled = false;
+        }
+    });
+    </script>
+</body>
+</html>
