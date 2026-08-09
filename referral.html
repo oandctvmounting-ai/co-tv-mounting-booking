@@ -36,10 +36,24 @@
             --text-light: rgba(255,255,255,0.85);
             --text-muted: rgba(255,255,255,0.5);
             --radius: 16px;
-            --radius-sm: 10px;
-            --transition: 0.2s ease;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+                        --radius-sm: 10px;
+                        --transition: 0.2s ease;
+                        --shiny-width: 200px;
+                    }
+                    @keyframes shiny-text {
+                        0%, 90%, 100% { background-position: calc(-100% - var(--shiny-width)) 0; }
+                        30%, 60% { background-position: calc(100% + var(--shiny-width)) 0; }
+                    }
+                    .shiny-text {
+                        background: linear-gradient(135deg, transparent 0%, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent 100%);
+                        background-size: var(--shiny-width) 100%;
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        color: transparent;
+                        animation: shiny-text 8s cubic-bezier(0.6, 0.6, 0, 1) infinite;
+                    }
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
@@ -281,15 +295,39 @@
             margin-bottom: 24px;
         }
         .benefit-cards {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-        }
-        @media (max-width: 560px) { .benefit-cards { grid-template-columns: 1fr; } }
-        .benefit-card {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm); padding: 20px;
-            backdrop-filter: blur(10px); transition: all var(--transition);
-        }
-        .benefit-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                }
+                @media (max-width: 560px) { .benefit-cards { grid-template-columns: 1fr; } }
+                .benefit-card {
+                    position: relative;
+                    background: var(--glass); border: 1px solid var(--glass-border);
+                    border-radius: var(--radius-sm); padding: 20px;
+                    backdrop-filter: blur(10px); transition: all var(--transition);
+                    isolation: isolate;
+                }
+                /* Magic UI — Border Beam on benefit cards */
+                .benefit-card::before {
+                    content: "";
+                    position: absolute; inset: -2px; z-index: -1;
+                    border-radius: calc(var(--radius-sm) + 2px);
+                    border: 2px solid transparent;
+                    background: linear-gradient(135deg, var(--gold), var(--gold-light), transparent) border-box;
+                    -webkit-mask: linear-gradient(#000, #000) padding-box, linear-gradient(#000, #000) border-box;
+                    mask: linear-gradient(#000, #000) padding-box, linear-gradient(#000, #000) border-box;
+                    -webkit-mask-composite: xor; mask-composite: exclude;
+                    opacity: 0; pointer-events: none;
+                }
+                .benefit-card:hover::before {
+                    opacity: 1;
+                    animation: border-beam 3s linear infinite;
+                }
+                @keyframes border-beam {
+                    0% { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
+                .benefit-card:hover { transform: translateY(-3px); border-color: var(--gold); }
         .benefit-num {
             font-family: 'Playfair Display', serif;
             font-size: 2rem; color: var(--gold); font-weight: 700;
@@ -491,10 +529,10 @@
         <div class="hero-orb hero-orb-2"></div>
         <div class="hero-sweep"></div>
         <div class="hero-content">
-            <div class="hero-badge">💰 referral partner program</div>
-            <h1>Turn Your <span class="gold">Client Network</span><br>Into
-                <span class="rotator-wrap"><span class="rotator-word in" id="rotator">Monthly Cash</span></span>
-            </h1>
+                    <div class="hero-badge">💰 referral partner program</div>
+                    <h1 class="shiny-text">Turn Your <span class="gold">Client Network</span><br>Into
+                        <span class="rotator-wrap"><span class="rotator-word in" id="rotator">Monthly Cash</span></span>
+                    </h1>
             <p>You're already recommending TV mounting, fireplace installs, and home services. Now get <strong style="color:var(--gold)">$25–$75 per job</strong> for doing it.</p>
             <div class="hero-cta">
                 <div class="stats-bar">

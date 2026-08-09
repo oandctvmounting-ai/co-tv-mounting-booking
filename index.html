@@ -60,9 +60,15 @@
             --transition: 0.2s ease;
             --transition-slow: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             --blue-gradient: linear-gradient(135deg, var(--royal-blue-dark) 0%, var(--royal-blue) 50%, var(--royal-blue-light) 100%);
-            --gold-gradient: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+                        --gold-gradient: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
+                        /* Magic UI — Animated Shiny Text keyframes */
+                        --shiny-width: 200px;
+                    }
+                    @keyframes shiny-text {
+                        0%, 90%, 100% { background-position: calc(-100% - var(--shiny-width)) 0; }
+                        30%, 60% { background-position: calc(100% + var(--shiny-width)) 0; }
+                    }
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -102,15 +108,25 @@
         }
 
         /* Header — Classy Hero effects adapted from 21st.dev */
-        header {
-            background: var(--blue-gradient);
-            color: var(--white);
-            padding: 48px 16px 32px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        /* Noise overlay */
+                header {
+                    background: var(--blue-gradient);
+                    color: var(--white);
+                    padding: 48px 16px 32px;
+                    text-align: center;
+                    position: relative;
+                    overflow: hidden;
+                }
+                /* Magic UI — Animated Shiny Text utility */
+                .shiny-text {
+                    background: linear-gradient(135deg, transparent 0%, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent 100%);
+                    background-size: var(--shiny-width) 100%;
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    color: transparent;
+                    animation: shiny-text 8s cubic-bezier(0.6, 0.6, 0, 1) infinite;
+                }
+                /* Noise overlay */
         .hero-noise {
             position: absolute; inset: 0; z-index: 0; pointer-events: none;
             opacity: 0.12; mix-blend-mode: overlay;
@@ -255,15 +271,37 @@
         .step-sub { text-align:center; color: var(--text-muted); font-size:0.85rem; margin-bottom:20px; line-height: 1.5; }
 
         /* Service cards / option cards */
-        .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
-        .option-card {
-            position: relative; padding: 16px 18px; border: 1.5px solid rgba(255,255,255,0.1);
-            border-radius: 14px; cursor: pointer; transition: var(--transition);
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
-            background: var(--glass); backdrop-filter: blur(10px);
-        }
-        .option-card:hover { border-color: var(--glass-border-strong); background: var(--glass-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-        .option-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.1); box-shadow: 0 8px 24px rgba(212,175,55,0.15); }
+                .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
+                .option-card {
+                    position: relative; padding: 16px 18px; border: 1.5px solid rgba(255,255,255,0.1);
+                    border-radius: 14px; cursor: pointer; transition: var(--transition);
+                    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+                    background: var(--glass); backdrop-filter: blur(10px);
+                    isolation: isolate;
+                }
+                /* Magic UI — Border Beam (CSS-only) */
+                .option-card::before {
+                    content: "";
+                    position: absolute; inset: -2px; z-index: -1;
+                    border-radius: 16px;
+                    border: 2px solid transparent;
+                    background: linear-gradient(135deg, var(--gold), var(--gold-light), transparent) border-box;
+                    -webkit-mask: linear-gradient(#000, #000) padding-box, linear-gradient(#000, #000) border-box;
+                    mask: linear-gradient(#000, #000) padding-box, linear-gradient(#000, #000) border-box;
+                    -webkit-mask-composite: xor; mask-composite: exclude;
+                    opacity: 0;
+                    pointer-events: none;
+                }
+                .option-card:hover::before {
+                    opacity: 1;
+                    animation: border-beam 3s linear infinite;
+                }
+                @keyframes border-beam {
+                    0% { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
+                .option-card:hover { border-color: var(--glass-border-strong); background: var(--glass-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+                .option-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.1); box-shadow: 0 8px 24px rgba(212,175,55,0.15); }
         .price-tag { font-weight:700; color: var(--gold); font-size: 0.9rem; white-space: nowrap; }
 
         /* Service card grid layout */
@@ -284,10 +322,41 @@
             .mount-grid { grid-template-columns: repeat(3, 1fr) !important; }
         }
         @media (min-width: 900px) {
-            .options-grid { grid-template-columns: repeat(3, 1fr); }
-        }
+                    .options-grid { grid-template-columns: repeat(3, 1fr); }
+                }
 
-        /* Price strip */
+                /* Magic UI — Bento Grid layout for services */
+                        @media (min-width: 900px) {
+                            .options-grid.bento {
+                                grid-template-columns: repeat(4, 1fr);
+                                grid-template-rows: repeat(2, minmax(160px, auto));
+                                grid-template-areas:
+                                    "tv tv mount mount"
+                                    "fireplace blinds led soundbar";
+                                gap: 16px;
+                            }
+                            .options-grid.bento .service-card.tv { grid-area: tv; }
+                            .options-grid.bento .service-card.mount { grid-area: mount; }
+                            .options-grid.bento .service-card.fireplace { grid-area: fireplace; }
+                            .options-grid.bento .service-card.blinds { grid-area: blinds; }
+                            .options-grid.bento .service-card.led { grid-area: led; }
+                            .options-grid.bento .service-card.soundbar { grid-area: soundbar; }
+                            .options-grid.bento .service-card.mirrors { grid-area: mirrors; }
+                            /* Large cards span 2 columns */
+                            .options-grid.bento .service-card.tv,
+                            .options-grid.bento .service-card.mount {
+                                grid-column: span 2;
+                            }
+                        }
+                @media (max-width: 899px) {
+                    .options-grid.bento {
+                        grid-template-columns: repeat(2, 1fr);
+                        grid-template-rows: auto;
+                        grid-template-areas: none;
+                    }
+                }
+
+                /* Price strip */
         .price-strip { margin-top: 16px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px; padding: 14px 18px; background: rgba(0,35,102,0.3); border: 1px solid var(--glass-border); border-radius: 14px; }
         .price-strip-item { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 0.88rem; color: var(--text-light); white-space: nowrap; }
         .price-strip-item strong { color: var(--gold); font-size: 1rem; }
@@ -509,8 +578,8 @@
         <div class="hero-orb hero-orb-2"></div>
         <div class="hero-sweep"></div>
         <div class="hero-content">
-            <h1>C&O TV Mounting</h1>
-            <p><span class="rotator-wrap"><span class="rotator-word in" id="hero-rotator">Premium Installations. Flawless Execution.</span></span></p>
+                    <h1 class="shiny-text">C&O TV Mounting</h1>
+                    <p><span class="rotator-wrap"><span class="rotator-word in" id="hero-rotator">Premium Installations. Flawless Execution.</span></span></p>
             <div class="hero-warranty-badge" aria-label="24-Month Workmanship Warranty">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hero-warranty-icon">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round"/>
@@ -542,10 +611,10 @@
         </div>
 
     <!-- STEP 1: Primary service -->
-    <div class="form-step active" id="form-step-1">
-        <h2>What can we install for you?</h2>
-        <p class="step-sub">Pick your main service — you can add more on the next screen.</p>
-        <div class="options-grid" id="service-options"></div>
+        <div class="form-step active" id="form-step-1">
+            <h2>What can we install for you?</h2>
+            <p class="step-sub">Pick your main service — you can add more on the next screen.</p>
+            <div class="options-grid bento" id="service-options"></div>
         <div class="price-strip">
             <span class="price-strip-item"><span class="price-strip-icon">📺</span> TV Mounting <strong>from $90</strong></span>
             <span class="price-strip-sep"></span>
@@ -851,12 +920,12 @@
     <script>
 /* ---------- Pricing model (from C&O TV Mounting Pricing.md) ---------- */
 const SERVICES = {
-    tv:       { name: 'TV Mounting',          icon: '📺' },
-    fireplace:{ name: 'Electronic Fireplace Mount/Install', icon: '🔥' },
-    blinds:   { name: 'Blinds & Shades',      icon: '🪟' },
-    mirrors:  { name: 'Mirrors & Portraits',  icon: '🖼️' },
-    led:      { name: 'LED Lighting',         icon: '💡' },
-    soundbar: { name: 'Soundbar Mounting',    icon: '🔊' }
+    tv:       { name: 'TV Mounting',          icon: '📺', bentoArea: 'tv' },
+    fireplace:{ name: 'Electronic Fireplace Mount/Install', icon: '🔥', bentoArea: 'fireplace' },
+    blinds:   { name: 'Blinds & Shades',      icon: '🪟', bentoArea: 'blinds' },
+    mirrors:  { name: 'Mirrors & Portraits',  icon: '🖼️', bentoArea: 'mirrors' },
+    led:      { name: 'LED Lighting',         icon: '💡', bentoArea: 'led' },
+    soundbar: { name: 'Soundbar Mounting',    icon: '🔊', bentoArea: 'soundbar' }
 };
 
 const TV = {
@@ -977,11 +1046,13 @@ function renderStep1() {
     };
 
     for (const key in SERVICES) {
-        const s = SERVICES[key];
-        const d = SERVICE_DETAILS[key] || {};
-        const div = document.createElement('div');
-        div.className = 'option-card service-card' + (d.popular ? ' service-card--popular' : '');
-        div.innerHTML = `
+            const s = SERVICES[key];
+            const d = SERVICE_DETAILS[key] || {};
+            const div = document.createElement('div');
+            div.className = 'option-card service-card' + (d.popular ? ' service-card--popular' : '');
+            // Add bento grid area class for Magic UI Bento Grid layout
+            if (s.bentoArea) div.classList.add(s.bentoArea);
+            div.innerHTML = `
             ${d.popular ? '<div class="popular-ribbon">★ Most Popular</div>' : ''}
             <div class="service-card__head">
                 <div class="service-card__icon">${s.icon}</div>
