@@ -457,7 +457,20 @@
         .mount-name { padding: 6px 10px; font-weight: 600; font-size: 0.8rem; color: var(--white); display: block; }
 
         /* Addon blocks */
-        .addon-block { margin-bottom: 12px; }
+                .addon-block { margin-bottom: 12px; }
+                /* Desktop: lay add-on blocks out in a multi-column grid so all add-ons
+                   (incl. Mirrors & Portraits) sit at the same visual level. */
+                @media (min-width: 700px) {
+                    .addon-list {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 12px;
+                    }
+                    .addon-list .addon-block { margin-bottom: 0; }
+                }
+                @media (max-width: 699px) {
+                    .addon-list { display: block; }
+                }
         .addon-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px; border:1.5px solid rgba(255,255,255,0.1); border-radius:12px; cursor:pointer; transition:var(--transition); font-weight:600; font-size:1rem; background: var(--glass); backdrop-filter: blur(10px); }
         .addon-body { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; }
         .addon-block.open .addon-body { max-height: 600px; padding: 14px 0; }
@@ -1104,22 +1117,23 @@ function renderStep2() {
         <span>Add More Services <span class="addon-count">(${state.addons.size} selected)</span></span>
         <span class="addon-main-chev"></span>
     </button>
-    <div class="addon-main-content" id="addon-main-content">`;
-    for (const key in SERVICES) {
-            if (key === state.primary) continue;
-            const s = SERVICES[key];
-            const isAdded = state.addons.has(key);
-            const open = isAdded ? ' open' : '';
-            html += `<div class="addon-block${open}" data-svc="${key}">
-                            <div class="addon-head" onclick="toggleAddon('${key}')" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; background:${isAdded ? 'var(--royal-blue)' : 'var(--glass)'}; color:${isAdded ? 'var(--white)' : 'var(--white)'}; border:1.5px solid ${isAdded ? 'var(--royal-blue)' : 'rgba(255,255,255,0.1)'}; border-radius:14px; cursor:pointer; transition:all 0.2s ease; font-weight:600; font-size:0.95rem;">
-                                <span style="display:flex; align-items:center; gap:12px; font-size:1.1rem;">${s.icon} ${s.name}</span>
-                                <span style="padding:10px 20px; background:var(--gold); color:var(--black); border-radius:8px; font-weight:700; font-size:0.8rem; box-shadow:0 4px 12px rgba(212,175,55,0.25); transition:all 0.2s ease;">${isAdded ? '✓ Added' : '+ Add Service'}</span>
-                            </div>
-                            <div class="addon-body">${configHtml(key, 'a')}</div>
-                        </div>`;
-        }
-    html += `</div>`;
-    html += `</div>`;  // close .step2-below-video (wraps the rest of Step 2 content below video)
+    <div class="addon-main-content" id="addon-main-content">
+            <div class="addon-list">`;
+        for (const key in SERVICES) {
+                if (key === state.primary) continue;
+                const s = SERVICES[key];
+                const isAdded = state.addons.has(key);
+                const open = isAdded ? ' open' : '';
+                html += `<div class="addon-block${open}" data-svc="${key}">
+                                <div class="addon-head" onclick="toggleAddon('${key}')" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px; background:${isAdded ? 'var(--royal-blue)' : 'var(--glass)'}; color:${isAdded ? 'var(--white)' : 'var(--white)'}; border:1.5px solid ${isAdded ? 'var(--royal-blue)' : 'rgba(255,255,255,0.1)'}; border-radius:14px; cursor:pointer; transition:all 0.2s ease; font-weight:600; font-size:0.95rem;">
+                                    <span style="display:flex; align-items:center; gap:12px; font-size:1.1rem;">${s.icon} ${s.name}</span>
+                                    <span style="padding:10px 20px; background:var(--gold); color:var(--black); border-radius:8px; font-weight:700; font-size:0.8rem; box-shadow:0 4px 12px rgba(212,175,55,0.25); transition:all 0.2s ease;">${isAdded ? '✓ Added' : '+ Add Service'}</span>
+                                </div>
+                                <div class="addon-body">${configHtml(key, 'a')}</div>
+                            </div>`;
+            }
+        html += `</div>`;
+        html += `</div>`;  // close .step2-below-video (wraps the rest of Step 2 content below video)
     c.innerHTML = html;
     if (state.primary === 'tv' || state.addons.has('tv')) renderTvs('p');
     // addon TV blocks (if tv was added as an add-on)
