@@ -326,35 +326,29 @@
                 }
 
                 /* Magic UI — Bento Grid layout for services */
-                        @media (min-width: 900px) {
-                            .options-grid.bento {
-                                grid-template-columns: repeat(4, 1fr);
-                                grid-template-rows: repeat(2, minmax(160px, auto));
-                                grid-template-areas:
-                                    "tv tv mount mount"
-                                    "fireplace blinds led soundbar";
-                                gap: 16px;
-                            }
-                            .options-grid.bento .service-card.tv { grid-area: tv; }
-                            .options-grid.bento .service-card.mount { grid-area: mount; }
-                            .options-grid.bento .service-card.fireplace { grid-area: fireplace; }
-                            .options-grid.bento .service-card.blinds { grid-area: blinds; }
-                            .options-grid.bento .service-card.led { grid-area: led; }
-                            .options-grid.bento .service-card.soundbar { grid-area: soundbar; }
-                            .options-grid.bento .service-card.mirrors { grid-area: mirrors; }
-                            /* Large cards span 2 columns */
-                            .options-grid.bento .service-card.tv,
-                            .options-grid.bento .service-card.mount {
-                                grid-column: span 2;
-                            }
-                        }
-                @media (max-width: 899px) {
-                    .options-grid.bento {
-                        grid-template-columns: repeat(2, 1fr);
-                        grid-template-rows: auto;
-                        grid-template-areas: none;
-                    }
-                }
+                                        @media (min-width: 900px) {
+                                            .options-grid.bento {
+                                                                            grid-template-columns: repeat(3, 1fr);
+                                                                            grid-template-areas:
+                                                                                "tv tv fireplace"
+                                                                                "blinds mirrors led"
+                                                                                "soundbar soundbar soundbar";
+                                                                            gap: 16px;
+                                                                        }
+                                            .options-grid.bento .service-card.tv { grid-area: tv; }
+                                            .options-grid.bento .service-card.fireplace { grid-area: fireplace; }
+                                            .options-grid.bento .service-card.blinds { grid-area: blinds; }
+                                            .options-grid.bento .service-card.mirrors { grid-area: mirrors; }
+                                            .options-grid.bento .service-card.led { grid-area: led; }
+                                            .options-grid.bento .service-card.soundbar { grid-area: soundbar; }
+                                        }
+                                @media (max-width: 899px) {
+                                    .options-grid.bento {
+                                        grid-template-columns: repeat(2, 1fr);
+                                        grid-template-rows: auto;
+                                        grid-template-areas: none;
+                                    }
+                                }
 
                 /* Price strip */
         .price-strip { margin-top: 16px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px; padding: 14px 18px; background: rgba(0,35,102,0.3); border: 1px solid var(--glass-border); border-radius: 14px; }
