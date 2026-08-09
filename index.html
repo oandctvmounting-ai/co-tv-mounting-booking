@@ -265,9 +265,38 @@
         .serving-line strong { color: var(--gold); }
 
         /* Form steps */
-        .form-step { display: none; padding: 28px 24px; opacity: 0; transform: translateY(12px); transition: opacity 0.3s ease, transform 0.3s ease; }
-        .form-step.active { display: block; opacity: 1; transform: translateY(0); }
-        h2 { font-family: 'Playfair Display',serif; color: var(--white); margin-bottom: 6px; font-size: 1.4rem; text-align: center; font-weight: 700; }
+                .form-step { display: none; padding: 28px 24px; opacity: 0; transform: translateY(12px); transition: opacity 0.3s ease, transform 0.3s ease; }
+                .form-step.active { display: block; opacity: 1; transform: translateY(0); }
+
+                /* Magic UI — Step 3 & 4 card shell: noise bg + animated Border Beam */
+                @keyframes border-beam {
+                    0% { background-position: 0% 50%; }
+                    100% { background-position: 200% 50%; }
+                }
+                .form-card {
+                    position: relative; border-radius: 18px; overflow: hidden; isolation: isolate;
+                    background: var(--glass); backdrop-filter: blur(12px);
+                    border: 1px solid var(--glass-border);
+                    padding: 4px; margin-bottom: 12px;
+                }
+                .form-card::before { /* noise */
+                    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+                    opacity: 0.07; mix-blend-mode: overlay;
+                    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+                    background-repeat: repeat; background-size: 150px 150px;
+                }
+                .form-card::after { /* border beam on hover */
+                    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+                    border-radius: 18px; padding: 2px;
+                    background: linear-gradient(135deg, transparent 20%, var(--gold) 50%, transparent 80%);
+                    opacity: 0; transition: opacity 0.3s ease; -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+                    -webkit-mask-composite: xor; mask-composite: exclude;
+                    background-size: 250% 250%;
+                }
+                .form-card:hover::after, .form-card.beam-live::after { opacity: 1; animation: border-beam 4s linear infinite; }
+                .form-card .form-card-inner { position: relative; z-index: 2; }
+
+                h2 { font-family: 'Playfair Display',serif; color: var(--white); margin-bottom: 6px; font-size: 1.4rem; text-align: center; font-weight: 700; }
         .step-sub { text-align:center; color: var(--text-muted); font-size:0.85rem; margin-bottom:20px; line-height: 1.5; }
 
         /* Service cards / option cards */
@@ -410,8 +439,14 @@
         .total-note { display: block; font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
 
         /* Submit button */
-        .btn-submit { padding: 16px 40px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: var(--black); border: none; border-radius: 12px; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 16px rgba(212,175,55,0.3); font-family: 'Inter',sans-serif; letter-spacing: 0.5px; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.4); }
+                .btn-submit { padding: 16px 40px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: var(--black); border: none; border-radius: 12px; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 16px rgba(212,175,55,0.3); font-family: 'Inter',sans-serif; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+                .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.4); }
+                /* Magic UI — Ripple effect on click */
+                .ripple { position: absolute; border-radius: 50%; transform: scale(0); background: rgba(255,255,255,0.5); pointer-events: none; animation: ripple-anim 0.6s ease-out; }
+                @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+                /* Magic UI — final total count-up (animated number) */
+                .count-x { display: inline-block; }
 
         /* Deposit note */
         .deposit-note { padding: 14px 18px; background: rgba(0,35,102,0.2); border: 1px solid var(--glass-border); border-radius: 12px; font-size: 0.9rem; color: var(--text-light); display: flex; align-items: center; gap: 10px; }
@@ -670,65 +705,73 @@
     </div>
 
     <!-- STEP 3: Details -->
-        <div class="form-step" id="form-step-3">
-            <h2>Your Details</h2>
-        <p class="step-sub">So we can confirm the appointment and prepare.</p>
-        <div class="input-group">
-            <label>Full Name</label>
-            <input type="text" id="cust-name" placeholder="Enter your name">
-            <span class="valid-check" aria-hidden="true">✓</span>
-        </div>
-        <div class="input-group">
-            <label>Service Address</label>
-            <div class="service-area-note">📍 We proudly serve the entire <strong>DFW metroplex & all surrounding areas!</strong></div>
-            <input type="text" id="cust-address" placeholder="Street, City, TX (e.g. 123 Main St, Irving, TX 75061)">
-            <span class="valid-check" aria-hidden="true">✓</span>
-        </div>
-        <div class="input-group">
-            <label>Phone Number</label>
-            <input type="tel" id="cust-phone" placeholder="(555) 000-0000">
-            <span class="valid-check" aria-hidden="true">✓</span>
-        </div>
-        <div class="input-group">
-            <label>Wall / Space Photo (helps us prepare)</label>
-            <div class="file-upload" onclick="document.getElementById('file-input').click()">
-                <span id="file-label">Click to upload a photo</span>
-                <input type="file" id="file-input" style="display:none" accept="image/*">
+            <div class="form-step" id="form-step-3">
+                <div class="form-card">
+                    <div class="form-card-inner">
+                        <h2>Your Details</h2>
+                        <p class="step-sub">So we can confirm the appointment and prepare.</p>
+                        <div class="input-group">
+                            <label class="shiny-text">Full Name</label>
+                            <input type="text" id="cust-name" placeholder="Enter your name">
+                            <span class="valid-check" aria-hidden="true">✓</span>
+                        </div>
+                        <div class="input-group">
+                            <label class="shiny-text">Service Address</label>
+                            <div class="service-area-note">📍 We proudly serve the entire <strong>DFW metroplex & all surrounding areas!</strong></div>
+                            <input type="text" id="cust-address" placeholder="Street, City, TX (e.g. 123 Main St, Irving, TX 75061)">
+                            <span class="valid-check" aria-hidden="true">✓</span>
+                        </div>
+                        <div class="input-group">
+                            <label class="shiny-text">Phone Number</label>
+                            <input type="tel" id="cust-phone" placeholder="(555) 000-0000">
+                            <span class="valid-check" aria-hidden="true">✓</span>
+                        </div>
+                        <div class="input-group">
+                            <label class="shiny-text">Wall / Space Photo (helps us prepare)</label>
+                            <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                                <span id="file-label">Click to upload a photo</span>
+                                <input type="file" id="file-input" style="display:none" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="nav-buttons">
+                            <button class="nav-btn nav-btn-back" onclick="prevStep(2)">Back</button>
+                            <button class="nav-btn nav-btn-primary" onclick="goToStep4()">Continue</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="nav-buttons">
-            <button class="nav-btn nav-btn-back" onclick="prevStep(2)">Back</button>
-            <button class="nav-btn nav-btn-primary" onclick="goToStep4()">Continue</button>
-        </div>
-    </div>
 
-    <!-- STEP 4: Schedule + deposit -->
-        <div class="form-step" id="form-step-4">
-            <h2>Finalize Booking</h2>
-        <p class="step-sub">Pick a time and we'll lock it in.</p>
-        <div class="deposit-note" style="margin-bottom:18px">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:28px; height:28px; vertical-align:middle; margin-right:8px; stroke:var(--gold);">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <strong>24-MONTH WORKMANSHIP WARRANTY</strong> — Your install is protected
-        </div>
-        <div class="input-group">
-            <label>Preferred Date & Time</label>
-            <input type="datetime-local" id="booking-time">
-        </div>
-        <div id="deposit-area"></div>
-        <div id="final-travel-note"></div>
-        <div id="final-pricing" class="total-box" style="margin-top:18px">
-            <span class="total-label">Final Estimate</span>
-            <span class="total-amount" id="final-total">$0</span>
-            <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
-        </div>
-        <div class="nav-buttons">
-            <button class="nav-btn nav-btn-back" onclick="prevStep(3)">Back</button>
-            <button class="btn-submit" id="submit-btn" onclick="submitBooking()">Book Now</button>
-        </div>
-    </div>
+        <!-- STEP 4: Schedule + deposit -->
+            <div class="form-step" id="form-step-4">
+                <div class="form-card">
+                    <div class="form-card-inner">
+                        <h2>Finalize Booking</h2>
+                        <p class="step-sub">Pick a time and we'll lock it in.</p>
+                        <div class="deposit-note" style="margin-bottom:18px">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:28px; height:28px; vertical-align:middle; margin-right:8px; stroke:var(--gold);">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <strong>24-MONTH WORKMANSHIP WARRANTY</strong> — Your install is protected
+                        </div>
+                        <div class="input-group">
+                            <label class="shiny-text">Preferred Date & Time</label>
+                            <input type="datetime-local" id="booking-time">
+                        </div>
+                        <div id="deposit-area"></div>
+                        <div id="final-travel-note"></div>
+                        <div id="final-pricing" class="total-box" style="margin-top:18px">
+                            <span class="total-label">Final Estimate</span>
+                            <span class="total-amount"><span class="count-x" id="final-total">$0</span></span>
+                            <div id="final-promo" style="margin-top:6px; font-weight:600; color:var(--gold)"></div>
+                        </div>
+                        <div class="nav-buttons">
+                            <button class="nav-btn nav-btn-back" onclick="prevStep(3)">Back</button>
+                            <button class="btn-submit" id="submit-btn" onclick="submitBooking()">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
     <!-- FAQ -->
     <div class="faq">
@@ -1450,7 +1493,21 @@ function calculateTotal() {
         }
         const pa = document.getElementById('promo-applied');
         if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
-        // === PRICE FLASH ANIMATION (Step 2 + Step 4) ===
+        // === Magic UI — Ripple effect on Book Now submit ===
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-submit');
+        if (!btn) return;
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        btn.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    });
+    // === PRICE FLASH ANIMATION (Step 2 + Step 4) ===
         // Replay the flash every time the total changes (skip the very first render)
         if (!calculateTotal.firstRendered) {
             calculateTotal.firstRendered = true;
@@ -1583,12 +1640,29 @@ function goToStep4() {
 }
 
 /* ---------- Final pricing + travel-fee note (Step 4) ---------- */
+/* Magic UI — Animated Number Ticker for the final estimate */
+function animateCountUp(el, target, duration) {
+    if (!el) return;
+    const old = el._target || 0;
+    if (target === old) { el.innerText = '$' + target; return; }
+    duration = duration || 700;
+    const start = performance.now();
+    el._target = target;
+    function frame(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
+        const val = Math.round(old + (target - old) * ease);
+        el.innerText = '$' + val;
+        if (t < 1) requestAnimationFrame(frame); else el.innerText = '$' + target;
+    }
+    requestAnimationFrame(frame);
+}
 function renderFinalPricing() {
     const total = calculateTotal();
     const ft = document.getElementById('final-total');
     // On final step, show exact price (not range)
     if (ft) {
-        ft.innerText = '$' + total;
+        animateCountUp(ft, total);
         const parent = ft.parentElement;
         if (parent && parent.classList.contains('total-box')) {
             // Ensure label says "Final Estimate" not "Instant Estimate Range"
