@@ -300,8 +300,15 @@
         .step-sub { text-align:center; color: var(--text-muted); font-size:0.85rem; margin-bottom:20px; line-height: 1.5; }
 
         /* Service cards / option cards */
-                .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
-                .option-card {
+                        .options-grid { display: grid; gap: 12px; margin-bottom: 18px; }
+                        /* Fix: optCard/mountCards emit a <label> as first grid child. Make it span
+                           the full row so it acts as a header, not a squeezed grid cell. */
+                        .options-grid > label {
+                            grid-column: 1 / -1;
+                            font-weight: 600; font-size: 0.85rem; color: var(--text-muted);
+                            margin-bottom: 0; padding-bottom: 2px;
+                        }
+                        .option-card {
                     position: relative; padding: 16px 18px; border: 1.5px solid rgba(255,255,255,0.1);
                     border-radius: 14px; cursor: pointer; transition: var(--transition);
                     display: flex; align-items: center; justify-content: space-between; gap: 12px;
