@@ -101,30 +101,96 @@
             position: relative;
         }
 
-        /* Header */
+        /* Header — Classy Hero effects adapted from 21st.dev */
         header {
             background: var(--blue-gradient);
             color: var(--white);
-            padding: 28px 16px 22px;
+            padding: 48px 16px 32px;
             text-align: center;
             position: relative;
+            overflow: hidden;
         }
+        /* Noise overlay */
+        .hero-noise {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            opacity: 0.12; mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat; background-size: 150px 150px;
+        }
+        /* Dotted grid */
+        .hero-grid {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            opacity: 0.2;
+            background-image:
+                radial-gradient(circle, rgba(212,175,55,0.15) 1px, transparent 1px),
+                radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 30px 30px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        /* Ambient light orbs */
+        .hero-orb {
+            position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+            filter: blur(40px);
+        }
+        .hero-orb-1 {
+            top: -40px; right: -40px; width: 140px; height: 140px;
+            background: rgba(212,175,55,0.18);
+            animation: orbPulse1 5s ease-in-out infinite;
+        }
+        .hero-orb-2 {
+            bottom: -40px; left: -60px; width: 200px; height: 200px;
+            background: rgba(13,47,122,0.3);
+            animation: orbPulse2 7s ease-in-out infinite;
+        }
+        @keyframes orbPulse1 { 0%,100%{opacity:0.18} 50%{opacity:0.35} }
+        @keyframes orbPulse2 { 0%,100%{opacity:0.15} 50%{opacity:0.3} }
+        /* Light sweep */
+        .hero-sweep { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .hero-sweep::before {
+            content: ''; position: absolute;
+            top: 0; left: -100%; width: 200%; height: 300%;
+            background: linear-gradient(115deg, transparent 35%, rgba(212,175,55,0.15) 45%, rgba(212,175,55,0.06) 50%, transparent 60%);
+            transform: rotate(-15deg);
+            animation: sweep 8s ease-in-out infinite; animation-delay: 3s;
+        }
+        @keyframes sweep { 0%{left:-100%} 40%{left:100%} 100%{left:100%} }
+        /* Edge lighting */
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 1px; pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        /* Hero content z-index */
+        .hero-content { position: relative; z-index: 10; }
         header::after {
             content: ''; position: absolute; bottom: 0; left: 50%;
             transform: translateX(-50%); width: 80px; height: 3px;
             background: var(--gold-gradient); border-radius: 2px;
         }
-        header::before {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.4) 30%, rgba(212,175,55,0.6) 50%, rgba(212,175,55,0.4) 70%, transparent 100%);
-        }
         header h1 {
             font-family: 'Playfair Display', serif;
             font-size: 1.6rem; margin-bottom: 4px;
             letter-spacing: 0.3px; font-weight: 700;
+            animation: heroFadeIn 0.8s ease-out 0.2s both;
         }
-        header p { font-weight: 300; opacity: 0.8; font-size: 0.9rem; letter-spacing: 0.2px; }
+        /* Text rotator */
+        .rotator-wrap { display: inline; }
+        .rotator-word {
+            display: inline-block; font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .rotator-word.out { opacity: 0; filter: blur(8px); transform: translateY(-6px); }
+        .rotator-word.in { opacity: 1; filter: blur(0); transform: translateY(0); }
+        header p {
+            font-weight: 300; opacity: 0.8; font-size: 0.9rem; letter-spacing: 0.2px;
+            animation: heroFadeIn 0.8s ease-out 0.5s both;
+        }
+        @keyframes heroFadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:0.8;transform:translateY(0)} }
+        @keyframes heroBadgeFadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
         /* Warranty badge — clean, no pulsing */
         .hero-warranty-badge {
@@ -137,6 +203,7 @@
             border-radius: 999px;
             font-size: 0.85rem; font-weight: 700; letter-spacing: 0.3px;
             white-space: nowrap;
+            animation: heroBadgeFadeIn 0.8s ease-out 0.8s both;
         }
         .hero-warranty-badge strong { font-weight: 800; color: var(--gold); }
         .hero-warranty-icon { width: 18px; height: 18px; stroke: var(--gold); stroke-width: 2; flex-shrink: 0; fill: none; }
@@ -436,15 +503,22 @@
 
 <div class="container">
     <header>
-        <h1>C&O TV Mounting</h1>
-        <p>Premium Installations. Flawless Execution.</p>
-        <div class="hero-warranty-badge" aria-label="24-Month Workmanship Warranty">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hero-warranty-icon">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round"/>
-                        <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <strong>24-Month Warranty</strong>
-                </div>
+        <div class="hero-noise"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-sweep"></div>
+        <div class="hero-content">
+            <h1>C&O TV Mounting</h1>
+            <p><span class="rotator-wrap"><span class="rotator-word in" id="hero-rotator">Premium Installations. Flawless Execution.</span></span></p>
+            <div class="hero-warranty-badge" aria-label="24-Month Workmanship Warranty">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hero-warranty-icon">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round"/>
+                    <path d="M9 12l2 2 4-4" stroke-cap="round" stroke-linejoin="round"/>
+                </svg>
+                <strong>24-Month Warranty</strong>
+            </div>
+        </div>
     </header>
 
     <div class="progress-bar cf" data-step="1">
@@ -1882,6 +1956,24 @@ checkPaidRedirect();
 document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('page-loaded');
 });
+
+// Hero text rotator — adapted from 21st.dev Classy Hero
+(function() {
+    var words = ['Premium Installations. Flawless Execution.', 'Trusted Across All of DFW.', '24-Month Workmanship Warranty.'];
+    var idx = 0;
+    var el = document.getElementById('hero-rotator');
+    if (!el) return;
+    setInterval(function() {
+        el.classList.remove('in');
+        el.classList.add('out');
+        setTimeout(function() {
+            idx = (idx + 1) % words.length;
+            el.textContent = words[idx];
+            el.classList.remove('out');
+            el.classList.add('in');
+        }, 400);
+    }, 3800);
+})();
 </script>
 </body>
 </html>
