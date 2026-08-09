@@ -63,33 +63,141 @@
         }
         .topbar a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.4); }
 
-        /* HERO */
+        /* HERO — adapted from 21st.dev Classy Hero */
         .hero {
+            position: relative;
             text-align: center;
-            padding: 48px 24px 40px;
-            max-width: 760px; margin: 0 auto;
+            padding: 60px 24px 48px;
+            max-width: 900px; margin: 0 auto;
+            overflow: hidden;
         }
+        /* Noise overlay */
+        .hero-noise {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            opacity: 0.15; mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat; background-size: 150px 150px;
+        }
+        /* Dotted grid */
+        .hero-grid {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            opacity: 0.25;
+            background-image:
+                radial-gradient(circle, rgba(212,175,55,0.12) 1px, transparent 1px),
+                radial-gradient(circle, rgba(0,35,102,0.08) 1px, transparent 1px);
+            background-size: 30px 30px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        /* Ambient light orbs */
+        .hero-orb {
+            position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+            filter: blur(40px);
+        }
+        .hero-orb-1 {
+            top: -40px; right: -40px; width: 160px; height: 160px;
+            background: rgba(212,175,55,0.15);
+            animation: orbPulse1 5s ease-in-out infinite;
+        }
+        .hero-orb-2 {
+            bottom: 20%; left: -60px; width: 240px; height: 240px;
+            background: rgba(0,35,102,0.2);
+            animation: orbPulse2 7s ease-in-out infinite;
+        }
+        @keyframes orbPulse1 { 0%,100%{opacity:0.15} 50%{opacity:0.3} }
+        @keyframes orbPulse2 { 0%,100%{opacity:0.1} 50%{opacity:0.25} }
+        /* Light sweep */
+        .hero-sweep {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            overflow: hidden;
+        }
+        .hero-sweep::before {
+            content: ''; position: absolute;
+            top: 0; left: -100%; width: 200%; height: 300%;
+            background: linear-gradient(115deg, transparent 35%, rgba(212,175,55,0.12) 45%, rgba(212,175,55,0.05) 50%, transparent 60%);
+            transform: rotate(-15deg);
+            animation: sweep 8s ease-in-out infinite;
+            animation-delay: 3s;
+        }
+        @keyframes sweep {
+            0% { left: -100%; }
+            40% { left: 100%; }
+            100% { left: 100%; }
+        }
+        /* Edge lighting */
+        .hero::before, .hero::after {
+            content: ''; position: absolute; left: 0; right: 0; height: 1px; pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+        }
+        .hero::before { top: 0; }
+        .hero::after { bottom: 0; }
+        /* Hero content */
+        .hero-content { position: relative; z-index: 10; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(212,175,55,0.12); border: 1px solid var(--gold);
             color: var(--gold); font-size: 0.8rem; font-weight: 700;
             padding: 8px 18px; border-radius: 999px; white-space: nowrap;
             letter-spacing: 0.5px; margin-bottom: 24px; text-transform: uppercase;
+            animation: fadeIn 0.8s ease-out 0.2s both;
         }
         .hero h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.4rem; line-height: 1.15; color: var(--white);
+            font-size: 2.6rem; line-height: 1.15; color: var(--white);
             margin-bottom: 12px; font-weight: 700;
+            animation: fadeIn 0.8s ease-out 0.5s both;
         }
         .hero h1 .gold { color: var(--gold); }
+        /* Text rotator */
+        .rotator-wrap {
+            display: block; min-height: 1.3em; margin-top: 4px;
+        }
+        .rotator-word {
+            display: inline-block;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, #F9F4E8 50%, var(--gold) 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .rotator-word.out { opacity: 0; filter: blur(8px); transform: translateY(-8px); }
+        .rotator-word.in { opacity: 1; filter: blur(0); transform: translateY(0); }
         .hero p {
             font-size: 1.05rem; color: var(--text-muted); max-width: 580px;
             margin: 0 auto 32px; font-weight: 300;
+            animation: fadeIn 0.8s ease-out 0.9s both;
         }
+        .hero .hero-cta {
+            animation: fadeIn 0.8s ease-out 1.2s both;
+        }
+        /* Hero email pill */
+        .hero-pill {
+            margin: 28px auto 0; max-width: 360px;
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 999px; padding: 6px; backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease-out 1.5s both;
+        }
+        .hero-pill input {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.85rem;
+            padding: 8px 14px;
+        }
+        .hero-pill input::placeholder { color: rgba(255,255,255,0.3); }
+        .hero-pill button {
+            background: var(--gold); color: var(--royal-blue); border: none;
+            border-radius: 999px; padding: 8px 18px; font-weight: 700; font-size: 0.85rem;
+            cursor: pointer; white-space: nowrap; transition: all var(--transition);
+        }
+        .hero-pill button:hover { transform: scale(1.03); }
+        .hero-pill-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         @media (max-width: 560px) {
-            .hero { padding: 32px 16px 28px; }
-            .hero h1 { font-size: 1.7rem; }
+            .hero { padding: 40px 16px 32px; }
+            .hero h1 { font-size: 1.8rem; }
+            .rotator-word { font-size: 1.8rem; }
             .hero p { font-size: 0.95rem; }
+            .hero-pill { max-width: 100%; }
         }
 
         /* STATS BAR */
@@ -375,23 +483,39 @@
         <a href="index.html">← Back to Home & Book Now</a>
     </div>
 
-    <!-- HERO -->
+    <!-- HERO — Classy Hero adapted -->
     <div class="hero">
-        <div class="hero-badge">💰 referral partner program</div>
-        <h1>Turn Your <span class="gold">Client Network</span><br>Into Monthly Cash</h1>
-        <p>You're already recommending TV mounting, fireplace installs, and home services. Now get <strong style="color:var(--gold)">$25–$75 per job</strong> for doing it.</p>
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-num">$25–$75</div>
-                <div class="stat-label">Per Completed Job</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">$200</div>
-                <div class="stat-label">Top Referrer Bonus</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">24 mo</div>
-                <div class="stat-label">Workmanship Warranty</div>
+        <div class="hero-noise"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-sweep"></div>
+        <div class="hero-content">
+            <div class="hero-badge">💰 referral partner program</div>
+            <h1>Turn Your <span class="gold">Client Network</span><br>Into
+                <span class="rotator-wrap"><span class="rotator-word in" id="rotator">Monthly Cash</span></span>
+            </h1>
+            <p>You're already recommending TV mounting, fireplace installs, and home services. Now get <strong style="color:var(--gold)">$25–$75 per job</strong> for doing it.</p>
+            <div class="hero-cta">
+                <div class="stats-bar">
+                    <div class="stat-card">
+                        <div class="stat-num">$25–$75</div>
+                        <div class="stat-label">Per Completed Job</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-num">$200</div>
+                        <div class="stat-label">Top Referrer Bonus</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-num">24 mo</div>
+                        <div class="stat-label">Workmanship Warranty</div>
+                    </div>
+                </div>
+                <div class="hero-pill">
+                    <input type="email" id="hero-email" placeholder="Your email to get started">
+                    <button onclick="document.getElementById('referral-form').scrollIntoView({behavior:'smooth'})">Start Earning →</button>
+                </div>
+                <p class="hero-pill-note">No commitment. Submit your first referral in 60 seconds.</p>
             </div>
         </div>
     </div>
@@ -605,6 +729,21 @@
 
     <script>
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR4VnnJrI4eZrbSNds-LoRaEzNZ8oS04r8PfUOaDDiQHUIp3qTaoSn4jVZyn_5L1s/exec';
+
+    // Text rotator — adapted from 21st.dev Classy Hero
+    const rotatorWords = ['Monthly Cash', 'Recurring Income', 'Passive Revenue'];
+    let rotatorIdx = 0;
+    const rotatorEl = document.getElementById('rotator');
+    setInterval(() => {
+        rotatorEl.classList.remove('in');
+        rotatorEl.classList.add('out');
+        setTimeout(() => {
+            rotatorIdx = (rotatorIdx + 1) % rotatorWords.length;
+            rotatorEl.textContent = rotatorWords[rotatorIdx];
+            rotatorEl.classList.remove('out');
+            rotatorEl.classList.add('in');
+        }, 400);
+    }, 3500);
 
     // Earnings calculator
     const slider = document.getElementById('calc-slider');
