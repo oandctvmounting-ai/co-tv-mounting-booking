@@ -65,10 +65,174 @@
                         --shiny-width: 200px;
                     }
                     @keyframes shiny-text {
-                        0%, 90%, 100% { background-position: calc(-100% - var(--shiny-width)) 0; }
-                        30%, 60% { background-position: calc(100% + var(--shiny-width)) 0; }
-                    }
-                    * { box-sizing: border-box; margin: 0; padding: 0; }
+                                            0%, 90%, 100% { background-position: calc(-100% - var(--shiny-width)) 0; }
+                                            30%, 60% { background-position: calc(100% + var(--shiny-width)) 0; }
+                                        }
+                                        /* ================================================================
+                                           MAGIC UI UPGRADES — 5 new effects (2026-08-09)
+                                           Adapted from magicui.design to vanilla HTML/CSS/JS
+                                           ================================================================ */
+                                        /* Number Ticker — animated counting numbers */
+                                        @keyframes number-ticker {
+                                            from { opacity: 0; transform: translateY(8px); }
+                                            to   { opacity: 1; transform: translateY(0); }
+                                        }
+                                        .number-ticker {
+                                            display: inline-block;
+                                            font-family: 'Playfair Display', serif;
+                                            font-size: 2.5rem;
+                                            font-weight: 700;
+                                            background: var(--gold-gradient);
+                                            -webkit-background-clip: text;
+                                            background-clip: text;
+                                            -webkit-text-fill-color: transparent;
+                                            color: transparent;
+                                            min-width: 3ch;
+                                            text-align: center;
+                                            animation: number-ticker 0.6s ease-out both;
+                                        }
+                                        .number-ticker-label {
+                                            display: block;
+                                            font-family: 'Inter', sans-serif;
+                                            font-size: 0.85rem;
+                                            color: var(--text-muted);
+                                            margin-top: 4px;
+                                            text-align: center;
+                                            text-transform: uppercase;
+                                            letter-spacing: 0.5px;
+                                        }
+                                        /* Number Ticker grid */
+                                        .stats-grid {
+                                            display: grid;
+                                            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                                            gap: 24px;
+                                            padding: 40px 20px;
+                                            background: rgba(10,10,10,0.5);
+                                            border-top: 1px solid var(--glass-border);
+                                        }
+                                        .stat-item { text-align: center; }
+
+                                        /* Border Beam — animated gold beam around card borders */
+                                        @keyframes border-beam-flow {
+                                            0% { background-position: 0% 50%; }
+                                            100% { background-position: 200% 50%; }
+                                        }
+                                        .beam-border {
+                                            position: relative;
+                                            border-radius: 20px;
+                                            overflow: hidden;
+                                            isolation: isolate;
+                                        }
+                                        .beam-border::after {
+                                            content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+                                            border-radius: 20px; padding: 2px;
+                                            background: linear-gradient(135deg, transparent 20%, var(--gold) 50%, transparent 80%);
+                                            opacity: 0; transition: opacity 0.3s ease;
+                                            -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+                                            -webkit-mask-composite: xor; mask-composite: exclude;
+                                            background-size: 250% 250%;
+                                        }
+                                        .beam-border:hover::after,
+                                        .beam-border.beam-live::after {
+                                            opacity: 1; animation: border-beam-flow 4s linear infinite;
+                                        }
+                                        .beam-border .beam-inner { position: relative; z-index: 2; }
+
+                                        /* Marquee — infinite scrolling DFW cities */
+                                        @keyframes marquee-scroll {
+                                            0% { transform: translateX(0); }
+                                            100% { transform: translateX(-50%); }
+                                        }
+                                        .marquee {
+                                            overflow: hidden; white-space: nowrap;
+                                            background: rgba(10,10,10,0.6);
+                                            border-top: 1px solid var(--glass-border);
+                                            border-bottom: 1px solid var(--glass-border);
+                                            padding: 16px 0;
+                                        }
+                                        .marquee-track {
+                                            display: flex;
+                                            animation: marquee-scroll 30s linear infinite;
+                                            width: max-content;
+                                        }
+                                        .marquee:hover .marquee-track { animation-play-state: paused; }
+                                        .marquee-item {
+                                            display: inline-flex; align-items: center; gap: 8px;
+                                            padding: 0 24px;
+                                            color: var(--text-light);
+                                            font-size: 0.95rem; font-weight: 500;
+                                            white-space: nowrap;
+                                        }
+                                        .marquee-item::before {
+                                            content: ""; width: 6px; height: 6px; border-radius: 50%;
+                                            background: var(--gold); box-shadow: 0 0 12px var(--gold);
+                                            flex-shrink: 0;
+                                        }
+                                        @media (prefers-reduced-motion: reduce) {
+                                            .marquee-track { animation: none; }
+                                        }
+
+                                        /* Meteors — subtle gold shooting stars in background */
+                                        @keyframes meteor-fly {
+                                            0% { transform: translate(0,0) rotate(215deg); opacity: 0; }
+                                            10% { opacity: 1; }
+                                            90% { opacity: 1; }
+                                            100% { transform: translate(120vw, 120vh) rotate(215deg); opacity: 0; }
+                                        }
+                                        .meteor-layer {
+                                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                            pointer-events: none; z-index: -1;
+                                            overflow: hidden;
+                                        }
+                                        .meteor {
+                                            position: absolute;
+                                            width: 2px; height: 60px;
+                                            background: linear-gradient(180deg, transparent, var(--gold) 30%, var(--gold-light) 60%, transparent);
+                                            filter: drop-shadow(0 0 6px var(--gold));
+                                            border-radius: 2px;
+                                            opacity: 0;
+                                            animation: meteor-fly var(--duration, 6s) ease-in-out var(--delay, 0s) infinite;
+                                        }
+
+                                        /* Magic Card — spotlight follows cursor */
+                                        .magic-card {
+                                            position: relative;
+                                            border-radius: 18px;
+                                            overflow: hidden;
+                                            background: var(--glass);
+                                            backdrop-filter: blur(12px);
+                                            border: 1px solid var(--glass-border);
+                                            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                                        }
+                                        .magic-card::before { /* noise overlay */
+                                            content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+                                            opacity: 0.07; mix-blend-mode: overlay;
+                                            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n3'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n3)'/%3E%3C/svg%3E");
+                                            background-repeat: repeat; background-size: 150px 150px;
+                                        }
+                                        .magic-card::after { /* spotlight gradient */
+                                            content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+                                            background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%),
+                                                rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.06) 30%, transparent 70%);
+                                            opacity: 0; transition: opacity 0.3s ease;
+                                            border-radius: 18px;
+                                        }
+                                        .magic-card:hover::after { opacity: 1; }
+                                        .magic-card:hover { border-color: var(--gold); box-shadow: 0 0 32px rgba(212,175,55,0.15); }
+                                        .magic-card .magic-inner { position: relative; z-index: 2; padding: 24px; }
+
+                                        /* Animated List — staggered reveal on scroll */
+                                        .reveal-item { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+                                        .reveal-item.visible { opacity: 1; transform: translateY(0); }
+                                        @media (prefers-reduced-motion: reduce) {
+                                            .reveal-item { opacity: 1; transform: none; transition: none; }
+                                        }
+
+                                        /* Service card enhancements */
+                                        .service-card { position: relative; }
+                                        .city-card { position: relative; }
+                    
+                                        * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -329,14 +493,10 @@
                     pointer-events: none;
                 }
                 .option-card:hover::before {
-                    opacity: 1;
-                    animation: border-beam 3s linear infinite;
-                }
-                @keyframes border-beam {
-                    0% { background-position: 0% 50%; }
-                    100% { background-position: 200% 50%; }
-                }
-                .option-card:hover { border-color: var(--glass-border-strong); background: var(--glass-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+                                    opacity: 1;
+                                    animation: border-beam 3s linear infinite;
+                                }
+                                .option-card:hover { border-color: var(--glass-border-strong); background: var(--glass-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
                 .option-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.1); box-shadow: 0 8px 24px rgba(212,175,55,0.15); }
         .price-tag { font-weight:700; color: var(--gold); font-size: 0.9rem; white-space: nowrap; }
 
@@ -888,31 +1048,62 @@
 
         <!-- View Gallery link -->
         <div style="text-align:center;padding:20px 16px;border-top:1px solid var(--glass-border);">
-            <a href="gallery.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:1px solid var(--gold);border-radius:999px;color:var(--gold);font-weight:600;font-size:14px;text-decoration:none;transition:all .2s ease;background:rgba(212,175,55,0.05);">🖼️ View Our Project Gallery</a>
-        </div>
+                    <a href="gallery.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:1px solid var(--gold);border-radius:999px;color:var(--gold);font-weight:600;font-size:14px;text-decoration:none;transition:all .2s ease;background:rgba(212,175,55,0.05);">🖼️ View Our Project Gallery</a>
+                </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════
-             GOOGLE REVIEWS BADGE — Real rating from Google Business Profile
-             Links to live Google reviews page (not fabricated)
-             ═══════════════════════════════════════════════════════════════ -->
+                <!-- ══════════════════════════════════════════════════════════════
+                     MAGIC UI — NUMBER TICKER STATS
+                     Animated counting: TVs mounted, Google rating, Cities served, Years warranty
+                     ══════════════════════════════════════════════════════════════ -->
+                <div class="stats-grid" id="stats-section">
+                    <div class="stat-item reveal-item">
+                        <span class="number-ticker" data-target="500" data-suffix="+">0</span>
+                        <span class="number-ticker-label">TVs Mounted</span>
+                    </div>
+                    <div class="stat-item reveal-item">
+                        <span class="number-ticker" data-target="5" data-decimals="1">0</span>
+                        <span class="number-ticker-label">Google Rating</span>
+                    </div>
+                    <div class="stat-item reveal-item">
+                        <span class="number-ticker" data-target="20" data-suffix="+">0</span>
+                        <span class="number-ticker-label">DFW Cities</span>
+                    </div>
+                    <div class="stat-item reveal-item">
+                        <span class="number-ticker" data-target="2" data-suffix=" yr">0</span>
+                        <span class="number-ticker-label">Warranty</span>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════════
+                     GOOGLE REVIEWS BADGE — Real rating from Google Business Profile
+                     Links to live Google reviews page (not fabricated)
+                     ══════════════════════════════════════════════════════════════ -->
         <div style="padding:40px 20px;background:rgba(10,10,10,0.5);border-top:1px solid var(--glass-border);text-align:center;">
-            <h2 style="font-family:'Playfair Display',serif;color:#fff;margin-bottom:6px;">Reviewed on Google</h2>
-            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;">Our real customers. Our real rating.</p>
-            <div style="display:inline-flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:var(--glass);border:1px solid var(--glass-border-strong);border-radius:20px;backdrop-filter:blur(10px);">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <svg viewBox="0 0 24 24" style="width:28px;height:28px;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                    <span style="font-size:42px;font-weight:800;color:var(--gold);">5.0</span>
+                    <h2 style="font-family:'Playfair Display',serif;color:#fff;margin-bottom:6px;">Reviewed on Google</h2>
+                    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;">Our real customers. Our real rating.</p>
+                    <div style="display:inline-flex;flex-direction:column;align-items:center;gap:12px;padding:28px 40px;background:var(--glass);border:1px solid var(--glass-border-strong);border-radius:20px;backdrop-filter:blur(10px);">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <svg viewBox="0 0 24 24" style="width:28px;height:28px;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                            <span style="font-size:42px;font-weight:800;color:var(--gold);">5.0</span>
+                        </div>
+                        <div style="color:var(--gold);font-size:22px;letter-spacing:4px;">★★★★★</div>
+                        <div style="color:var(--text-muted);font-size:13px;">Rated by real customers on Google</div>
+                        <div style="display:flex;gap:10px;margin-top:8px;">
+                            <a href="https://www.google.com/maps/search/C%26O+Tv+Mounting+Irving+TX" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:#4285F4;color:#fff;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;transition:opacity .2s;">📖 Read Reviews</a>
+                            <a href="https://www.google.com/maps/search/C%26O+Tv+Mounting+Irving+TX" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:transparent;color:var(--gold);border:1px solid var(--gold);border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;transition:all .2s;">✍️ Leave a Review</a>
+                        </div>
+                    </div>
                 </div>
-                <div style="color:var(--gold);font-size:22px;letter-spacing:4px;">★★★★★</div>
-                <div style="color:var(--text-muted);font-size:13px;">Rated by real customers on Google</div>
-                <div style="display:flex;gap:10px;margin-top:8px;">
-                    <a href="https://www.google.com/maps/search/C%26O+Tv+Mounting+Irving+TX" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:#4285F4;color:#fff;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;transition:opacity .2s;">📖 Read Reviews</a>
-                    <a href="https://www.google.com/maps/search/C%26O+Tv+Mounting+Irving+TX" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:transparent;color:var(--gold);border:1px solid var(--gold);border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;transition:all .2s;">✍️ Leave a Review</a>
-                </div>
-            </div>
-        </div>
 
-        <!-- Service Areas Section (SEO) -->
+                <!-- ══════════════════════════════════════════════════════════════
+                     MAGIC UI — MARQUEE (DFW Cities infinite scroll)
+                     Replaces static city grid with animated marquee + keeps grid for SEO
+                     ══════════════════════════════════════════════════════════════ -->
+                <div class="marquee" aria-label="Cities we serve in DFW" role="region">
+                    <div class="marquee-track" id="marquee-track"></div>
+                </div>
+
+                <!-- Service Areas Section (SEO) -->
         <div style="padding: 48px 20px; background: rgba(10,10,10,0.6); border-top: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
             <h2 style="font-family: 'Playfair Display', serif; color: var(--black); text-align: center;">We Serve All of DFW</h2>
             <p style="text-align: center; font-size: 1.1rem; color: var(--text-light); max-width: 800px; margin: 0 auto 24px;">From Dallas to Fort Worth, Plano to Arlington and everywhere in between—our expert team brings professional TV mounting, fireplace installs, and smart home solutions to your doorstep.</p>
@@ -2120,6 +2311,135 @@ checkPaidRedirect();
 // Page load fade-in
 document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('page-loaded');
+
+    /* ================================================================
+       MAGIC UI — Initialize all 5 new effects
+       ================================================================ */
+
+    // 1. NUMBER TICKER — animate stats on scroll into view
+    (function() {
+        const tickers = document.querySelectorAll('.number-ticker[data-target]');
+        if (!tickers.length) return;
+        const animate = (el) => {
+            const target = parseFloat(el.dataset.target);
+            const decimals = parseInt(el.dataset.decimals) || 0;
+            const suffix = el.dataset.suffix || '';
+            const duration = 1500;
+            const start = performance.now();
+            function step(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+                const value = target * eased;
+                el.textContent = value.toFixed(decimals) + suffix;
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        };
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    animate(e.target);
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        tickers.forEach(t => obs.observe(t));
+    })();
+
+    // 2. MARQUEE — populate DFW cities infinite scroll
+    (function() {
+        const track = document.getElementById('marquee-track');
+        if (!track) return;
+        const cities = [
+            'Dallas', 'Fort Worth', 'Plano', 'Arlington', 'Irving', 'Richardson',
+            'McKinney', 'Frisco', 'Garland', 'Mesquite', 'Allen', 'Flower Mound',
+            'Mansfield', 'Carrollton', 'Lewisville', 'Euless', 'Bedford', 'DeSoto',
+            'Cedar Hill', 'Grand Prairie', 'Grapevine', 'Coppell', 'The Colony',
+            'Little Elm', 'Prosper', 'Celina', 'Anna', 'Melissa', 'Princeton',
+            'Wylie', 'Sachse', 'Rowlett', 'Rockwall', 'Forney', 'Terrell',
+            'Kaufman', 'Ennis', 'Waxahachie', 'Midlothian', 'Red Oak', 'Lancaster',
+            'Duncanville', 'Cedar Hill', 'Balch Springs', 'Seagoville', 'Sunnyvale',
+            'Wilmer', 'Hutchins', 'Lancaster', 'Ferris', 'Palmer', 'Bristol'
+        ];
+        // Duplicate for seamless loop
+        const items = [...cities, ...cities].map(c =>
+            `<span class="marquee-item">${c}</span>`
+        ).join('');
+        track.innerHTML = items;
+    })();
+
+    // 3. METEORS — spawn gold shooting stars
+    (function() {
+        const layer = document.createElement('div');
+        layer.className = 'meteor-layer';
+        layer.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(layer);
+        const COUNT = 18; // subtle, not overwhelming
+        for (let i = 0; i < COUNT; i++) {
+            const m = document.createElement('div');
+            m.className = 'meteor';
+            // Randomize start position across top/left edges
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            m.style.left = startX + 'vw';
+            m.style.top = startY + 'vh';
+            // Random duration 4-10s, delay 0-8s
+            const dur = 4 + Math.random() * 6;
+            const delay = Math.random() * 8;
+            m.style.setProperty('--duration', dur + 's');
+            m.style.setProperty('--delay', delay + 's');
+            layer.appendChild(m);
+        }
+    })();
+
+    // 4. MAGIC CARD — spotlight follows cursor on service cards
+    (function() {
+        const cards = document.querySelectorAll('.service-card, .city-card, .option-card, .faq-item');
+        cards.forEach(card => {
+            card.classList.add('magic-card');
+            const inner = document.createElement('div');
+            inner.className = 'magic-inner';
+            // Wrap existing content
+            while (card.firstChild) inner.appendChild(card.firstChild);
+            card.appendChild(inner);
+            // Track mouse
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mx', x + '%');
+                card.style.setProperty('--my', y + '%');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--mx', '50%');
+                card.style.setProperty('--my', '50%');
+            });
+        });
+    })();
+
+    // 5. ANIMATED LIST — staggered reveal on scroll
+    (function() {
+        const items = document.querySelectorAll('.reveal-item');
+        if (!items.length) return;
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => e.target.classList.add('visible'), i * 80);
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(item => obs.observe(item));
+    })();
+
+    // 6. BORDER BEAM — activate on form cards hover (already CSS, but add beam-live for touch)
+    (function() {
+        const beamCards = document.querySelectorAll('.form-card, .option-card');
+        beamCards.forEach(card => {
+            card.addEventListener('touchstart', () => card.classList.add('beam-live'), { passive: true });
+            card.addEventListener('touchend', () => setTimeout(() => card.classList.remove('beam-live'), 2000), { passive: true });
+        });
+    })();
 });
 
 // Hero text rotator — adapted from 21st.dev Classy Hero
