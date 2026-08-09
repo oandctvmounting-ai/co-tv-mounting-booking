@@ -45,14 +45,16 @@
                         30%, 60% { background-position: calc(100% + var(--shiny-width)) 0; }
                     }
                     .shiny-text {
-                        background: linear-gradient(135deg, transparent 0%, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent 100%);
-                        background-size: var(--shiny-width) 100%;
-                        background-clip: text;
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        color: transparent;
-                        animation: shiny-text 8s cubic-bezier(0.6, 0.6, 0, 1) infinite;
-                    }
+                                            background: linear-gradient(135deg, transparent 0%, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent 100%);
+                                            background-size: var(--shiny-width) 100%;
+                                            background-clip: text;
+                                            -webkit-background-clip: text;
+                                            /* Solid gold fallback so text is never invisible if
+                                               gradient-clip fails on inline elements */
+                                            color: var(--gold);
+                                            -webkit-text-fill-color: transparent;
+                                            animation: shiny-text 8s cubic-bezier(0.6, 0.6, 0, 1) infinite;
+                                        }
                     * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
@@ -163,19 +165,19 @@
         .hero h1 .gold { color: var(--gold); }
         /* Text rotator */
         .rotator-wrap {
-            display: block; min-height: 1.3em; margin-top: 4px;
-        }
-        .rotator-word {
-            display: inline-block;
-            font-family: 'Playfair Display', serif;
-            font-size: 2.6rem; font-weight: 700;
-            background: linear-gradient(135deg, var(--gold) 0%, #F9F4E8 50%, var(--gold) 100%);
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent; color: transparent;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .rotator-word.out { opacity: 0; filter: blur(8px); transform: translateY(-8px); }
-        .rotator-word.in { opacity: 1; filter: blur(0); transform: translateY(0); }
+                    display: inline-block; min-height: 1.3em; margin: 0; padding: 0; vertical-align: baseline;
+                }
+                .rotator-word {
+                    display: inline-block;
+                    font-family: 'Playfair Display', serif;
+                    font-size: 2.6rem; font-weight: 700;
+                    /* NO background here — shiny-text supplies the gold gradient
+                       so they don't fight each other. */
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    white-space: nowrap;
+                }
+                .rotator-word.out { opacity: 0; filter: blur(8px); transform: translateY(-8px); }
+                .rotator-word.in { opacity: 1; filter: blur(0); transform: translateY(0); }
         .hero p {
             font-size: 1.05rem; color: var(--text-muted); max-width: 580px;
             margin: 0 auto 32px; font-weight: 300;
@@ -530,10 +532,10 @@
         <div class="hero-sweep"></div>
         <div class="hero-content">
                     <div class="hero-badge">💰 referral partner program</div>
-                    <h1 class="shiny-text">Turn Your <span class="gold">Client Network</span><br>Into
-                        <span class="rotator-wrap"><span class="rotator-word in" id="rotator">Monthly Cash</span></span>
+                    <h1>Turn Your <span class="gold">Client Network</span><br>Into
+                        <span class="rotator-wrap"><span class="rotator-word shiny-text in" id="rotator">Monthly Cash</span></span>
                     </h1>
-            <p>You're already recommending TV mounting, fireplace installs, and home services. Now get <strong style="color:var(--gold)">$25–$75 per job</strong> for doing it.</p>
+                    <p>You're already recommending TV mounting, fireplace installs, and home services. Now get <strong style="color:var(--gold)">$25–$75 per job</strong> for doing it.</p>
             <div class="hero-cta">
                 <div class="stats-bar">
                     <div class="stat-card">
