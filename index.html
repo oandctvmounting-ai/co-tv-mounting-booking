@@ -317,12 +317,17 @@
         .popular-ribbon { position: absolute; top: -1px; right: -1px; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 0 14px 0 8px; }
 
         .mount-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
-        @media (min-width: 600px) {
-            .options-grid { grid-template-columns: repeat(2, 1fr); }
-            .mount-grid { grid-template-columns: repeat(3, 1fr) !important; }
-        }
-        @media (min-width: 900px) {
-                    .options-grid { grid-template-columns: repeat(3, 1fr); }
+                @media (min-width: 600px) {
+                    .options-grid { grid-template-columns: repeat(2, 1fr); }
+                    .mount-grid { grid-template-columns: repeat(3, 1fr) !important; }
+                }
+                @media (min-width: 900px) {
+                            .options-grid { grid-template-columns: repeat(3, 1fr); }
+
+                            /* Step 2 TV config — give TV Size and Wall Type grid layouts that
+                               divide evenly so items never strand alone on a last row. */
+                            .size-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
+                            .surface-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
                 }
 
                 /* Magic UI — Bento Grid layout for services */
@@ -1224,13 +1229,13 @@ function renderTvs(prefix) {
                 ${mountCards(prefix + '_mount_' + i)}
             </div>
             <div class="section-label required" style="margin-top:18px">TV Size <span class="req-badge">Required</span></div>
-            <div class="options-grid" style="margin-top:10px">
-                ${optCard(prefix + '_size_' + i, 'TV Size', Object.entries(TV.size).map(([k,v]) => [k, TV.sizeLabel[k] + ' (+$' + v + ')']))}
-            </div>
-            <div class="section-label required" style="margin-top:18px">Wall Type <span class="req-badge">Required</span></div>
-            <div class="options-grid" style="margin-top:10px">
-                ${optCard(prefix + '_surface_' + i, 'Wall Type', Object.entries(TV.surface).map(([k, v]) => [k, TV.surfaceLabel[k] + ' (+$' + v + ')']))}
-            </div>
+                        <div class="options-grid size-grid" style="margin-top:10px">
+                            ${optCard(prefix + '_size_' + i, 'TV Size', Object.entries(TV.size).map(([k,v]) => [k, TV.sizeLabel[k] + ' (+$' + v + ')']))}
+                        </div>
+                        <div class="section-label required" style="margin-top:18px">Wall Type <span class="req-badge">Required</span></div>
+                        <div class="options-grid surface-grid" style="margin-top:10px">
+                            ${optCard(prefix + '_surface_' + i, 'Wall Type', Object.entries(TV.surface).map(([k, v]) => [k, TV.surfaceLabel[k] + ' (+$' + v + ')']))}
+                        </div>
             <div class="options-grid" style="margin-top:12px">
                 <div class="option-card" id="${prefix}_fw_${i}" onclick="toggleFireplace('${prefix}', ${i})"><span>Over Fireplace</span><span class="price-tag">+$${TV.fireplaceSurcharge}</span></div>
                 <div class="option-card" id="${prefix}_wire_internal_${i}" onclick="setTv('${prefix}', ${i}, 'wire', 'internal')"><span>Internal Wire Concealment</span><span class="price-tag">+$${TV.wire.internal}</span></div>
