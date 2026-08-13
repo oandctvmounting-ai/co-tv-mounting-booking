@@ -505,27 +505,29 @@
         btn.textContent = 'Sending...';
 
         const formData = new FormData(document.getElementById('lead-form'));
-        const payload = {
-            action: 'referral_card_lead',
-            refCode: formData.get('refCode'),
-            partnerName: formData.get('partnerName'),
-            partnerEmail: formData.get('partnerEmail'),
-            clientName: formData.get('clientName'),
-            clientPhone: formData.get('clientPhone'),
-            clientEmail: formData.get('clientEmail'),
-            clientAddress: formData.get('clientAddress'),
-            serviceNeeded: formData.get('serviceNeeded'),
-            serviceNotes: formData.get('serviceNotes'),
-            warranty: '2-year',
-            priority: true
-        };
+        const refCode = formData.get('refCode');
+        const partnerName = formData.get('partnerName');
+        const partnerEmail = formData.get('partnerEmail');
+        const clientName = formData.get('clientName');
+        const clientPhone = formData.get('clientPhone');
+        const clientEmail = formData.get('clientEmail');
+        const clientAddress = formData.get('clientAddress');
+        const serviceNeeded = formData.get('serviceNeeded');
+        const serviceNotes = formData.get('serviceNotes');
 
         try {
-            const resp = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const url = APP_SCRIPT_URL + '?action=referral_card_lead' +
+                '&refCode=' + encodeURIComponent(refCode) +
+                '&partnerName=' + encodeURIComponent(partnerName) +
+                '&partnerEmail=' + encodeURIComponent(partnerEmail) +
+                '&clientName=' + encodeURIComponent(clientName) +
+                '&clientPhone=' + encodeURIComponent(clientPhone) +
+                '&clientEmail=' + encodeURIComponent(clientEmail) +
+                '&clientAddress=' + encodeURIComponent(clientAddress) +
+                '&serviceNeeded=' + encodeURIComponent(serviceNeeded) +
+                '&serviceNotes=' + encodeURIComponent(serviceNotes) +
+                '&warranty=2-year&priority=true';
+            const resp = await fetch(url);
             const data = await resp.json();
 
             if (data.ok) {

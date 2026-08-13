@@ -589,6 +589,70 @@ function doGet(e) {
       return jsonOut({ ok: true, referrals: referrals });
     }
 
+    // ---- Branch: referral_card_lead (GET support) ----
+    if (data.action === 'referral_card_lead') {
+      const refSheet = getReferralsSheet();
+      const refCode = data.refCode || '';
+      refSheet.appendRow([
+        new Date(),
+        data.partnerName || '',
+        '',
+        '',
+        data.partnerEmail || '',
+        data.clientName || '',
+        data.clientPhone || '',
+        data.clientEmail || '',
+        data.clientAddress || '',
+        data.serviceNeeded || '',
+        data.serviceNotes || '',
+        refCode,
+        'new',
+        data.warranty || '2-year',
+        'priority'
+      ]);
+
+      // Telegram alert
+      try {
+        const token = tgBotToken();
+        if (token) {
+          var msg = '🔔 REFERRAL CARD LEAD — C&O TV Mounting\n' +
+            '⚡ PRIORITY — 2-Year Warranty\n' +
+            'Client: ' + (data.clientName || '?') + '\n' +
+            'Phone: ' + (data.clientPhone || '?') + '\n' +
+            (data.clientEmail ? 'Email: ' + data.clientEmail + '\n' : '') +
+            (data.clientAddress ? 'Area: ' + data.clientAddress + '\n' : '') +
+            'Service: ' + (data.serviceNeeded || '?') + '\n' +
+            (data.serviceNotes ? 'Notes: ' + data.serviceNotes + '\n' : '') +
+            'Referral Code: ' + refCode + '\n' +
+            'Partner: ' + (data.partnerName || 'Unknown') + '\n' +
+            'Action: Call within 2 hours — this is a priority lead.';
+          var url = 'https://api.telegram.org/bot' + token + '/sendMessage';
+          UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+            payload: JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: msg }) });
+          UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+            payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: msg }) });
+        }
+      } catch(e) { Logger.log('Referral card lead Telegram alert failed: ' + e); }
+
+      // Email notification
+      try {
+        GmailApp.sendEmail('oandctvmounting@gmail.com',
+          '🔔 Referral Card Lead: ' + (data.clientName || '?') + ' [' + refCode + ']',
+          'New lead from referral card!\n\n' +
+          'Client: ' + (data.clientName || '?') + '\n' +
+          'Phone: ' + (data.clientPhone || '?') + '\n' +
+          (data.clientEmail ? 'Email: ' + data.clientEmail + '\n' : '') +
+          (data.clientAddress ? 'Area: ' + data.clientAddress + '\n' : '') +
+          'Service: ' + (data.serviceNeeded || '?') + '\n' +
+          (data.serviceNotes ? 'Notes: ' + data.serviceNotes + '\n' : '') +
+          'Referral Code: ' + refCode + '\n' +
+          'Partner: ' + (data.partnerName || 'Unknown') + '\n' +
+          'Action: Call within 2 hours — this is a priority lead.');
+      } catch(e) { Logger.log('Referral card lead email failed: ' + e); }
+
+      return jsonOut({ ok: true });
+    }
+
     // Default: health check
     return jsonOut({ status: 'C&O booking endpoint live' });
   } catch(err) {
