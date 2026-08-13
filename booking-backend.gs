@@ -545,8 +545,55 @@ function doPost(e) {
   }
 }
 
-function doGet() {
-  return jsonOut({ status: 'C&O booking endpoint live' });
+function doGet(e) {
+  // Handle GET requests with query params (same actions as POST)
+  try {
+    const data = e.parameter || {};
+    
+    // ---- Branch: get_partner_card ----
+    if (data.action === 'get_partner_card') {
+      const email = String(data.partnerEmail || '').toLowerCase().trim();
+      if (!email) return jsonOut({ ok: false, error: 'Email required' });
+      const sh = getReferralCodesSheet();
+      const rows = sh.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (String(r[3] || '').toLowerCase().trim() === email) {
+          return jsonOut({
+            ok: true,
+            partnerName: r[1],
+            partnerCompany: r[2],
+            referralCode: r[4]
+          });
+        }
+      }
+      return jsonOut({ ok: false, error: 'No card found' });
+    }
+
+    // ---- Branch: generate_referral_code ----
+    if (data.action === 'generate_referral_code') {
+      const referralCode = getOrCreateReferralCode(data.partnerName, data.partnerCompany, data.partnerEmail, data.clientCode);
+      // Notify business owner
+      try {
+        GmailApp.sendEmail('oandctvmounting@gmail.com',
+          'New referral code generated: ' + referralCode,
+          'Partner: ' + (data.partnerName || '') + '\\nCompany: ' + (data.partnerCompany || '') + '\\nEmail: ' + (data.partnerEmail || '') + '\\nCode: ' + referralCode
+        );
+      } catch(err) { Logger.log('Notify email failed: ' + err); }
+      return jsonOut({ ok: true, referralCode: referralCode });
+    }
+
+    // ---- Branch: get_referrals ----
+    if (data.action === 'get_referrals') {
+      const referrals = getReferralsByPartnerEmail(data.partnerEmail || '');
+      return jsonOut({ ok: true, referrals: referrals });
+    }
+
+    // Default: health check
+    return jsonOut({ status: 'C&O booking endpoint live' });
+  } catch(err) {
+    return jsonOut({ ok: false, error: String(err).slice(0, 300) });
+  }
 }
 
 function sendTelegramAlert(data, tvDetails) {
