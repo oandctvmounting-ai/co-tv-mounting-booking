@@ -257,10 +257,58 @@
         </div>
         <style>@media(max-width:560px){.stats-row{grid-template-columns:1fr 1fr 1fr !important;gap:8px !important;}.stats-row .card{padding:14px 8px !important;}.stats-row .card div:first-child{font-size:1.1rem !important;}.stats-row .card div:last-child{font-size:0.6rem !important;}}</style>
         <div class="card">
-            <h2>Your Referrals</h2>
-            <p>Track your referrals, earnings, and payouts in real-time.</p>
-            <a href="my-referrals.html" class="btn btn-primary">Check Your Referrals →</a>
-        </div>
+                    <h2>Your Referrals</h2>
+                    <p>Track your referrals, earnings, and payouts in real-time.</p>
+                    <a href="my-referrals.html" class="btn btn-primary">Check Your Referrals →</a>
+                </div>
+
+                <!-- REAL-TIME STATS TRACKER -->
+                <div class="card" id="stats-tracker">
+                    <h2>📊 Your Stats This Month</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 16px;">Live data from your referral pipeline. Refreshes every 30 seconds.</p>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
+                        <div class="stat-box">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-pending">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Quoted</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-quoted">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Booked</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-booked">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Paid This Month</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-paid">$0</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <div class="stat-box" style="flex: 1; min-width: 140px;">
+                            <div class="stat-label">Est. Earnings</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-earnings">$0</div>
+                        </div>
+                        <div class="stat-box" style="flex: 1; min-width: 140px;">
+                            <div class="stat-label">Quarter Bonus</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-bonus">$0</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshStats()" style="margin-top: 12px; width: auto;">🔄 Refresh Now</button>
+                    <div id="last-updated" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;"></div>
+                </div>
+                <style>
+                    .stat-box {
+                        background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+                        border-radius: var(--radius-sm); padding: 16px; text-align: center;
+                    }
+                    .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+                    .stat-value { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; line-height: 1; }
+                    .stat-value#stat-paid, .stat-value#stat-earnings, .stat-value#stat-bonus { color: var(--gold); }
+                    @media (max-width: 560px) {
+                        .stat-value { font-size: 1.3rem; }
+                    }
+                </style>
 
         <div class="card">
             <h2>Tax Information</h2>
@@ -292,6 +340,17 @@
                 <div class="logo">C&O</div>
                 <div class="code" id="card-code">REF-XXXX</div>
                 <div class="tagline">Trusted TV Mounting Partner</div>
+            </div>
+            <div id="card-link-section" style="display:none;margin-top:16px;">
+                <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:14px;margin-bottom:10px;">
+                    <label style="font-size:0.75rem;font-weight:700;color:var(--gold);display:block;margin-bottom:6px;">Your Shareable Card Link</label>
+                    <input type="text" id="card-link" readonly
+                        style="width:100%;padding:10px;border:1.5px solid rgba(212,175,55,0.3);border-radius:8px;background:rgba(0,0,0,0.3);color:var(--gold);font-size:0.8rem;font-family:monospace;"
+                        value="">
+                </div>
+                <button class="btn btn-gold" id="copy-card-link" style="width:auto;display:inline-flex;padding:10px 24px;">📋 Copy Card Link</button>
+                <a class="btn btn-primary" id="open-card-link" target="_blank" style="width:auto;display:inline-flex;padding:10px 24px;margin-left:8px;text-decoration:none;">↗ Open Card</a>
+                <p style="font-size:0.72rem;color:var(--text-muted);margin-top:8px;">Send this link to clients — they'll see a digital business card with your name, a 2-year warranty offer, and a contact form to book.</p>
             </div>
         </div>
 
@@ -551,6 +610,11 @@
         partnerCodeInput.value = code;
         cardCodeDisplay.textContent = code;
         cardPreview.style.display = 'block';
+        // Generate and show the shareable referral card link
+        var cardLink = 'https://oandctvmounting-ai.github.io/co-tv-mounting-booking/referral-card.html?code=' + code;
+        document.getElementById('card-link').value = cardLink;
+        document.getElementById('open-card-link').href = cardLink;
+        document.getElementById('card-link-section').style.display = 'block';
         if (email) {
             fetch(APP_SCRIPT_URL, {
                 method: 'POST', mode: 'no-cors',
@@ -565,6 +629,15 @@
         showToast('Referral card generated! Code stored to your account.');
     }
     generateCardBtn.addEventListener('click', updateCardPreview);
+
+    // Copy card link to clipboard
+    const copyCardLinkBtn = document.getElementById('copy-card-link');
+    copyCardLinkBtn.addEventListener('click', function() {
+        var linkInput = document.getElementById('card-link');
+        linkInput.select();
+        document.execCommand('copy');
+        showToast('Card link copied! Paste it in a text or email to your client.');
+    });
 
     // Email Templates
     const template1 = `Hi [Client Name],\n\nI highly recommend C&O TV Mounting for your TV installation needs. They're professional, reliable, and offer a 24-month workmanship warranty. You can book directly at https://oandctvmounting-ai.github.io/co-tv-mounting-booking/ or mention my referral code: [YOUR CODE].\n\nBest regards,\n[Your Name]`;

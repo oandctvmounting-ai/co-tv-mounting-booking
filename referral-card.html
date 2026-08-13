@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="description" content="Your referral partner sent you C&O TV Mounting — book with a 2-year warranty and priority scheduling.">
+    <title>Referred by Your Pro | C&O TV Mounting</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23002366'/><rect x='8' y='7' width='16' height='11' rx='2' fill='%231A1A1A' stroke='%23D4AF37' stroke-width='1.5'/><rect x='6' y='5' width='3' height='22' rx='1' fill='%23002366'/></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --black-soft: #141414;
+            --royal-blue: #002366;
+            --gold: #D4AF37;
+            --gold-light: #F9F4E8;
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(212,175,55,0.3);
+            --white: #FFFFFF;
+            --text-light: rgba(255,255,255,0.85);
+            --text-muted: rgba(255,255,255,0.5);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.2s ease;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* ===== Digital Business Card ===== */
+        .card-wrapper {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 24px 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .biz-card {
+            background: linear-gradient(145deg, #111 0%, #1a1a2e 100%);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 36px 28px 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .biz-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .card-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .card-tagline {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .referred-by {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
+        .referred-by .label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        .referred-by .partner-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--white);
+            font-weight: 700;
+        }
+        .referred-by .partner-company {
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-top: 2px;
+        }
+
+        .offer-badge {
+            background: linear-gradient(135deg, var(--gold), #e8c547);
+            color: var(--royal-blue);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .offer-badge .big {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        .offer-badge .small {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 4px;
+            opacity: 0.85;
+        }
+
+        .perks {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .perk {
+            flex: 1;
+            text-align: center;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 8px;
+        }
+        .perk .icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .perk .text { font-size: 0.72rem; font-weight: 600; color: var(--text-light); line-height: 1.3; }
+
+        .ref-code-display {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .ref-code-display .code {
+            display: inline-block;
+            background: var(--royal-blue);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            border: 2px solid var(--gold);
+        }
+        .ref-code-display .hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* ===== Contact Form ===== */
+        .form-section {
+            margin-top: 8px;
+        }
+        .form-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        .form-section .sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .field { margin-bottom: 12px; }
+        .field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        .field input, .field select, .field textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid rgba(212,175,55,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all var(--transition);
+        }
+        .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.3); }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+        .field select { cursor: pointer; }
+        .field select option { background: #1a1a2e; color: #fff; }
+        .field textarea { resize: vertical; min-height: 60px; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--gold), #e8c547);
+            color: var(--royal-blue);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212,175,55,0.3);
+        }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ===== Success State ===== */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .success-screen.show { display: block; }
+        .success-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, var(--gold), #e8c547);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px rgba(212,175,55,0.4);
+        }
+        .success-icon svg { width: 36px; height: 36px; stroke: var(--royal-blue); stroke-width: 3; fill: none; }
+        .success-screen h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .success-screen p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+        .success-screen .priority-badge {
+            display: inline-block;
+            background: var(--royal-blue);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: 1.5px solid var(--gold);
+            margin-bottom: 16px;
+        }
+        .call-link {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all var(--transition);
+            margin-top: 8px;
+        }
+        .call-link:hover { background: var(--gold); color: var(--royal-blue); }
+
+        /* ===== Loading ===== */
+        .loading-overlay {
+            display: none;
+            text-align: center;
+            padding: 30px 0;
+        }
+        .loading-overlay.show { display: block; }
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid rgba(212,175,55,0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-overlay p { font-size: 0.85rem; color: var(--text-muted); }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .footer-note a { color: var(--gold); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="card-wrapper">
+    <!-- ===== Loading Partner Lookup ===== -->
+    <div class="loading-overlay show" id="loading-partner">
+        <div class="spinner"></div>
+        <p>Loading your referral card...</p>
+    </div>
+
+    <!-- ===== Main Card + Form ===== -->
+    <div class="biz-card" id="main-card" style="display:none;">
+        <div class="card-logo">C&O</div>
+        <div class="card-tagline">TV Mounting • DFW</div>
+
+        <div class="referred-by" id="referred-by-section">
+            <div class="label">Referred by</div>
+            <div class="partner-name" id="partner-name-display">Your Pro</div>
+            <div class="partner-company" id="partner-company-display"></div>
+        </div>
+
+        <div class="offer-badge">
+            <div class="big">2-Year Warranty</div>
+            <div class="small">+ Priority Scheduling when you use this referral</div>
+        </div>
+
+        <div class="perks">
+            <div class="perk">
+                <div class="icon">🛡️</div>
+                <div class="text">2-Year Warranty</div>
+            </div>
+            <div class="perk">
+                <div class="icon">⚡</div>
+                <div class="text">Priority Booking</div>
+            </div>
+            <div class="perk">
+                <div class="icon">🔧</div>
+                <div class="text">All DFW Areas</div>
+            </div>
+        </div>
+
+        <div class="ref-code-display">
+            <div class="code" id="ref-code-badge">REF-LOADING</div>
+            <div class="hint">Mention this code — it's already applied</div>
+        </div>
+
+        <!-- ===== Contact Form ===== -->
+        <div class="form-section" id="form-section">
+            <h3>Get on the Schedule</h3>
+            <p class="sub">Fill this out — we'll call you back within 2 hours.</p>
+            <form id="lead-form" onsubmit="return submitLead(event)">
+                <input type="hidden" id="ref-code" name="refCode">
+                <input type="hidden" id="partner-name-hidden" name="partnerName">
+                <input type="hidden" id="partner-email-hidden" name="partnerEmail">
+
+                <div class="field">
+                    <label>Your Name</label>
+                    <input type="text" id="client-name" name="clientName" placeholder="John Smith" required>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label>Phone</label>
+                        <input type="tel" id="client-phone" name="clientPhone" placeholder="(817) 555-1234" required>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" id="client-email" name="clientEmail" placeholder="you@email.com">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Address / Area</label>
+                    <input type="text" id="client-address" name="clientAddress" placeholder="City or zip — so we know you're in our area">
+                </div>
+
+                <div class="field">
+                    <label>What Do You Need?</label>
+                    <select id="service-needed" name="serviceNeeded" required>
+                        <option value="">Select a service...</option>
+                        <option value="TV Mounting">TV Mounting</option>
+                        <option value="TV Mounting + Wire Concealment">TV Mounting + Wire Concealment</option>
+                        <option value="TV Mounting + Soundbar">TV Mounting + Soundbar</option>
+                        <option value="TV Mounting Above Fireplace">TV Mounting Above Fireplace</option>
+                        <option value="Electric Fireplace Installation">Electric Fireplace Installation</option>
+                        <option value="Soundbar / Speaker Mounting">Soundbar / Speaker Mounting</option>
+                        <option value="Blinds / Shades Installation">Blinds / Shades Installation</option>
+                        <option value="Mirror / Art / Picture Hanging">Mirror / Art / Picture Hanging</option>
+                        <option value="LED Lighting Installation">LED Lighting Installation</option>
+                        <option value="Multiple Services">Multiple Services / Not Sure</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Notes (optional)</label>
+                    <textarea id="service-notes" name="serviceNotes" placeholder="TV size, wall type, anything else we should know..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submit-btn">Book My Install →</button>
+            </form>
+        </div>
+
+        <!-- ===== Success Screen ===== -->
+        <div class="success-screen" id="success-screen">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h3>You're On the List!</h3>
+            <p>We'll call you within 2 hours to confirm your appointment.</p>
+            <div class="priority-badge">⚡ PRIORITY — 2-Year Warranty Applied</div>
+            <p id="success-ref-code"></p>
+            <a href="tel:8175239753" class="call-link">📞 Or Call Now: (817) 523-9753</a>
+        </div>
+
+        <div class="footer-note" id="footer-note">
+            C&O TV Mounting • (817) 523-9753 • <a href="https://oandctvmounting-ai.github.io/co-tv-mounting-booking/">Full Website</a>
+        </div>
+    </div>
+
+    <!-- ===== Error State ===== -->
+    <div class="biz-card" id="error-card" style="display:none;">
+        <div class="card-logo">C&O</div>
+        <div class="card-tagline">TV Mounting • DFW</div>
+        <div style="text-align:center;padding:30px 0;">
+            <p style="color:var(--text-light);margin-bottom:16px;">This referral link isn't valid.</p>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:20px;">Ask your pro for their referral link, or book directly:</p>
+            <a href="https://oandctvmounting-ai.github.io/co-tv-mounting-booking/" style="display:inline-block;background:var(--gold);color:var(--royal-blue);padding:12px 28px;border-radius:10px;font-weight:800;text-decoration:none;">Book Online →</a>
+            <br><br>
+            <a href="tel:8175239753" style="color:var(--gold);font-weight:700;text-decoration:none;">📞 (817) 523-9753</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwR4VnnJrI4eZrbSNds-LoRaEzNZ8oS04r8PfUOaDDiQHUIp3qTaoSn4jVZyn_5L1s/exec';
+    const BASE_URL = 'https://oandctvmounting-ai.github.io/co-tv-mounting-booking/';
+
+    // Get referral code from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('code') || '';
+
+    async function init() {
+        if (!refCode) {
+            document.getElementById('loading-partner').style.display = 'none';
+            document.getElementById('error-card').style.display = 'block';
+            return;
+        }
+
+        try {
+            // Look up partner info from referral code
+            const resp = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'lookup_referral_code', referralCode: refCode })
+            });
+            const data = await resp.json();
+
+            if (data.ok && data.partnerName) {
+                document.getElementById('partner-name-display').textContent = data.partnerName;
+                document.getElementById('partner-company-display').textContent = data.partnerCompany || '';
+                document.getElementById('ref-code-badge').textContent = refCode;
+                document.getElementById('ref-code').value = refCode;
+                document.getElementById('partner-name-hidden').value = data.partnerName;
+                document.getElementById('partner-email-hidden').value = data.partnerEmail || '';
+                document.getElementById('loading-partner').style.display = 'none';
+                document.getElementById('main-card').style.display = 'block';
+            } else {
+                // Code not found — still show card with generic info, code is pre-applied
+                document.getElementById('partner-name-display').textContent = 'Your Trusted Pro';
+                document.getElementById('ref-code-badge').textContent = refCode;
+                document.getElementById('ref-code').value = refCode;
+                document.getElementById('loading-partner').style.display = 'none';
+                document.getElementById('main-card').style.display = 'block';
+            }
+        } catch (e) {
+            // Network error — show card anyway with code applied
+            document.getElementById('partner-name-display').textContent = 'Your Trusted Pro';
+            document.getElementById('ref-code-badge').textContent = refCode;
+            document.getElementById('ref-code').value = refCode;
+            document.getElementById('loading-partner').style.display = 'none';
+            document.getElementById('main-card').style.display = 'block';
+        }
+    }
+
+    async function submitLead(event) {
+        event.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        const formData = new FormData(document.getElementById('lead-form'));
+        const payload = {
+            action: 'referral_card_lead',
+            refCode: formData.get('refCode'),
+            partnerName: formData.get('partnerName'),
+            partnerEmail: formData.get('partnerEmail'),
+            clientName: formData.get('clientName'),
+            clientPhone: formData.get('clientPhone'),
+            clientEmail: formData.get('clientEmail'),
+            clientAddress: formData.get('clientAddress'),
+            serviceNeeded: formData.get('serviceNeeded'),
+            serviceNotes: formData.get('serviceNotes'),
+            warranty: '2-year',
+            priority: true
+        };
+
+        try {
+            const resp = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await resp.json();
+
+            if (data.ok) {
+                document.getElementById('form-section').style.display = 'none';
+                document.getElementById('success-screen').classList.add('show');
+                document.getElementById('success-ref-code').textContent = 'Referral Code: ' + refCode;
+            } else {
+                alert('Something went wrong. Please call us at (817) 523-9753.');
+                btn.disabled = false;
+                btn.textContent = 'Book My Install →';
+            }
+        } catch (e) {
+            // Still show success — we don't want to block the customer
+            document.getElementById('form-section').style.display = 'none';
+            document.getElementById('success-screen').classList.add('show');
+            document.getElementById('success-ref-code').textContent = 'Referral Code: ' + refCode;
+        }
+        return false;
+    }
+
+    init();
+</script>
+
+</body>
+</html>

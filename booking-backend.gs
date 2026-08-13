@@ -392,6 +392,85 @@ function doPost(e) {
       return jsonOut({ ok: true });
     }
 
+    // ---- Branch 7: Lookup referral code → return partner info for card page ----
+    if (data.action === 'lookup_referral_code') {
+      const sh = getReferralCodesSheet();
+      const rows = sh.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        if (String(rows[i][4] || '').toUpperCase().trim() === String(data.referralCode || '').toUpperCase().trim()) {
+          return jsonOut({ ok: true, partnerName: rows[i][1], partnerCompany: rows[i][2], partnerEmail: rows[i][3] });
+        }
+      }
+      return jsonOut({ ok: false, error: 'Code not found' });
+    }
+
+    // ---- Branch 8: Referral card lead (client fills form on partner's card page) ----
+    if (data.action === 'referral_card_lead') {
+      // Save to Referrals sheet (same structure as manual referral)
+      const refSheet = getReferralsSheet();
+      const refCode = data.refCode || '';
+      refSheet.appendRow([
+        new Date(),
+        data.partnerName || '',          // Partner Name
+        '',                               // Partner Company (not always known)
+        '',                               // Partner Phone
+        data.partnerEmail || '',          // Partner Email
+        data.clientName || '',            // Client Name
+        data.clientPhone || '',           // Client Phone
+        data.clientEmail || '',           // Client Email
+        data.clientAddress || '',         // Client Address
+        data.serviceNeeded || '',         // Job Service
+        data.serviceNotes || '',          // Job Notes
+        refCode,                          // Referral Code
+        'new',                            // Status
+        data.warranty || '2-year',        // Warranty
+        'priority'                        // Priority flag
+      ]);
+
+      // Tumblr + Telegram alert
+      try {
+        const token = tgBotToken();
+        if (token) {
+          var msg = '🔔 REFERRAL CARD LEAD — C&O TV Mounting\n' +
+            '⚡ PRIORITY — 2-Year Warranty\n' +
+            'Client: ' + (data.clientName || '?') + '\n' +
+            'Phone: ' + (data.clientPhone || '?') + '\n' +
+            (data.clientEmail ? 'Email: ' + data.clientEmail + '\n' : '') +
+            (data.clientAddress ? 'Area: ' + data.clientAddress + '\n' : '') +
+            'Service: ' + (data.serviceNeeded || '?') + '\n' +
+            (data.serviceNotes ? 'Notes: ' + data.serviceNotes + '\n' : '') +
+            'Referral Code: ' + refCode + '\n' +
+            'Partner: ' + (data.partnerName || 'Unknown') + '\n' +
+            'Action: Call within 2 hours — this is a priority lead.';
+          var url = 'https://api.telegram.org/bot' + token + '/sendMessage';
+          UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+            payload: JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: msg }) });
+          UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
+            payload: JSON.stringify({ chat_id: TELEGRAM_GROUP_CHAT, text: msg }) });
+        }
+      } catch(e) { Logger.log('Referral card lead Telegram alert failed: ' + e); }
+
+      // Notify business owner by email too
+      try {
+        GmailApp.sendEmail('oandctvmounting@gmail.com',
+          '🔔 Referral Card Lead: ' + (data.clientName || '?') + ' [' + refCode + ']',
+          'New lead from referral card!\n\n' +
+          'Client: ' + (data.clientName || '?') + '\n' +
+          'Phone: ' + (data.clientPhone || '?') + '\n' +
+          'Email: ' + (data.clientEmail || '') + '\n' +
+          'Address: ' + (data.clientAddress || '') + '\n' +
+          'Service: ' + (data.serviceNeeded || '?') + '\n' +
+          'Notes: ' + (data.serviceNotes || '') + '\n\n' +
+          'Referral Code: ' + refCode + '\n' +
+          'Partner: ' + (data.partnerName || 'Unknown') + '\n' +
+          'Warranty: 2-Year (referral upgrade)\n' +
+          'Priority: YES — call within 2 hours'
+        );
+      } catch(e) { Logger.log('Referral card email failed: ' + e); }
+
+      return jsonOut({ ok: true, refCode: refCode });
+    }
+
     // ---- Branch 6: legacy booking intake (unchanged behavior) ----
     const sheet = getSheet();
     const tvDetails = (data.tvDetails && data.tvDetails.length)
