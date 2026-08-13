@@ -575,12 +575,8 @@
         gateBtn.textContent = 'Loading...';
         gateBtn.disabled = true;
         try {
-            const resp = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'get_partner_card', partnerEmail: email })
-            });
+            const url = APP_SCRIPT_URL + '?action=get_partner_card&partnerEmail=' + encodeURIComponent(email);
+            const resp = await fetch(url);
             const data = await resp.json();
             if (data.ok) {
                 // Card exists! Populate everything and reveal dashboard
@@ -662,19 +658,9 @@
         const code = 'REF-' + namePart + (companyPart ? '-' + companyPart : '') + '-' + random;
 
         try {
-            // Save to backend
-            const resp = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'generate_referral_code',
-                    partnerName: name,
-                    partnerCompany: company,
-                    partnerEmail: email,
-                    clientCode: code
-                })
-            });
+            // Save to backend - use GET to avoid 411 error
+            const saveUrl = APP_SCRIPT_URL + '?action=generate_referral_code&partnerName=' + encodeURIComponent(name) + '&partnerCompany=' + encodeURIComponent(company) + '&partnerEmail=' + encodeURIComponent(email) + '&clientCode=' + encodeURIComponent(code);
+            const resp = await fetch(saveUrl);
             const data = await resp.json();
             if (data.ok) {
                 localStorage.setItem('partner_email', email);
