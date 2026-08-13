@@ -362,6 +362,26 @@ function doPost(e) {
       return jsonOut({ ok: true, referralCode: referralCode });
     }
 
+    // ---- Branch 5b: Get a partner's existing referral card (by email) ----
+    if (data.action === 'get_partner_card') {
+      const email = String(data.partnerEmail || '').toLowerCase().trim();
+      if (!email) return jsonOut({ ok: false, error: 'Email required' });
+      const sh = getReferralCodesSheet();
+      const rows = sh.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        if (String(r[3] || '').toLowerCase().trim() === email) {
+          return jsonOut({
+            ok: true,
+            partnerName: r[1],
+            partnerCompany: r[2],
+            referralCode: r[4]
+          });
+        }
+      }
+      return jsonOut({ ok: false, error: 'No card found' });
+    }
+
     // ---- Branch 6: Quick lead capture (name + phone from banner) ----
     if (data.action === 'quick_lead') {
       const leadsSheet = getLeadsSheet();

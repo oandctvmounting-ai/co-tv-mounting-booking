@@ -240,6 +240,34 @@
     </div>
 
     <div class="wrap">
+        <!-- EMAIL GATE SECTION -->
+        <div class="card" id="gate-card" style="text-align:center; padding:32px 24px; max-width:540px; margin:20px auto 30px;">
+            <div style="font-size:2.5rem; margin-bottom:12px;">🔑</div>
+            <h2 style="font-size:1.4rem; color:var(--gold); margin-bottom:8px;">Access Your Partner Dashboard</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Enter your partner email to load your saved referral card, share link, and custom portal.</p>
+            <form id="gate-form" style="display:flex; flex-direction:column; gap:12px;">
+                <input type="email" id="gate-email" placeholder="Enter your partner email..." required
+                    style="width:100%; padding:14px 16px; border:1.5px solid var(--glass-border); border-radius:10px; background:rgba(0,0,0,0.4); color:var(--white); font-size:1rem; outline:none;">
+                <button type="submit" id="gate-btn" class="btn btn-gold" style="width:100%; font-size:1rem; padding:14px;">Open My Dashboard →</button>
+            </form>
+            <div id="new-partner-setup" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid rgba(212,175,55,0.2); text-align:left;">
+                <h3 style="font-size:1.05rem; color:var(--gold); margin-bottom:6px;">No saved card found!</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Create your permanent partner referral card below:</p>
+                <form id="setup-card-form" style="display:flex; flex-direction:column; gap:10px;">
+                    <div class="input-group" style="margin:0;">
+                        <label style="font-size:0.8rem; color:var(--gold-light);">Your Name *</label>
+                        <input type="text" id="setup-name" placeholder="John Smith" required style="padding:10px 12px; background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); color:#fff; border-radius:8px; width:100%;">
+                    </div>
+                    <div class="input-group" style="margin:0;">
+                        <label style="font-size:0.8rem; color:var(--gold-light);">Company / Trade *</label>
+                        <input type="text" id="setup-company" placeholder="Smith Electrical / Realtor" required style="padding:10px 12px; background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); color:#fff; border-radius:8px; width:100%;">
+                    </div>
+                    <button type="submit" id="setup-btn" class="btn btn-primary" style="width:100%; margin-top:6px;">Create My Referral Card →</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="dashboard-content" style="display:none;">
         <!-- QUICK STATS -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;" class="stats-row">
             <div class="card" style="text-align:center;padding:18px;">
@@ -497,6 +525,8 @@
             </div>
         </div>
 
+        </div>
+
         <!-- GOOGLE REVIEWS -->
         <div style="text-align:center;padding:32px 20px;">
             <h2 style="font-family:'Playfair Display',serif;color:var(--white);margin-bottom:6px;font-size:1.2rem;">Reviewed on Google</h2>
@@ -521,28 +551,151 @@
     <script>
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxFz5GMiiO9yxl6xjlKH6o-h9kbJOWNT97SWbj2f0bMs_Xs8Aw3qQTXkWPWC_pF8s0i/exec';
 
-    function generateReferralCode(partnerName, company) {
-        const namePart = partnerName.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-        const companyPart = company.trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+    // ========== EMAIL GATE LOGIC ==========
+    const gateCard = document.getElementById('gate-card');
+    const gateForm = document.getElementById('gate-form');
+    const gateEmail = document.getElementById('gate-email');
+    const gateBtn = document.getElementById('gate-btn');
+    const newPartnerSetup = document.getElementById('new-partner-setup');
+    const setupCardForm = document.getElementById('setup-card-form');
+    const setupName = document.getElementById('setup-name');
+    const setupCompany = document.getElementById('setup-company');
+    const setupBtn = document.getElementById('setup-btn');
+    const dashboardContent = document.getElementById('dashboard-content');
+
+    // Check localStorage for saved email (auto-open if same device)
+    const savedEmail = localStorage.getItem('partner_email');
+    if (savedEmail) {
+        gateEmail.value = savedEmail;
+        // Auto-submit after a tiny delay so the page is visually ready
+        setTimeout(() => gateForm.dispatchEvent(new Event('submit')), 100);
+    }
+
+    async function loadPartnerCard(email) {
+        gateBtn.textContent = 'Loading...';
+        gateBtn.disabled = true;
+        try {
+            const resp = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'get_partner_card', partnerEmail: email })
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                // Card exists! Populate everything and reveal dashboard
+                localStorage.setItem('partner_email', email);
+                applyPartnerData(data.partnerName, data.partnerCompany, data.referralCode, email);
+                gateCard.style.display = 'none';
+                dashboardContent.style.display = 'block';
+                showToast('Welcome back! Your dashboard is ready.');
+            } else {
+                // No card yet — show setup form
+                newPartnerSetup.style.display = 'block';
+                gateBtn.textContent = 'Open My Dashboard →';
+                gateBtn.disabled = false;
+            }
+        } catch (err) {
+            console.error('Gate error:', err);
+            showToast('Could not load card. Check connection and try again.');
+            gateBtn.textContent = 'Open My Dashboard →';
+            gateBtn.disabled = false;
+        }
+    }
+
+    function applyPartnerData(name, company, code, email) {
+        // 1. Pre-fill the Card Generator inputs
+        document.getElementById('partner-name-card').value = name;
+        document.getElementById('partner-company-card').value = company;
+        document.getElementById('partner-email-card').value = email;
+        document.getElementById('partner-code').value = code;
+
+        // 2. Display the saved card preview immediately
+        const cardPreview = document.getElementById('card-preview');
+        const cardCodeDisplay = document.getElementById('card-code');
+        cardCodeDisplay.textContent = code;
+        cardPreview.style.display = 'block';
+
+        // 3. Show the shareable card link section
+        const cardLink = 'https://oandctvmounting-ai.github.io/co-tv-mounting-booking/referral-card.html?code=' + code;
+        document.getElementById('card-link').value = cardLink;
+        document.getElementById('open-card-link').href = cardLink;
+        document.getElementById('card-link-section').style.display = 'block';
+
+        // 4. Pre-fill the Referral Form partner info so they don't have to re-type
+        document.getElementById('partner-name').value = name;
+        document.getElementById('partner-company').value = company;
+        document.getElementById('partner-email').value = email;
+        document.getElementById('partner-phone').focus();
+
+        // 5. Update email templates placeholder (optional visual)
+        showToast('Your saved referral card: ' + code);
+    }
+
+    gateForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = gateEmail.value.trim().toLowerCase();
+        if (!email) return;
+        await loadPartnerCard(email);
+    });
+
+    setupCardForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setupBtn.textContent = 'Creating...';
+        setupBtn.disabled = true;
+
+        const name = setupName.value.trim();
+        const company = setupCompany.value.trim();
+        const email = gateEmail.value.trim().toLowerCase();
+
+        if (!name || !company) {
+            showToast('Please enter both your name and company.');
+            setupBtn.textContent = 'Create My Referral Card →';
+            setupBtn.disabled = false;
+            return;
+        }
+
+        // Generate the code client-side (same logic as before)
+        const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+        const companyPart = company.split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
         const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-        return `REF-${namePart}-${companyPart}-${random}`;
-    }
+        const code = 'REF-' + namePart + (companyPart ? '-' + companyPart : '') + '-' + random;
 
-    function showToast(message) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
-    }
+        try {
+            // Save to backend
+            const resp = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'generate_referral_code',
+                    partnerName: name,
+                    partnerCompany: company,
+                    partnerEmail: email,
+                    clientCode: code
+                })
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                localStorage.setItem('partner_email', email);
+                applyPartnerData(name, company, data.referralCode || code, email);
+                newPartnerSetup.style.display = 'none';
+                gateCard.style.display = 'none';
+                dashboardContent.style.display = 'block';
+                showToast('Your referral card is saved! Welcome to your dashboard.');
+            } else {
+                throw new Error(data.error || 'Save failed');
+            }
+        } catch (err) {
+            console.error('Setup error:', err);
+            showToast('Could not save. Please try again.');
+        } finally {
+            setupBtn.textContent = 'Create My Referral Card →';
+            setupBtn.disabled = false;
+        }
+    });
 
-    function showSuccess(referralCode) {
-        document.getElementById('referral-form').style.display = 'none';
-        const successState = document.getElementById('success-state');
-        successState.classList.add('show');
-        document.getElementById('referral-code-display').textContent = referralCode;
-        showToast('Referral submitted! Your code: ' + referralCode);
-    }
-
+    // ========== EXISTING REFERRAL FORM LOGIC (unchanged) ==========
     document.getElementById('referral-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const form = e.target;
@@ -584,7 +737,29 @@
         }
     });
 
-    // Card Generator
+    // ========== CARD GENERATOR (now works with pre-filled data) ==========
+    function generateReferralCode(partnerName, company) {
+        const namePart = partnerName.trim().split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
+        const companyPart = company.trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+        const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+        return `REF-${namePart}-${companyPart}-${random}`;
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function showSuccess(referralCode) {
+        document.getElementById('referral-form').style.display = 'none';
+        const successState = document.getElementById('success-state');
+        successState.classList.add('show');
+        document.getElementById('referral-code-display').textContent = referralCode;
+        showToast('Referral submitted! Your code: ' + referralCode);
+    }
+
     const partnerNameInput = document.getElementById('partner-name-card');
     const partnerEmailInput = document.getElementById('partner-email-card');
     const partnerCompanyInput = document.getElementById('partner-company-card');
@@ -595,17 +770,17 @@
 
     async function updateCardPreview() {
         const name = partnerNameInput.value.trim();
+        const email = partnerEmailInput.value.trim();
+        const company = partnerCompanyInput.value.trim();
         if (name === '') {
             partnerCodeInput.value = '';
             cardCodeDisplay.textContent = 'REF-XXXX';
             cardPreview.style.display = 'none';
             return;
         }
-        const email = partnerEmailInput.value.trim();
-        const company = partnerCompanyInput.value.trim();
         const namePart = name.split(/\s+/).pop().toUpperCase().replace(/[^A-Z]/g, '');
-        const companyPart = company ? company.split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0,4) : '';
-        const random = Math.random().toString(36).substring(2,5).toUpperCase();
+        const companyPart = company ? company.split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) : '';
+        const random = Math.random().toString(36).substring(2, 5).toUpperCase();
         const code = 'REF-' + namePart + (companyPart ? '-' + companyPart : '') + '-' + random;
         partnerCodeInput.value = code;
         cardCodeDisplay.textContent = code;
