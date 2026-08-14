@@ -292,7 +292,7 @@
 
                 <!-- REAL-TIME STATS TRACKER -->
                 <div class="card" id="stats-tracker">
-                    <h2>���������📊 Your Stats This Month</h2>
+                    <h2>📊 Your Stats This Month</h2>
                     <p style="color: var(--text-muted); margin-bottom: 16px;">Live data from your referral pipeline. Refreshes every 30 seconds.</p>
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
                         <div class="stat-box">
@@ -326,7 +326,7 @@
                             <div class="stat-value number-ticker" data-target="0" id="stat-alltime">$0</div>
                         </div>
                     </div>
-                    <button class="btn btn-secondary" onclick="refreshStats()" style="margin-top: 12px; width: auto;">���������🔄 Refresh Now</button>
+                    <button class="btn btn-secondary" onclick="refreshStats()" style="margin-top: 12px; width: auto;">🔄 Refresh Now</button>
                     <div id="last-updated" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;"></div>
                 </div>
                 <style>
@@ -768,7 +768,7 @@
     async function refreshStats() {
       const btn = document.querySelector('button[onclick="refreshStats()"]');
       if (!btn) return;
-      btn.textContent = '���🔄 Refreshing...';
+      btn.textContent = '🔄 Refreshing...';
       btn.disabled = true;
       try {
         const email = localStorage.getItem('partner_email');
@@ -792,7 +792,7 @@
         console.error('refreshStats error:', err);
         showToast('Could not refresh stats: ' + err.message);
       } finally {
-        btn.textContent = '���🔄 Refresh Now';
+        btn.textContent = '🔄 Refresh Now';
         btn.disabled = false;
       }
     }
