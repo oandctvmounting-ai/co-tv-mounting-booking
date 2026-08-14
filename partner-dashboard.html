@@ -292,7 +292,7 @@
 
                 <!-- REAL-TIME STATS TRACKER -->
                 <div class="card" id="stats-tracker">
-                    <h2>📊 Your Stats This Month</h2>
+                    <h2>���������📊 Your Stats This Month</h2>
                     <p style="color: var(--text-muted); margin-bottom: 16px;">Live data from your referral pipeline. Refreshes every 30 seconds.</p>
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
                         <div class="stat-box">
@@ -321,8 +321,12 @@
                             <div class="stat-label">Quarter Bonus</div>
                             <div class="stat-value number-ticker" data-target="0" id="stat-bonus">$0</div>
                         </div>
+                        <div class="stat-box" style="flex: 1; min-width: 140px;">
+                            <div class="stat-label">All Time</div>
+                            <div class="stat-value number-ticker" data-target="0" id="stat-alltime">$0</div>
+                        </div>
                     </div>
-                    <button class="btn btn-secondary" onclick="refreshStats()" style="margin-top: 12px; width: auto;">🔄 Refresh Now</button>
+                    <button class="btn btn-secondary" onclick="refreshStats()" style="margin-top: 12px; width: auto;">���������🔄 Refresh Now</button>
                     <div id="last-updated" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;"></div>
                 </div>
                 <style>
@@ -332,9 +336,24 @@
                     }
                     .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
                     .stat-value { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; line-height: 1; }
-                    .stat-value#stat-paid, .stat-value#stat-earnings, .stat-value#stat-bonus { color: var(--gold); }
+                    .stat-value#stat-paid, .stat-value#stat-earnings, .stat-value#stat-bonus, .stat-value#stat-alltime { color: var(--gold); }
                     @media (max-width: 560px) {
                         .stat-value { font-size: 1.3rem; }
+                        /* Stack all stats vertically on mobile */
+                        #stats-tracker > div:nth-child(1) { /* first grid: Pending, Quoted, Booked, Paid */
+                            display: grid;
+                            grid-template-columns: 1fr;
+                            gap: 12px;
+                        }
+                        #stats-tracker > div:nth-child(3) { /* flex container with Est. Earnings, Quarter Bonus, All Time */
+                            display: grid;
+                            grid-template-columns: 1fr;
+                            gap: 12px;
+                        }
+                        #stats-tracker > div:nth-child(1) .stat-box,
+                        #stats-tracker > div:nth-child(3) .stat-box {
+                            min-width: unset;
+                        }
                     }
                 </style>
 
@@ -744,6 +763,38 @@
         successState.classList.add('show');
         document.getElementById('referral-code-display').textContent = referralCode;
         showToast('Referral submitted! Your code: ' + referralCode);
+    }
+
+    async function refreshStats() {
+      const btn = document.querySelector('button[onclick="refreshStats()"]');
+      if (!btn) return;
+      btn.textContent = '���🔄 Refreshing...';
+      btn.disabled = true;
+      try {
+        const email = localStorage.getItem('partner_email');
+        if (!email) throw new Error('No partner email');
+        const url = APP_SCRIPT_URL + '?action=get_partner_stats&partnerEmail=' + encodeURIComponent(email);
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.ok) {
+          document.getElementById('stat-pending').textContent = data.pending || 0;
+          document.getElementById('stat-quoted').textContent = data.quoted || 0;
+          document.getElementById('stat-booked').textContent = data.booked || 0;
+          document.getElementById('stat-paid').textContent = '$' + (data.paidThisMonth || 0);
+          document.getElementById('stat-earnings').textContent = '$' + (data.estimatedEarnings || 0);
+          document.getElementById('stat-bonus').textContent = '$' + (data.quarterBonus || 0);
+          document.getElementById('stat-alltime').textContent = '$' + (data.allTimeEarnings || 0);
+          document.getElementById('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+        } else {
+          throw new Error(data.error || 'Failed to fetch stats');
+        }
+      } catch (err) {
+        console.error('refreshStats error:', err);
+        showToast('Could not refresh stats: ' + err.message);
+      } finally {
+        btn.textContent = '���🔄 Refresh Now';
+        btn.disabled = false;
+      }
     }
 
     const partnerNameInput = document.getElementById('partner-name-card');
