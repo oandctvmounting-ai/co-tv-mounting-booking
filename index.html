@@ -705,6 +705,43 @@
             * { animation: none !important; transition: none !important; }
             body { opacity: 1 !important; }
         }
+
+        /* ==== Enhanced Dropdown (Magic UI) ==== */
+        .dropdown-wrapper { position: relative; margin-bottom: 16px; }
+        .dropdown-wrapper > label { display: block; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+        .dropdown { position: relative; cursor: pointer; }
+        .dropdown-input {
+            width: 100%; padding: 14px 16px; border: 1.5px solid rgba(255,255,255,0.12);
+            border-radius: 10px; background: rgba(255,255,255,0.04); color: var(--white);
+            font-family: 'Inter',sans-serif; font-size: 1rem; transition: var(--transition);
+            cursor: pointer; padding-right: 40px;
+        }
+        .dropdown-input::placeholder { color: var(--text-dim); }
+        .dropdown-input:focus, .dropdown-input:not(:placeholder-shown) {
+            outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+            background: rgba(255,255,255,0.08);
+        }
+        .dropdown-arrow {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            pointer-events: none; transition: transform 0.2s ease; color: var(--gold);
+        }
+        .dropdown-open .dropdown-arrow { transform: translateY(-50%) rotate(180deg); }
+        .dropdown-options {
+            position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px;
+            max-height: 240px; overflow-y: auto;
+            background: rgba(10,10,10,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+            z-index: 50; display: none; box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        }
+        .dropdown-options.show { display: block; }
+        .dropdown-options li {
+            padding: 12px 16px; cursor: pointer; font-size: 0.95rem; color: var(--text-light);
+            transition: background 0.15s ease, color 0.15s ease; list-style: none;
+        }
+        .dropdown-options li:hover { background: rgba(212,175,55,0.12); }
+        .dropdown-options li.selected { background: var(--gold); color: var(--black); font-weight: 600; }
+        .dropdown-options li.disabled { opacity: 0.4; cursor: default; }
+        .dropdown-options li.disabled:hover { background: none; }
     </style>
 </head>
 <body>
@@ -1381,28 +1418,48 @@ function renderStep2() {
     calculateTotal();
 }
 
+/* Helper: build an enhanced (Magic UI styled) dropdown from a list of [value, label] pairs.
+   callbackName is the global function name to call (e.g. 'setBlinds'),
+   callbackField is the field argument (e.g. 'size'). */
+function buildEnhancedDropdown(id, label, placeholder, options, callbackName, callbackField) {
+    const items = options.map(([val, disp]) =>
+        `<li data-value="${val}" role="option">${disp}</li>`
+    ).join('');
+    return `<div class="dropdown-wrapper" id="${id}_wrapper">
+        <label>${label}</label>
+        <div class="dropdown" data-callback="${callbackName}" data-field="${callbackField}" data-target="${id}">
+            <input type="text" readonly class="dropdown-input" placeholder="${placeholder}"
+                   aria-label="${label}" aria-expanded="false" aria-controls="${id}_opts" id="${id}_input">
+            <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+            </svg>
+        </div>
+        <ul class="dropdown-options" id="${id}_opts" role="listbox">${items}</ul>
+        <select id="${id}" tabindex="-1" aria-hidden="true" style="display:none">
+            <option value="">${placeholder}</option>
+            ${options.map(([val]) => `<option value="${val}">${val}</option>`).join('')}
+        </select>
+    </div>`;
+}
+
 /* Build config UI for a service. prefix 'p' = primary, 'a' = addon (unique IDs) */
 function configHtml(key, prefix) {
+
     if (key === 'tv') {
         let h = `<div id="${prefix}_tvs"></div>`;
         h += `<button type="button" class="nav-btn nav-btn-gold" style="margin-top:8px" onclick="addTv('${prefix}')">+ Add another TV</button>`;
         return h;
     }
     if (key === 'blinds') {
-        return `<label>Window Size</label><select id="${prefix}_blindsize" onchange="setBlinds('size', this.value)">
-            <option value="">Select size…</option>` +
-            Object.entries(BLINDS).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
-            `</select>
-            <label style="margin-top:12px">How many windows?</label>
-            <input type="number" min="1" value="1" id="${prefix}_blindqty" onchange="setBlinds('qty', this.value)">`;
+        const opts = Object.entries(BLINDS).map(([k,v]) => `${k} (+$${v})`);
+        return buildEnhancedDropdown(prefix + '_blindsize', 'Window Size', 'Select size…', Object.entries(BLINDS).map(([k,v]) => [k, `${k} (+$${v})`]), 'setBlinds', 'size') +
+            `<div class="input-group" style="margin-top:12px"><label>How many windows?</label>
+            <input type="number" min="1" value="1" id="${prefix}_blindqty" onchange="setBlinds('qty', this.value)"></div>`;
     }
     if (key === 'mirrors') {
-        return `<label>Item Size</label><select id="${prefix}_mirrorsize" onchange="setMirrors('size', this.value)">
-            <option value="">Select size…</option>` +
-            Object.entries(MIRRORS).map(([k,v]) => `<option value="${k}">${k} (+$${v})</option>`).join('') +
-            `</select>
-            <label style="margin-top:12px">How many pieces?</label>
-            <input type="number" min="1" value="1" id="${prefix}_mirrorqty" onchange="setMirrors('qty', this.value)">`;
+        return buildEnhancedDropdown(prefix + '_mirrorsize', 'Item Size', 'Select size…', Object.entries(MIRRORS).map(([k,v]) => [k, `${k} (+$${v})`]), 'setMirrors', 'size') +
+            `<div class="input-group" style="margin-top:12px"><label>How many pieces?</label>
+            <input type="number" min="1" value="1" id="${prefix}_mirrorqty" onchange="setMirrors('qty', this.value)"></div>`;
     }
     if (key === 'soundbar') {
         return `<label>How many soundbars?</label>

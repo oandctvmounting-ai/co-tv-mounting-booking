@@ -21,7 +21,142 @@
       "address": { "@type": "PostalAddress", "addressLocality": "Irving", "addressRegion": "TX", "addressCountry": "US" },
       "priceRange": "$$"
     }
-    </script>
+    
+    // ========== MAGIC UI INITIALIZERS ==========
+    
+    // Marquee - Populate DFW cities
+    (function() {
+      const marqueeTrack = document.getElementById('marquee-track');
+      if (!marqueeTrack) return;
+      
+      const cities = [
+        "Addison", "Allen", "Arlington", "Austin", "Balch Springs", "Bedford", 
+        "Benbrook", "Burleson", "Carrollton", "Cedar Hill", "Celina", "Coppell", 
+        "Dallas", "Denton", "DeSoto", "Duncanville", "Euless", "Fairview", 
+        "Farmers Branch", "Flower Mound", "Fort Worth", "Frisco", "Garland", 
+        "Granbury", "Grapevine", "Greenville", "Haltom City", "Harlingen", 
+        "Haslet", "Hurst", "Irving", "Johnson City", "Keller", "Kennedale", 
+        "Lancaster", "Lewisville", "Lincoln", "Little Elm", "Longview", 
+        "Mansfield", "McKinney", "Mesquite", "Midlothian", "Mineral Wells", 
+        "North Richland Hills", "Plano", "Prosper", "Red Oak", "Richardson", 
+        "Rockwall", "Rowlett", "Sachse", "Saginaw", "San Angelo", "San Antonio", 
+        "Southlake", "Springtown", "Stephenville", "Sugar Land", "Temple", 
+        "Terrell", "Texarkana", "The Colony", "Tyler", "University Park", 
+        "Waco", "Watauga", "Waxahachie", "Weatherford", "Wichita Falls"
+      ];
+      
+      // Duplicate for seamless loop
+      const duplicatedCities = [...cities, ...cities];
+      
+      duplicatedCities.forEach(city => {
+        const marqueeItem = document.createElement('div');
+        marqueeItem.className = 'marquee-item';
+        marqueeItem.textContent = city;
+        marqueeTrack.appendChild(marqueeItem);
+      });
+    })();
+    
+    // Meteors - Create 18 dynamic elements
+    (function() {
+      const meteorLayer = document.getElementById('meteor-layer');
+      if (!meteorLayer) return;
+      
+      for (let i = 0; i < 18; i++) {
+        const meteor = document.createElement('div');
+        meteor.className = 'meteor';
+        
+        // Random properties
+        const size = Math.random() * 3 + 1; // 1-4px width
+        meteor.style.width = `${size}px`;
+        meteor.style.height = `${size * 30}px`; // 30-120px height
+        
+        // Random duration (4-8s)
+        const duration = Math.random() * 4 + 4;
+        meteor.style.setProperty('--duration', `${duration}s`);
+        
+        // Random delay (0-5s)
+        const delay = Math.random() * 5;
+        meteor.style.setProperty('--delay', `${delay}s`);
+        
+        // Random starting position
+        const startX = Math.random() * 100 - 20; // -20% to 80%
+        const startY = Math.random() * 100 - 20; // -20% to 80%
+        meteor.style.transform = `translate(${startX}vw, ${startY}vh) rotate(215deg)`;
+        
+        meteorLayer.appendChild(meteor);
+      }
+    })();
+    
+    // Magic Card - Add magic-inner wrapper and mousemove tracking
+    (function() {
+      // Wrap card content in .magic-inner
+      const cardsToWrap = document.querySelectorAll('.card:not(.magic-card)');
+      cardsToWrap.forEach(card => {
+        // Skip certain cards that shouldn't have the effect
+        if (card.id === 'gate-card' || card.querySelector('#stats-tracker') || 
+            card.querySelector('#success-state') || card.querySelector('.toast')) {
+          return;
+        }
+        
+        const inner = document.createElement('div');
+        inner.className = 'magic-inner';
+        
+        // Move all children into the inner div
+        while (card.firstChild) {
+          inner.appendChild(card.firstChild);
+        }
+        
+        card.appendChild(inner);
+        card.classList.add('magic-card');
+      });
+      
+      // Mousemove tracking for magic effect
+      document.addEventListener('mousemove', (e) => {
+        const magicCards = document.querySelectorAll('.magic-card');
+        magicCards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+          const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+          
+          card.style.setProperty('--mx', `${xPercent}%`);
+          card.style.setProperty('--my', `${yPercent}%`);
+        });
+      });
+    })();
+    
+    // Animated List - Reveal items on scroll
+    (function() {
+      const revealItems = document.querySelectorAll('.reveal-item');
+      if (revealItems.length === 0) return;
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      
+      revealItems.forEach((item, index) => {
+        item.style.transitionDelay = `${index * 80}ms`;
+        observer.observe(item);
+      });
+    })();
+    
+    // Border Beam Touch - Add .beam-live class on touchstart for mobile
+    (function() {
+      const beamBorders = document.querySelectorAll('.beam-border');
+      beamBorders.forEach(el => {
+        el.addEventListener('touchstart', () => {
+          el.classList.add('beam-live');
+        });
+        el.addEventListener('touchend', () => {
+          el.classList.remove('beam-live');
+        });
+      });
+    })();
+</script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -226,7 +361,154 @@
             opacity: 0; transition: all 0.3s ease; z-index: 1000;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    </style>
+    
+/* Border Beam */
+@keyframes border-beam-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.beam-border {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.beam-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, transparent 20%, var(--gold) 50%, transparent 80%);
+  opacity: 0;
+  -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+  -webkit-mask-composite: xor;
+  background-size: 250% 250%;
+}
+.beam-border:hover::after {
+  opacity: 1;
+  animation: border-beam-flow 4s linear infinite;
+}
+
+/* Marquee */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  background: rgba(10,10,10,0.6);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 16px 0;
+  margin: 24px 0;
+}
+.marquee-track {
+  display: flex;
+  animation: marquee-scroll 30s linear infinite;
+  width: max-content;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px;
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.marquee-item::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+/* Meteors */
+@keyframes meteor-fly {
+  0% { transform: translate(0,0) rotate(215deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translate(120vw, 120vh) rotate(215deg); opacity: 0; }
+}
+.meteor-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -2;
+  overflow: hidden;
+}
+.meteor {
+  position: absolute;
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, var(--gold) 30%, var(--gold-light) 60%, transparent);
+  filter: drop-shadow(0 0 6px var(--gold));
+  border-radius: 2px;
+  opacity: 0;
+  animation: meteor-fly var(--duration, 6s) ease-in-out var(--delay, 0s) infinite;
+}
+
+/* Magic Card */
+.magic-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+.magic-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 150px 150px;
+}
+.magic-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(212,175,55,0.18) 0%, rgba(212,175,55,0.06) 30%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.magic-card:hover::after {
+  opacity: 1;
+}
+.magic-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 32px rgba(212,175,55,0.15);
+}
+.magic-card .magic-inner {
+  position: relative;
+  z-index: 2;
+  padding: 24px;
+}
+
+/* Animated List */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
 </head>
 <body>
     <div class="topbar">
@@ -862,5 +1144,17 @@
         }).catch(err => { console.error('Failed to copy: ', err); });
     }
     </script>
+
+    <!-- Marquee for DFW cities -->
+    <div class="marquee">
+      <div class="marquee-track" id="marquee-track">
+        <!-- Will be populated by JS -->
+      </div>
+    </div>
+
+    <!-- Meteors layer -->
+    <div class="meteor-layer" id="meteor-layer">
+      <!-- Will be populated by JS -->
+    </div>
 </body>
 </html>
