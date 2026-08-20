@@ -1519,7 +1519,7 @@ function optCard(group, label, options) {
         options.map(([val, disp]) => {
             const show = disp || val;
             const tag = (typeof disp === 'string' && disp.includes('$')) ? show : '';
-            const text = (typeof disp === 'string' && disp.includes('$')) ? show.replace(/\s*\(\+\$\d+\)/,
+            const text = (typeof disp === 'string' && disp.includes('$')) ? show.replace(/\s*\(\+\$\d+\)/, '') : show;
             return `<div class="option-card" data-group="${group}" onclick="pickOption('${group}','${val}', this)"><span>${text}</span><span class="price-tag">${tag}</span></div>`;
         }).join('');
 }
@@ -1533,10 +1533,13 @@ function mountCards(group) {
         Object.entries(TV.mount).map(([k, v]) => {
             const title = MOUNT_TITLE[k] || k;
             const photo = MOUNT_PHOTO[k] || '';
+            const imgHtml = photo
+                ? `<img src="${photo}" alt="${title}" style="width:100%; height:80px; object-fit:cover; border-radius:8px;">`
+                : (MOUNT_SVG[k] || '');
             return `<div class="option-card mount-card" data-group="${group}" onclick="pickOption('${group}','${k}', this)">
-                ${photo ? `<img src="${photo}" alt="${title}" style="width:100%; height:80px; object-fit:cover; border-radius:8px;">` : (MOUNT_SVG[k] ||
-        }).join('') +
-        `</div>`;
+                ${imgHtml}
+        </div>`;
+        }).join('');
 }
 
 /* ---------- Multi-TV UI ---------- */
@@ -1810,7 +1813,7 @@ function calculateTotal() {
 }
 
 function applyPromo() {
-    const raw = (state.promoInput ||
+    const raw = (state.promoInput || '').trim();
     console.log('Promo input raw:', raw);
     const msg = document.getElementById('promo-msg');
     if (!raw) { 
@@ -2260,59 +2263,7 @@ function compressImage(file, maxDim, quality) {
     });
 }
 
-/* ---- Quick-estimate banner (top-of-page "Want a free estimate in minutes?") ----
-   Posts {action:'quick_lead', name, phone} to APP_SCRIPT_URL.
-   Backend writes to the Leads sheet tab and pings the booking bot's Telegram group. */
-(function bindQuickEstimate() {
 
-     {
-        ||
-        ||
-        if (!name || !phone) {
-            alert('Please enter your name and phone number so we can send your free estimate.');
-            return;
-        }
-        submit.disabled = true;
-        submit.innerText = 'Sending…';
-
-        const payload = {
-            action: 'quick_lead',
-            name: name,
-            phone: phone,
-            source: 'website-banner'
-        };
-
-        const showConfirm = () => {
-            form.style.display = 'none';
-            confirmEl.style.display = 'block';
-        };
-
-        if (!APP_SCRIPT_URL) {
-            // Backend not wired — fallback: confirm locally so the user isn't confused.
-            showConfirm();
-            return;
-        }
-
-        fetch(APP_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-        })
-        .then(r => r.json())
-        .then(res => {
-            if (res.ok) {
-                showConfirm();
-            } else {
-                throw new Error(res.error || 'submit failed');
-            }
-        })
-        .catch(() => {
-            // Don't lose the lead — confirm in UI even if backend hiccups.
-            showConfirm();
-        });
-    });
-})();
 
 /* init */
 renderStep1();
@@ -2332,8 +2283,8 @@ checkPaidRedirect();
         var group = input.closest('.input-group');
         var timer = null;
         var validate = function () {
-            var v = (input.value ||
-            var ok = v.length >= 3;
+                    var v = (input.value || '').trim();
+                    var ok = v.length >= 3;
             if (ok) {
                 group.classList.add('valid');
                 if (group._checkJustAdded) {
