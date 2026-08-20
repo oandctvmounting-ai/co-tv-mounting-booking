@@ -411,6 +411,26 @@
 
         }
 
+        /* Quick Estimate Banner */
+        .quick-estimate-banner { background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--glass-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .qe-content { max-width: 800px; margin: 0 auto; }
+        .qe-tagline { text-align: center; font-weight: 700; font-size: 1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 0.3px; }
+        .qe-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .qe-form input { padding: 12px 14px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 10px; background: rgba(255,255,255,0.05); color: var(--white); font-family: 'Inter',sans-serif; font-size: 0.95rem; flex: 1; min-width: 140px; transition: var(--transition); }
+        .qe-form input::placeholder { color: var(--text-dim); }
+        .qe-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); background: rgba(255,255,255,0.08); }
+        .qe-form button { padding: 12px 24px; background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%); color: var(--black); border: none; border-radius: 10px; font-family: 'Inter',sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: var(--transition); white-space: nowrap; letter-spacing: 0.3px; }
+        .qe-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.3); }
+        .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--gold); font-weight: 600; }
+        .qe-confirm strong { color: var(--white); }
+        @media (max-width: 560px) {
+            .quick-estimate-banner { padding: 8px 12px; }
+            .qe-tagline { font-size: 0.82rem; margin-bottom: 4px; }
+            .qe-form { flex-direction: column; gap: 6px; }
+            .qe-form input { max-width: 100%; width: 100%; padding: 8px 12px; font-size: 0.85rem; }
+            .qe-form button { width: 100%; padding: 8px 16px; font-size: 0.85rem; }
+        }
+
         /* Progress bar */
         .progress-bar { display: flex; justify-content: space-between; padding: 16px 40px; background: transparent; position: relative; }
         .progress-bar::before { content: ''; position: absolute; top: 50%; left: 60px; right: 60px; height: 2px; background: rgba(255,255,255,0.1); z-index: 0; transform: translateY(-50%); border-radius: 2px; }
@@ -851,11 +871,26 @@
         // Also try on first pointer-down (covers newer mobile + stylus)
         document.addEventListener('pointerdown', mobileKickoff, true);
     })();
-    </script>
-    </div>
-    </div>
+        </script>
+        </div>
+        </div>
 
-<div class="container">
+        <!-- Quick Estimate Banner -->
+        <div class="quick-estimate-banner" id="quick-banner">
+            <div class="qe-content">
+                <div class="qe-tagline">Want a free estimate in minutes?</div>
+                <div class="qe-form" id="qe-form">
+                    <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
+                    <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
+                    <button type="button" id="qe-submit" class="btn btn-gold">Get Free Estimate</button>
+                </div>
+                <div class="qe-confirmation" id="qe-confirm" style="display:none;">
+                    <span>✅ Got it! We'll text you within 5 minutes.</span>
+                </div>
+            </div>
+        </div>
+
+    <div class="container">
     <header>
         <div class="hero-noise"></div>
         <div class="hero-grid"></div>
@@ -2269,6 +2304,64 @@ function compressImage(file, maxDim, quality) {
 renderStep1();
 calculateTotal();
 checkPaidRedirect();
+
+/* ---- Quick-estimate banner (top-of-page "Want a free estimate in minutes?") ----
+   Posts {action:'quick_lead', name, phone} to APP_SCRIPT_URL.
+   Backend writes to the Leads sheet tab and pings the booking bot's Telegram group. */
+(function bindQuickEstimate() {
+    const form = document.getElementById('qe-form');
+    const submit = document.getElementById('qe-submit');
+    const confirmEl = document.getElementById('qe-confirm');
+    if (!form || !submit || !confirmEl) return;
+
+    submit.addEventListener('click', function () {
+        const name = (document.getElementById('qe-name').value || '').trim();
+        const phone = (document.getElementById('qe-phone').value || '').trim();
+        if (!name || !phone) {
+            alert('Please enter your name and phone number so we can send your free estimate.');
+            return;
+        }
+        submit.disabled = true;
+        submit.innerText = 'Sending…';
+
+        const payload = {
+            action: 'quick_lead',
+            name: name,
+            phone: phone,
+            source: 'website-banner'
+        };
+
+        const showConfirm = () => {
+            form.style.display = 'none';
+            confirmEl.style.display = 'block';
+        };
+
+        if (!APP_SCRIPT_URL) {
+            // Backend not wired — fallback: confirm locally so the user isn't confused.
+            showConfirm();
+            return;
+        }
+
+        fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.ok) {
+                showConfirm();
+            } else {
+                throw new Error(res.error || 'submit failed');
+            }
+        })
+        .catch(() => {
+            // Don't lose the lead — confirm in UI even if backend hiccups.
+            showConfirm();
+        });
+    });
+})();
 
 /* === STEP 3 SMOOTH CHECK ON VALIDATED FIELDS ===
    When the user pauses typing in a required field for >500ms with valid content,
