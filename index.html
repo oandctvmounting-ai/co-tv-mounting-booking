@@ -2393,10 +2393,66 @@ function showResumePrompt() {
                 clearProgress();
             });
         }
-    } catch (e) {}
-}
+            } catch (e) {}
+        }
 
-/* ---- Photo capture: read + compress so it can ride along in the JSON payload ---- */
+        /* ================================================================
+           ABANDONED-BOOKING RESCUE — capture contact before they leave
+           If a customer reaches Step 3 (has entered name/phone) but doesn't
+           complete, we silently queue their contact + service choice so the
+           team can follow up. Uses the same quick_lead pipeline (and a local
+           fallback in co_pending_bookings) as the rest of the site.
+           ================================================================ */
+        let RESCUE_SENT = false;   // only fire once per visit
+        const RESCUE_KEY = 'co_rescue_sent';   // persistent de-dupe
+
+        function rescueAbandonedBooking() {
+            try {
+                if (RESCUE_SENT) return;
+                // Don't trigger if the booking actually completed this session.
+                if (document.getElementById('booking-success-overlay') &&
+                    document.getElementById('booking-success-overlay').classList.contains('show')) return;
+
+                const name = (document.getElementById('cust-name') || {}).value || '';
+                const phone = (document.getElementById('cust-phone') || {}).value || '';
+                const address = (document.getElementById('cust-address') || {}).value || '';
+
+                // Only rescue if we have a real contact (name + phone/address).
+                if (!name || (!phone && !address)) return;
+
+                // De-dupe so we don't spam the same lead on repeat visits.
+                if (localStorage.getItem(RESCUE_KEY) === phone) return;
+                localStorage.setItem(RESCUE_KEY, phone);
+
+                const primary = state.primary ? SERVICES[state.primary]?.name || state.primary : 'TV Mounting';
+                const est = calculateTotal ? calculateTotal() : 0;
+
+                const payload = {
+                    action: 'quick_lead',
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    detail: 'Abandoned booking — ' + primary + ' (est $' + est + ')',
+                    source: 'website-abandoned-booking'
+                };
+
+                // Fire to backend (fire-and-forget), else queue locally for later sync.
+                if (APP_SCRIPT_URL) {
+                    try {
+                        fetch(APP_SCRIPT_URL, {
+                            method: 'POST', mode: 'cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(payload)
+                        }).catch(() => {});
+                    } catch (e) {}
+                } else {
+                    queueLocal(payload);
+                }
+                RESCUE_SENT = true;
+            } catch (e) {}
+        }
+
+        /* ---- Photo capture: read + compress so it can ride along in the JSON payload ---- */
 let PHOTO_DATA = null;
 document.getElementById('file-input').addEventListener('change', function() {
     const file = this.files[0];
@@ -2707,14 +2763,24 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 
     // 6. BORDER BEAM — activate on form cards hover (already CSS, but add beam-live for touch)
-    (function() {
-        const beamCards = document.querySelectorAll('.form-card, .option-card');
-        beamCards.forEach(card => {
-            card.addEventListener('touchstart', () => card.classList.add('beam-live'), { passive: true });
-            card.addEventListener('touchend', () => setTimeout(() => card.classList.remove('beam-live'), 2000), { passive: true });
+        (function() {
+            const beamCards = document.querySelectorAll('.form-card, .option-card');
+            beamCards.forEach(card => {
+                card.addEventListener('touchstart', () => card.classList.add('beam-live'), { passive: true });
+                card.addEventListener('touchend', () => setTimeout(() => card.classList.remove('beam-live'), 2000), { passive: true });
+            });
+        })();
+
+        // 7. ABANDONED-BOOKING RESCUE — fire when the visitor leaves the page
+        //    (close tab, navigate away, background the app) if they entered contact
+        //    info but didn't finish, so the team can follow up and close the job.
+        window.addEventListener('pagehide', function () {
+            try { rescueAbandonedBooking(); } catch (e) {}
         });
-    })();
-});
+        window.addEventListener('beforeunload', function () {
+                    try { rescueAbandonedBooking(); } catch (e) {}
+                });
+        });
 
 // Hero text rotator — adapted from 21st.dev Classy Hero
 (function() {
