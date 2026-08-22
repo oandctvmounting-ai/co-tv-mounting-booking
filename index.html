@@ -45,32 +45,71 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --black: #0a0a0a;
-            --black-soft: #141414;
-            --black-card: #1a1a1a;
-            --royal-blue: #002366;
-            --royal-blue-dark: #001a4a;
-            --royal-blue-light: #0d2f7a;
-            --gold: #D4AF37;
-            --gold-light: #F9F4E8;
-            --gold-dark: #b8962e;
-            --white: #FFFFFF;
-            --glass: rgba(255,255,255,0.06);
-            --glass-strong: rgba(255,255,255,0.10);
-            --glass-border: rgba(212,175,55,0.25);
-            --glass-border-strong: rgba(212,175,55,0.5);
-            --text-light: rgba(255,255,255,0.88);
-            --text-muted: rgba(255,255,255,0.55);
-            --text-dim: rgba(255,255,255,0.35);
-            --radius: 16px;
-            --radius-sm: 10px;
-            --transition: 0.2s ease;
-            --transition-slow: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            --blue-gradient: linear-gradient(135deg, var(--royal-blue-dark) 0%, var(--royal-blue) 50%, var(--royal-blue-light) 100%);
-                        --gold-gradient: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
-                        /* Magic UI — Animated Shiny Text keyframes */
-                        --shiny-width: 200px;
-                    }
+                    /* shadcn/ui design tokens (OKLCH) */
+                    --radius: 0.625rem;
+                    --radius-sm: calc(var(--radius) * 0.6);
+                    --radius-md: calc(var(--radius) * 0.8);
+                    --radius-lg: var(--radius);
+                    --radius-xl: calc(var(--radius) * 1.4);
+                    --radius-2xl: calc(var(--radius) * 1.8);
+                    --radius-3xl: calc(var(--radius) * 2.2);
+                    --radius-4xl: calc(var(--radius) * 2.6);
+                    --background: oklch(1 0 0);
+                    --foreground: oklch(0.145 0 0);
+                    --card: oklch(1 0 0);
+                    --card-foreground: oklch(0.145 0 0);
+                    --popover: oklch(1 0 0);
+                    --popover-foreground: oklch(0.145 0 0);
+                    --primary: oklch(0.205 0 0);
+                    --primary-foreground: oklch(0.985 0 0);
+                    --secondary: oklch(0.97 0 0);
+                    --secondary-foreground: oklch(0.205 0 0);
+                    --muted: oklch(0.97 0 0);
+                    --muted-foreground: oklch(0.556 0 0);
+                    --accent: oklch(0.97 0 0);
+                    --accent-foreground: oklch(0.205 0 0);
+                    --destructive: oklch(0.577 0.245 27.325);
+                    --destructive-foreground: oklch(0.985 0 0);
+                    --border: oklch(0.922 0 0);
+                    --input: oklch(0.922 0 0);
+                    --ring: oklch(0.708 0 0);
+                    --chart-1: oklch(0.646 0.222 264.376);
+                    --chart-2: oklch(0.6 0.118 184.704);
+                    --chart-3: oklch(0.398 0.07 227.392);
+                    --chart-4: oklch(0.828 0.189 84.429);
+                    --chart-5: oklch(0.769 0.188 70.08);
+                    --sidebar: oklch(0.985 0 0);
+                    --sidebar-foreground: oklch(0.145 0 0);
+                    --sidebar-primary: oklch(0.205 0 0);
+                    --sidebar-primary-foreground: oklch(0.985 0 0);
+                    --sidebar-accent: oklch(0.97 0 0);
+                    --sidebar-accent-foreground: oklch(0.205 0 0);
+                    --sidebar-border: oklch(0.922 0 0);
+                    --sidebar-ring: oklch(0.708 0 0);
+                    /* Legacy variable aliases for existing CSS */
+                    --black: var(--foreground);
+                    --black-soft: var(--muted);
+                    --black-card: var(--card);
+                    --royal-blue: var(--primary);
+                    --royal-blue-dark: var(--primary);
+                    --royal-blue-light: var(--primary-foreground);
+                    --gold: var(--accent);
+                    --gold-light: var(--accent);
+                    --gold-dark: var(--muted);
+                    --white: var(--background);
+                    --glass: rgba(255,255,255,0.06);
+                    --glass-strong: rgba(255,255,255,0.10);
+                    --glass-border: rgba(212,175,55,0.25);
+                    --glass-border-strong: rgba(212,175,55,0.5);
+                    --text-light: rgba(255,255,255,0.88);
+                    --text-muted: rgba(255,255,255,0.55);
+                    --text-dim: rgba(255,255,255,0.35);
+                    --transition: all 0.2s ease;
+                    --transition-slow: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                    --blue-gradient: linear-gradient(135deg, var(--royal-blue-dark) 0%, var(--royal-blue) 50%, var(--royal-blue-light) 100%);
+                    --gold-gradient: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
+                    --shiny-width: 200px;
+                }
                     @keyframes shiny-text {
                                             0%, 90%, 100% { background-position: calc(-100% - var(--shiny-width)) 0; }
                                             30%, 60% { background-position: calc(100% + var(--shiny-width)) 0; }
