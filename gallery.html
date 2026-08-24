@@ -21,7 +21,7 @@
       "priceRange": "$$"
     }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --black: #0a0a0a;
@@ -35,6 +35,7 @@
             --glass-border: rgba(212,175,55,0.25);
             --text-light: rgba(255,255,255,0.88);
             --text-muted: rgba(255,255,255,0.55);
+            --scrollbar-width: 8px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -44,82 +45,211 @@
             line-height: 1.7;
             padding: 20px;
             min-height: 100vh;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        .container {
-            max-width: 1200px; margin: 0 auto;
-            background: var(--glass);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-        }
+        .container { max-width: none; margin: 0 auto; padding: 0 20px; }
         header {
-            background: linear-gradient(135deg, var(--royal-blue-dark) 0%, var(--royal-blue) 100%);
-            color: var(--white);
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 3px solid var(--gold);
-            position: relative;
+            background: linear-gradient(90deg, var(--royal-blue-dark) 0%, var(--royal-blue) 100%);
+            color: var(--white); padding: 30px 20px; text-align: center; position: relative;
         }
-        header::after {
-            content: ''; position: absolute; bottom: 0; left: 50%;
-            transform: translateX(-50%); width: 80px; height: 3px;
-            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-            border-radius: 2px;
-        }
+        header::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light)); border-radius: 2px; }
         header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 10px; }
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 30px; }
+        /* Fixed scroll instruction caption at top */
+        .scroll-caption {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            text-align: center;
+            margin: 0 0 16px 0;
+            padding: 10px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+        /* Gallery grid - horizontal scroll only */
+        .gallery-wrapper {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: var(--scrollbar-width) solid var(--gold);
+            -ms-overflow-style: none;
+        }
+        .gallery-wrapper::-webkit-scrollbar { width: var(--scrollbar-width); background: var(--black); }
+        .gallery-wrapper::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+        .gallery-wrapper::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
+        .gallery-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 16px;
+            /* No white-space: nowrap - images just sit in a row */
+        }
         .gallery-item {
+            flex: 0 0 auto;
+            width: 300px;
+            min-width: 280px;
+            border-radius: 12px;
+            overflow: hidden;
             background: rgba(255,255,255,0.04);
             border: 1px solid var(--glass-border);
-            border-radius: 12px; overflow: hidden;
-            transition: all 0.3s ease; cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+            scroll-snap-align: start;
         }
-        .gallery-item:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.1); }
-        .gallery-item img { width: 100%; height: auto; display: block; }
-        .back-link {
-            display: block; text-align: center; margin: 20px 0 40px;
-            color: var(--gold); text-decoration: none; font-weight: 600;
-            transition: color 0.2s ease;
+        .gallery-item:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.2); }
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
         }
-        .back-link:hover { color: var(--white); text-decoration: underline; }
-
-        /* Quick Estimate Banner */
-        .quick-estimate-banner { background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--glass-border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .qe-content { max-width: 800px; margin: 0 auto; }
-        .qe-tagline { text-align: center; font-weight: 700; font-size: 1rem; color: var(--gold); margin-bottom: 10px; }
-        .qe-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-        .qe-form input { padding: 12px 14px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 10px; background: rgba(255,255,255,0.05); color: var(--white); font-family: 'Inter',sans-serif; font-size: 0.95rem; flex: 1; min-width: 140px; transition: all 0.2s ease; }
-        .qe-form input::placeholder { color: rgba(255,255,255,0.35); }
-        .qe-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15); }
-        .qe-form button { padding: 12px 24px; background: linear-gradient(135deg, var(--gold-dark), var(--gold)); color: var(--black); border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
-        .qe-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.3); }
-        .qe-confirm { display: none; text-align: center; padding: 16px; color: var(--gold); }
-        @media (max-width: 560px) { .qe-form { flex-direction: column; } .qe-form input { width: 100%; } .qe-form button { width: 100%; } }
+        .gallery-item:hover img { transform: scale(1.05); }
+        /* Caption/styles for the fixed top bar already in .scroll-caption */
+        @media (max-width: 480px) {
+            .gallery-item { min-width: 240px; }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>C&O TV Mounting</h1>
-        <p>Our Work Gallery</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>C&O TV Mounting</h1>
+            <p>Our Work Gallery</p>
+        </header>
 
-    <!-- Quick Estimate Banner -->
-    <div class="quick-estimate-banner" id="quick-banner">
-        <div class="qe-content">
-            <div class="qe-tagline">Want a free estimate in minutes?</div>
-            <div class="qe-form" id="qe-form">
-                <input type="text" id="qe-name" placeholder="Your Name" autocomplete="name">
-                <input type="tel" id="qe-phone" placeholder="Phone Number" autocomplete="tel">
-                <button type="button" id="qe-submit">Get Free Estimate</button>
-            </div>
-            <div class="qe-confirm" id="qe-confirm" style="display:none;">
-                <span>✅ Got it! We'll text you within 5 minutes.</span>
+        <!-- Fixed scroll instruction caption - stays on screen -->
+        <p class="scroll-caption">Scroll left ↔ right to view all project photos</p>
+
+        <!-- Horizontal scrollable gallery -->
+        <div class="gallery-wrapper" aria-label="Project gallery scrollable viewport">
+            <div class="gallery-grid" style="scroll-snap-type: x proximity;">
+                <!-- All 39 images - NO overlay title/desc captions on images -->
+                <figure class="gallery-item">
+                    <img src="images/img01.jpg" alt="TV mounted on light wall" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img02.jpg" alt="TV on dark wall with blue screen" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img03.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img04.jpg" alt="TV setup" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img05.jpg" alt="TV mount" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img06.jpg" alt="TV mounting" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img07.jpg" alt="TV installed" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img08.jpg" alt="TV on wall" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img09.jpg" alt="TV mount example" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img10.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img11.jpg" alt="TV mounted" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img12.jpg" alt="TV setup" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img13.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img14.jpg" alt="TV mounted on wall" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img15.jpg" alt="TV installation in living room" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img16.jpg" alt="TV mounted above fireplace" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img17.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_0c79606db11b.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_c5a61a577d46.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_92f56c1527e1.jpg" alt="TV mounted on wall" loading="lazy">
+                </figure>
+                <!-- Hash-named images from C&O cache -->
+                <figure class="gallery-item">
+                    <img src="images/img_2a5130e8013f.jpg" alt="Conference room installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_6da62e02783b.jpg" alt="Fireplace mount" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_90ec64b2204f.jpg" alt="TV mounted on wall" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_9eec9cd7a139.jpg" alt="Outdoor patio mount" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img_a9f346e64da3.jpg" alt="TV above fireplace" loading="lazy">
+                </figure>
+                <!-- Remaining older images -->
+                <figure class="gallery-item">
+                    <img src="images/img18.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img19.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img20.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img21.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img22.jpg" alt="TV mounted on wall" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img23.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img24.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img25.jpg" alt="TV mounted" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img26.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img27.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img28.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img29.jpg" alt="TV installation" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img30.jpg" alt="TV mounted on wall" loading="lazy">
+                </figure>
+                <figure class="gallery-item">
+                    <img src="images/img31.jpg" alt="TV mounting project" loading="lazy">
+                </figure>
             </div>
         </div>
-    </div>
 
     <div class="gallery">
         <!-- Images 1-12 -->
@@ -164,38 +294,7 @@
     <a href="index.html" class="back-link">&larr; Back to Booking Page</a>
 </div>
 
-<script>
-const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxFz5GMiiO9yxl6xjlKH6o-h9kbJOWNT97SWbj2f0bMs_Xs8Aw3qQTXkWPWC_pF8s0i/exec';
-
-document.getElementById('qe-submit').addEventListener('click', async () => {
-    const name = document.getElementById('qe-name').value.trim();
-    const phone = document.getElementById('qe-phone').value.trim();
-    if (!name || !phone) {
-        alert('Please enter both your name and phone number.');
-        return;
-    }
-    const btn = document.getElementById('qe-submit');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-    // Show confirmation immediately, then swap form
-    document.getElementById('qe-confirm').style.display = 'block';
-    document.getElementById('qe-form').style.display = 'none';
-    // Fire and forget
-    fetch(APP_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            action: 'quick_lead',
-            name: name,
-            phone: phone,
-            source: 'gallery-page'
-        })
-    }).catch(() => {});
-});
-</script>
-
-        <!-- GOOGLE REVIEWS BADGE -->
+        <!-- Google Reviews Badge -->
         <div style="padding:40px 20px;background:rgba(10,10,10,0.5);border-top:1px solid rgba(212,175,55,0.25);text-align:center;">
             <h2 style="font-family:'Playfair Display',serif;color:#fff;margin-bottom:6px;">Reviewed on Google</h2>
             <p style="color:rgba(255,255,255,0.55);font-size:0.9rem;margin-bottom:24px;">Our real customers. Our real rating.</p>
@@ -213,5 +312,6 @@ document.getElementById('qe-submit').addEventListener('click', async () => {
             </div>
         </div>
 
+    </div>
 </body>
 </html>
