@@ -56,21 +56,6 @@
         header::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light)); border-radius: 2px; }
         header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 10px; }
         /* Fixed scroll instruction caption at top */
-        .scroll-caption {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-            text-align: center;
-            margin: 0 0 16px 0;
-            padding: 10px;
-            background: rgba(212,175,55,0.1);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            color: var(--gold);
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-        }
         /* Gallery grid - horizontal scroll only */
         .gallery-wrapper {
             overflow-x: auto;
@@ -123,7 +108,6 @@
         </header>
 
         <!-- Fixed scroll instruction caption - stays on screen -->
-        <p class="scroll-caption">Scroll left ↔ right to view all project photos</p>
 
         <!-- Horizontal scrollable gallery -->
         <div class="gallery-wrapper" aria-label="Project gallery scrollable viewport">
