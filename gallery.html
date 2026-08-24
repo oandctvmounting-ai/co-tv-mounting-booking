@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23002366'/><rect x='8' y='7' width='16' height='11' rx='2' fill='%231A1A1A' stroke='%23D4AF37' stroke-width='1.5'/><rect x='6' y='5' width='3' height='22' rx='1' fill='%23002366'/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23002366'/><rect x='8' y='7' width='16' height='11' rx='2' fill='%231A1A1A' stroke='%23D4AF37' stroke-width='1.5'/><rect x='6' y='5' width='3' height='22' rx='1' fill='%23002366'/></svg>">
     <title>C&O TV Mounting - Project Gallery</title>
     <script type="application/ld+json">
     {
@@ -48,17 +48,30 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-        .container {
-            max-width: none; margin: 0 auto;
-            padding: 0 20px;
-        }
+        .container { max-width: none; margin: 0 auto; padding: 0 20px; }
         header {
             background: linear-gradient(90deg, var(--royal-blue-dark) 0%, var(--royal-blue) 100%);
             color: var(--white); padding: 30px 20px; text-align: center; position: relative;
         }
         header::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light)); border-radius: 2px; }
         header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 10px; }
-        /* Horizontal scrollable gallery */
+        /* Fixed scroll instruction caption at top */
+        .scroll-caption {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            text-align: center;
+            margin: 0 0 16px 0;
+            padding: 10px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+        /* Gallery grid - horizontal scroll only */
         .gallery-wrapper {
             overflow-x: auto;
             overflow-y: hidden;
@@ -69,31 +82,25 @@
         .gallery-wrapper::-webkit-scrollbar { width: var(--scrollbar-width); background: var(--black); }
         .gallery-wrapper::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
         .gallery-wrapper::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
-        /* Gallery grid of images in a single row that wraps */
-        .gallery-grid {                white-space: nowrap;
+        .gallery-grid {
             display: flex;
-            
+            flex-wrap: nowrap;
             gap: 16px;
-            /* No horizontal flex-basis constraint so images sit in a row */
+            /* No white-space: nowrap - images just sit in a row */
         }
-        /* Each image card */
         .gallery-item {
             flex: 0 0 auto;
-            width: 280px;
-            min-width: 260px;
+            width: 300px;
+            min-width: 280px;
             border-radius: 12px;
             overflow: hidden;
             background: rgba(255,255,255,0.04);
             border: 1px solid var(--glass-border);
             transition: transform 0.25s ease, box-shadow 0.25s ease;
             cursor: pointer;
-            /* Safari better scrolling */
             scroll-snap-align: start;
         }
-        .gallery-item:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.2);
-        }
+        .gallery-item:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(212,175,55,0.2); }
         .gallery-item img {
             width: 100%;
             height: 300px;
@@ -102,17 +109,7 @@
             transition: transform 0.3s ease;
         }
         .gallery-item:hover img { transform: scale(1.05); }
-        /* Overlay with title/desc */
-        .overlay {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 16px; background: linear-gradient(transparent 0%, rgba(0,0,0,0.8) 100%);
-            color: var(--white); font-family: 'Playfair Display', serif;
-            opacity: 0; transition: opacity 0.25s ease;
-        }
-        .gallery-item:hover .overlay { opacity: 1; }
-        .overlay .title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-        .overlay .desc { font-size: 0.75rem; opacity: 0.8; line-height: 1.2; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-        /* Scrollbar aesthetic */
+        /* Caption/styles for the fixed top bar already in .scroll-caption */
         @media (max-width: 480px) {
             .gallery-item { min-width: 240px; }
         }
@@ -125,287 +122,131 @@
             <p>Our Work Gallery</p>
         </header>
 
+        <!-- Fixed scroll instruction caption - stays on screen -->
+        <p class="scroll-caption">Scroll left ↔ right to view all project photos</p>
+
         <!-- Horizontal scrollable gallery -->
         <div class="gallery-wrapper" aria-label="Project gallery scrollable viewport">
-            <!-- Scroll instruction above gallery -->
-            <p style="text-align: center; color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.2rem; position: fixed; top: 0; width: 100%; z-index: 100; margin: 0 0 16px 0; padding: 10px; background: rgba(212,175,55,0.1); border-radius: 8px; border: 1px solid var(--glass-border);"> Scroll left ↔ right to view all project photos </p>
-
             <div class="gallery-grid" style="scroll-snap-type: x proximity;">
-                <!-- All 39 images from the folder -->
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <!-- All 39 images - NO overlay title/desc captions on images -->
+                <figure class="gallery-item">
                     <img src="images/img01.jpg" alt="TV mounted on light wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mounted on Wall</div>
-                        <div class="desc">Residential living room</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img02.jpg" alt="TV on dark wall with blue screen" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Dark Wall</div>
-                        <div class="desc">Blue screen backdrop</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img03.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Installation</div>
-                        <div class="desc">Standard install</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img04.jpg" alt="TV setup" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Setup</div>
-                        <div class="desc">Wall mounting</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img05.jpg" alt="TV mount" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mount</div>
-                        <div class="desc">Full motion arm</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img06.jpg" alt="TV mounting" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mounting</div>
-                        <div class="desc">Residential job</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img07.jpg" alt="TV installed" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Installed</div>
-                        <div class="desc">Above fireplace</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img08.jpg" alt="TV on wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Wall</div>
-                        <div class="desc">Living room mount</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img09.jpg" alt="TV mount example" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mount Example</div>
-                        <div class="desc">Portfolio piece</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img10.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Installation</div>
-                        <div class="desc">Home theater</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img11.jpg" alt="TV mounted" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mounted</div>
-                        <div class="desc">Completed job</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img12.jpg" alt="TV setup" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Setup</div>
-                        <div class="desc">Cabinet install</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img13.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mounting Project</div>
-                        <div class="desc">Full service</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img14.jpg" alt="TV mounted on wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Wall</div>
-                        <div class="desc">Living room</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img15.jpg" alt="TV installation in living room" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Living Room Install</div>
-                        <div class="desc">Main TV</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img16.jpg" alt="TV mounted above fireplace" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Above Fireplace</div>
-                        <div class="desc">Electric fireplace</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img17.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Mounting Project</div>
-                        <div class="desc">Commercial job</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_0c79606db11b.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Gallery shot</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_c5a61a577d46.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Install</div>
-                        <div class="desc">Standard mount</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_92f56c1527e1.jpg" alt="TV mounted on wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Wall</div>
-                        <div class="desc">Clean install</div>
-                    </div>
                 </figure>
-                <!-- Continuing with the new hash-named images -->
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <!-- Hash-named images from C&O cache -->
+                <figure class="gallery-item">
                     <img src="images/img_2a5130e8013f.jpg" alt="Conference room installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Conference Room</div>
-                        <div class="desc">Office TV mount</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_6da62e02783b.jpg" alt="Fireplace mount" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Fireplace Mount</div>
-                        <div class="desc">Electric fireplace</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_90ec64b2204f.jpg" alt="TV mounted on wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Wall</div>
-                        <div class="desc">Residential</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_9eec9cd7a139.jpg" alt="Outdoor patio mount" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Outdoor Patio</div>
-                        <div class="desc">Weatherproof install</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img_a9f346e64da3.jpg" alt="TV above fireplace" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">Above Fireplace</div>
-                        <div class="desc">Electric fireplaces</div>
-                    </div>
                 </figure>
                 <!-- Remaining older images -->
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img18.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Residential</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img19.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Install</div>
-                        <div class="desc">Home setup</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img20.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Commercial</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img21.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Install</div>
-                        <div class="desc">Residential</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img22.jpg" alt="TV mounted on wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Wall</div>
-                        <div class="desc">Living room</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img23.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Service call</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img24.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Install</div>
-                        <div class="desc">Wall mount</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img25.jpg" alt="TV mounted" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Mount</div>
-                        <div class="desc">Completed</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img26.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Commercial job</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img27.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Install</div>
-                        <div class="desc">Residential</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img28.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Commercial</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img29.jpg" alt="TV installation" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Install</div>
-                        <div class="desc">Home theater</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img30.jpg" alt="TV mounted on wall" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV on Wall</div>
-                        <div class="desc">Living room</div>
-                    </div>
                 </figure>
-                <figure class="gallery-item" style="scroll-snap-align: start;">
+                <figure class="gallery-item">
                     <img src="images/img31.jpg" alt="TV mounting project" loading="lazy">
-                    <div class="overlay">
-                        <div class="title">TV Project</div>
-                        <div class="desc">Full service</div>
-                    </div>
                 </figure>
             </div>
         </div>
