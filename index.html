@@ -630,9 +630,9 @@
                                             .options-grid.bento .service-card.led { grid-area: led; }
                                             .options-grid.bento .service-card.soundbar { grid-area: soundbar; }
                                         }
-                                @media (max-width: 899px) {
+                                @media (max-width: 599px) {
                                     .options-grid.bento {
-                                        grid-template-columns: repeat(2, 1fr);
+                                        grid-template-columns: repeat(1, 1fr);
                                         grid-template-rows: auto;
                                         grid-template-areas: none;
                                     }
@@ -851,7 +851,14 @@
         .dropdown-options li.selected { background: var(--gold); color: var(--black); font-weight: 600; }
         .dropdown-options li.disabled { opacity: 0.4; cursor: default; }
         .dropdown-options li.disabled:hover { background: none; }
-    </style>
+    
+/* Mobile fix: single column service cards + no clipped titles */
+@media (max-width: 599px) {
+    .options-grid.bento, .options-grid { grid-template-columns: 1fr !important; }
+    .service-card__name { overflow-wrap: anywhere; white-space: normal; font-size: 1rem; }
+    .option-card { padding: 14px 14px; }
+}
+</style>
 </head>
 <body>
     <div class="bg-video">
