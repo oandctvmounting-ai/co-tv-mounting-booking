@@ -616,13 +616,14 @@
                 /* Magic UI — Bento Grid layout for services */
                                         @media (min-width: 900px) {
                                             .options-grid.bento {
-                                                                            grid-template-columns: repeat(3, 1fr);
-                                                                            grid-template-areas:
-                                                                                    "tv tv fireplace"
-                                                                                    "blinds mirrors led"
-                                                                                    "soundbar foam foam";
-                                                                            gap: 16px;
-                                                                        }
+                                                            grid-template-columns: repeat(3, 1fr);
+                                                            grid-template-areas:
+                                                                "tv tv moviewall"
+                                                                "blinds mirrors led"
+                                                                "soundbar foam foam"
+                                                                "paint . .";
+                                                            gap: 16px;
+                                                        }
                                             .options-grid.bento .service-card.tv { grid-area: tv; }
                                             .options-grid.bento .service-card.fireplace { grid-area: fireplace; }
                                             .options-grid.bento .service-card.blinds { grid-area: blinds; }
@@ -630,6 +631,8 @@
                                             .options-grid.bento .service-card.led { grid-area: led; }
                                             .options-grid.bento .service-card.soundbar { grid-area: soundbar; }
 .options-grid.bento .service-card.foam { grid-area: foam; }
+.options-grid.bento .service-card.paint { grid-area: paint; }
+.options-grid.bento .service-card.moviewall { grid-area: moviewall; }
                                         }
                                 @media (max-width: 599px) {
                                     .options-grid.bento {
@@ -1336,7 +1339,8 @@ const SERVICES = {
     led:      { name: 'LED Lighting',         icon: '💡', bentoArea: 'led' },
     soundbar: { name: 'Soundbar Mounting',    icon: '🔊', bentoArea: 'soundbar' },
     foam:     { name: '3D Foam Tile Accent Walls', icon: '🧱', bentoArea: 'foam' },
-        paint:    { name: 'Interior Painting',         icon: '🎨', bentoArea: 'paint' }
+        paint:    { name: 'Interior Painting',         icon: '🎨', bentoArea: 'paint' },
+        moviewall: { name: 'Movie Wall Transformations', icon: '🎬', bentoArea: 'moviewall' }
     };
 
 const TV = {
@@ -1398,11 +1402,15 @@ const FOAM = { brick: 12, marble: 9, wood: 11, tile: 8 };
 const FOAM_LABEL = { brick: 'Brick Wall', marble: 'Marble Wall', wood: 'Wood Wall', tile: 'Tile / Stone Wall' };
 const FOAM_PHOTO = { brick: 'images/foam_brick.jpg', marble: 'images/foam_marble.jpg', wood: 'images/foam_wood.jpg', tile: 'images/foam_tile.jpg' };
 
-// Interior Painting — $/sq ft for retail wall+trim painting. Blended rate
-// within the $1–$3/sq ft range Orion confirmed. Customer enters sq ft.
-const PAINT = { rate: 2 };
-const PAINT_MIN_SQFT = 50; // below this we charge the min (50 × $2 = $100) to keep jobs worthwhile
+// Interior Painting — $/sq ft for retail wall+trim painting. Customer picks finish tier.
+// Rates sit inside Orion's confirmed $1–$3/sq ft band.
+const PAINT = { flat: 1.5, eggshell: 2, semigloss: 2.5 };
+const PAINT_LABEL = { flat: 'Flat', eggshell: 'Eggshell', semigloss: 'Semi-Gloss' };
+const PAINT_MIN_SQFT = 50; // below this we charge the min (50 × rate) to keep jobs worthwhile
 const PAINT_PHOTO = 'images/paint_room.jpg';
+
+// Movie Wall Transformations — custom-quoted projection wall builds (paint, screen
+// coating, ambient light control, projector mount). No auto-price: scope varies wildly.
 
 // Booking minimum — single source of truth for the gate. Equivalent to one
 // entry-level TV mount (TV fixed-mount base = $30 + 55" size = $90). Solo
@@ -1442,7 +1450,8 @@ let state = {
     soundbar:{ qty:1 },
     ledChoices: [],            // can include 'tv' (TV Lights $55) and/or 'house' (Inside House LEDs $100, lights provided)
     foam:    { style: null, heightFt: null, widthFt: null },
-    paint:   { sqft: null },
+    paint:   { finish: null, sqft: null },
+    moviewall: { wantsCallback: true },
     fireplaceStandalone: false,
     addons:  new Set(),
     promoInput: '',
@@ -1467,8 +1476,9 @@ function renderStep1() {
             led:       { fromPrice: 55,  subtitle: 'Bias TV lights or whole-room LEDs',     popular: false, helper: 'Code-compliant install · dimmable',        underMinNote: true  },
             soundbar:  { fromPrice: 45,  subtitle: 'Clean wire run + clean mount',          popular: false, helper: 'Sonos, Bose, Vizio, any brand',             underMinNote: true  },
             foam:      { fromPrice: 96,  subtitle: 'Brick, marble, wood or tile-look',      popular: false, helper: 'Showroom-grade 3D panels · materials incl.',   underMinNote: false },
-                        paint:     { fromPrice: 100, subtitle: 'Walls & trim · interior rooms',     popular: false, helper: '2 coats, light prep, clean lines · $2/sq ft',     underMinNote: false }
-                    };
+                        paint:     { fromPrice: 75, subtitle: 'Interior walls & trim · finish your pick', popular: false, helper: 'Flat/Eggshell/Semi-Gloss · $1.5–$2.5/sq ft', underMinNote: false },
+                                    moviewall: { fromPrice: 0, subtitle: 'Custom projection wall build',           popular: true,  helper: 'Projector wall, screen coating, lighting · custom quote', underMinNote: false }
+                                };
 
     for (const key in SERVICES) {
             const s = SERVICES[key];
@@ -1483,7 +1493,7 @@ function renderStep1() {
                 <div class="service-card__icon">${s.icon}</div>
             </div>
             <div class="service-card__name">${s.name}</div>
-            <div class="service-card__from">from <strong>$${d.fromPrice}</strong></div>
+            <div class="service-card__from">${d.fromPrice > 0 ? `from <strong>$${d.fromPrice}</strong>` : '<strong style="color:var(--gold)">Custom Quote</strong>'}</div>
             <div class="service-card__subtitle">${d.subtitle || ''}</div>
             <div class="service-card__service-area">${d.helper || ''}</div>
             ${d.underMinNote ? '<div class="service-card__min-note">+ Add another service to book (min $90)</div>' : ''}
@@ -1628,12 +1638,21 @@ function configHtml(key, prefix) {
                 <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">Showroom-grade 3D foam panels. Materials included. Choose your style then enter the wall area.</p>`;
                         }
                         if (key === 'paint') {
-                            return `<div class="option-card selected" style="pointer-events:none"><span>🎨 Interior Walls & Trim</span><span class="price-tag">$${PAINT.rate}/sq&nbsp;ft</span></div>
-                                <div class="input-group" style="margin:14px 0 10px"><label>Total Square Footage (walls + trim)</label>
-                                <input type="number" min="1" step="10" placeholder="e.g. 800" id="${prefix}_paintsqft" value="${state.paint.sqft !== null ? state.paint.sqft : ''}" onchange="setPaint('sqft', this.value)"></div>
-                                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">$2/sq ft · 2 coats, light prep, clean lines. Not sure of your sq footage? We'll measure it free at the site.</p>`;
-                        }
-                        return '';
+                                                    const finishCards = Object.keys(PAINT).map(f => {
+                                                        const on = state.paint.finish === f ? ' selected' : '';
+                                                        return `<div class="option-card${on}" onclick="setPaint('finish','${f}')"><span>${PAINT_LABEL[f]}</span><span class="price-tag">$${PAINT[f]}/sq&nbsp;ft</span></div>`;
+                                                    }).join('');
+                                                    return `<p style="color:var(--text-muted); font-size:0.9rem; margin:4px 0 10px">🎨 Interior walls & trim · pick your finish.</p>
+                                                        <div class="options-grid">${finishCards}</div>
+                                                        <div class="input-group" style="margin:14px 0 10px"><label>Total Square Footage (walls + trim)</label>
+                                                        <input type="number" min="1" step="10" placeholder="e.g. 800" id="${prefix}_paintsqft" value="${state.paint.sqft !== null ? state.paint.sqft : ''}" onchange="setPaint('sqft', this.value)"></div>
+                                                        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">2 coats, light prep, clean lines. Not sure of your sq footage? We'll measure it free at the site.</p>`;
+                                                }
+                                                if (key === 'moviewall') {
+                                                    return `<div class="option-card selected" style="pointer-events:none"><span>🎬 Custom Projection Wall Build</span><span class="price-tag">Custom Quote</span></div>
+                                                        <p style="color:var(--text-muted); font-size:0.9rem; margin:8px 0">Send us the room size and your projector setup, and we'll text you a custom quote within 2 hours. Includes wall prep, screen coating, ambient light control & projector mount.</p>`;
+                                                }
+                                                return '';
                     }
 
 /* helper: radio-style option cards */
@@ -1783,7 +1802,8 @@ function setFoam(field, val) {
     saveProgress();
 }
 function setPaint(field, val) {
-    if (field === 'sqft') state.paint.sqft = parseFloat(val) || null;
+    if (field === 'finish') { state.paint.finish = val; renderStep2(); }
+    if (field === 'sqft')   state.paint.sqft = parseFloat(val) || null;
     calculateTotal();
     saveProgress();
 }
@@ -1853,8 +1873,8 @@ function getInstantRange() {
         const cost = Math.round(FOAM[state.foam.style] * state.foam.heightFt * state.foam.widthFt);
         min += cost; max += cost + Math.round(cost * 0.1);
     }
-    if (active.has('paint') && state.paint.sqft) {
-        const cost = Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT.rate);
+    if (active.has('paint') && state.paint.sqft && state.paint.finish) {
+            const cost = Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT[state.paint.finish]);
         min += cost; max += cost + Math.round(cost * 0.1);
     }
     // Travel fee boundary
@@ -1894,9 +1914,9 @@ function calculateTotal() {
     if (active.has('foam') && state.foam.style && state.foam.heightFt && state.foam.widthFt) {
         total += Math.round(FOAM[state.foam.style] * state.foam.heightFt * state.foam.widthFt);
     }
-    if (active.has('paint') && state.paint.sqft) {
-        total += Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT.rate);
-    }
+    if (active.has('paint') && state.paint.sqft && state.paint.finish) {
+            total += Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT[state.paint.finish]);
+        }
 
     // Apply promo discount
     let discount = 0;
@@ -2272,7 +2292,8 @@ function submitBooking() {
             addons: addons,
             tvDetails: tvDetails,
             paintSqft: (state.primary === 'paint' || state.addons.has('paint')) ? state.paint.sqft : null,
-            paintTotal: (state.primary === 'paint' || state.addons.has('paint')) && state.paint.sqft ? Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT.rate) : null,
+                        paintFinish: (state.primary === 'paint' || state.addons.has('paint')) ? state.paint.finish : null,
+                        paintTotal: (state.primary === 'paint' || state.addons.has('paint')) && state.paint.sqft && state.paint.finish ? Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT[state.paint.finish]) : null,
             total: total,
             deposit: needsDeposit ? 50 : 0,
             promo: state.appliedPromo ? state.appliedPromo.code : '',
@@ -2370,7 +2391,7 @@ function checkPaidRedirect() {
 function summarize(p) {
     let s = `✅ Booking Confirmed!\n\nService: ${p.primary}`;
     if (p.addons && p.addons.length) s += `\nAdd-ons: ` + p.addons.join(', ');
-    if (p.paintSqft) s += `\nPainting: ${p.paintSqft} sq ft ($${p.paintTotal})`;
+    if (p.paintSqft && p.paintFinish) s += `\nPainting: ${p.paintSqft} sq ft ${p.paintFinish} ($${p.paintTotal})`;
     s += `\nName: ${p.name}`;
     s += `\nAddress: ${p.address}`;
     if (p.datetime) s += `\nDate/Time: ${p.datetime}`;
