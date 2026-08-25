@@ -618,9 +618,9 @@
                                             .options-grid.bento {
                                                                             grid-template-columns: repeat(3, 1fr);
                                                                             grid-template-areas:
-                                                                                "tv tv fireplace"
-                                                                                "blinds mirrors led"
-                                                                                "soundbar soundbar soundbar";
+                                                                                    "tv tv fireplace"
+                                                                                    "blinds mirrors led"
+                                                                                    "soundbar foam foam";
                                                                             gap: 16px;
                                                                         }
                                             .options-grid.bento .service-card.tv { grid-area: tv; }
@@ -629,6 +629,7 @@
                                             .options-grid.bento .service-card.mirrors { grid-area: mirrors; }
                                             .options-grid.bento .service-card.led { grid-area: led; }
                                             .options-grid.bento .service-card.soundbar { grid-area: soundbar; }
+.options-grid.bento .service-card.foam { grid-area: foam; }
                                         }
                                 @media (max-width: 599px) {
                                     .options-grid.bento {
@@ -1328,12 +1329,13 @@
     <script>
 /* ---------- Pricing model (from C&O TV Mounting Pricing.md) ---------- */
 const SERVICES = {
-    tv:       { name: 'TV Mounting',          icon: '📺', bentoArea: 'tv' },
+    tv:        { name: 'TV Mounting',          icon: '📺', bentoArea: 'tv' },
     fireplace:{ name: 'Electronic Fireplace Mount/Install', icon: '🔥', bentoArea: 'fireplace' },
     blinds:   { name: 'Blinds & Shades',      icon: '🪟', bentoArea: 'blinds' },
     mirrors:  { name: 'Mirrors & Portraits',  icon: '🖼️', bentoArea: 'mirrors' },
     led:      { name: 'LED Lighting',         icon: '💡', bentoArea: 'led' },
-    soundbar: { name: 'Soundbar Mounting',    icon: '🔊', bentoArea: 'soundbar' }
+    soundbar: { name: 'Soundbar Mounting',    icon: '🔊', bentoArea: 'soundbar' },
+    foam:     { name: '3D Foam Tile Accent Walls', icon: '🧱', bentoArea: 'foam' }
 };
 
 const TV = {
@@ -1390,6 +1392,9 @@ const MIRRORS = { small: 10, medium: 30, large: 45 };   // per piece
 const SOUNDBAR = 45;                                    // each
 const FIREPLACE = 150;                                  // electronic fireplace mounting/installation (standalone base)
 const LED = { tv: 55, house: 100 };                    // tv lights | inside-house LEDs (we provide lights)
+// 3D Foam Tile Accent Walls — per sq ft (H ft × W ft). Brand-compliant, within $8–$12/sq ft.
+const FOAM = { brick: 12, marble: 10, wood: 10, tile: 8 };
+const FOAM_LABEL = { brick: 'Brick Wall', marble: 'Marble Wall', wood: 'Wood Wall', tile: 'Tile-Look Wall' };
 
 // Booking minimum — single source of truth for the gate. Equivalent to one
 // entry-level TV mount (TV fixed-mount base = $30 + 55" size = $90). Solo
@@ -1428,6 +1433,7 @@ let state = {
     mirrors: { size:null, qty:1 },
     soundbar:{ qty:1 },
     ledChoices: [],            // can include 'tv' (TV Lights $55) and/or 'house' (Inside House LEDs $100, lights provided)
+    foam:    { style: null, heightFt: null, widthFt: null },
     fireplaceStandalone: false,
     addons:  new Set(),
     promoInput: '',
@@ -1445,13 +1451,14 @@ function renderStep1() {
        underMinNote flags solo jobs that would land under the $90 booking
        minimum -- those four tiles get a 'Add another service to book' cue. */
     const SERVICE_DETAILS = {
-        tv:        { fromPrice: 90,  subtitle: 'Any wall · any size',                   popular: true,  helper: 'TV brackets, hardware & leveling included', underMinNote: false },
-        fireplace:{ fromPrice: 150, subtitle: 'Heat-shield + secure anchor',           popular: false, helper: 'Above or beside mantel; gas/electric',       underMinNote: false },
-        blinds:    { fromPrice: 55,  subtitle: 'Per window · inside mount',            popular: false, helper: 'Cordless, motorized, blackout options',      underMinNote: true  },
-        mirrors:   { fromPrice: 10,  subtitle: 'Heavy-duty anchors included',           popular: false, helper: 'Mirrors, portraits, gallery walls',         underMinNote: true  },
-        led:       { fromPrice: 55,  subtitle: 'Bias TV lights or whole-room LEDs',     popular: false, helper: 'Code-compliant install · dimmable',        underMinNote: true  },
-        soundbar:  { fromPrice: 45,  subtitle: 'Clean wire run + clean mount',          popular: false, helper: 'Sonos, Bose, Vizio, any brand',             underMinNote: true  }
-    };
+            tv:        { fromPrice: 90,  subtitle: 'Any wall · any size',                   popular: true,  helper: 'TV brackets, hardware & leveling included', underMinNote: false },
+            fireplace:{ fromPrice: 150, subtitle: 'Heat-shield + secure anchor',           popular: false, helper: 'Above or beside mantel; gas/electric',       underMinNote: false },
+            blinds:    { fromPrice: 55,  subtitle: 'Per window · inside mount',            popular: false, helper: 'Cordless, motorized, blackout options',      underMinNote: true  },
+            mirrors:   { fromPrice: 10,  subtitle: 'Heavy-duty anchors included',           popular: false, helper: 'Mirrors, portraits, gallery walls',         underMinNote: true  },
+            led:       { fromPrice: 55,  subtitle: 'Bias TV lights or whole-room LEDs',     popular: false, helper: 'Code-compliant install · dimmable',        underMinNote: true  },
+            soundbar:  { fromPrice: 45,  subtitle: 'Clean wire run + clean mount',          popular: false, helper: 'Sonos, Bose, Vizio, any brand',             underMinNote: true  },
+            foam:      { fromPrice: 96,  subtitle: 'Brick, marble, wood or tile-look',      popular: false, helper: 'Showroom-grade 3D panels · materials incl.',   underMinNote: false }
+        };
 
     for (const key in SERVICES) {
             const s = SERVICES[key];
@@ -1592,11 +1599,24 @@ function configHtml(key, prefix) {
                     <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">Select one or both. For Inside House LEDs, we provide the lights.</p>`;
         }
     if (key === 'fireplace') {
-        return `<p style="color:var(--text-muted); font-size:0.9rem; margin:4px 0 8px">Electronic fireplace mounting / installation.</p>
-                <div class="option-card selected" style="pointer-events:none"><span>🔥 Base Installation</span><span class="price-tag">$150</span></div>`;
+            return `<p style="color:var(--text-muted); font-size:0.9rem; margin:4px 0 8px">Electronic fireplace mounting / installation.</p>
+                    <div class="option-card selected" style="pointer-events:none"><span>🔥 Base Installation</span><span class="price-tag">$150</span></div>`;
+        }
+        if (key === 'foam') {
+            const sel = state.foam.style;
+            const cards = Object.keys(FOAM).map(k => {
+                const on = sel === k ? ' selected' : '';
+                return `<div class="option-card${on}" onclick="setFoam('style','${k}')"><span>${FOAM_LABEL[k]}</span><span class="price-tag">$${FOAM[k]}/sq&nbsp;ft</span></div>`;
+            }).join('');
+            return `${cards}
+                <div class="input-group" style="margin:14px 0 10px"><label>Wall Height (feet)</label>
+                <input type="number" min="1" step="0.5" placeholder="e.g. 8" id="${prefix}_foamh" value="${state.foam.heightFt !== null ? state.foam.heightFt : ''}" onchange="setFoam('heightFt', this.value)"></div>
+                <div class="input-group"><label>Wall Width (feet)</label>
+                <input type="number" min="1" step="0.5" placeholder="e.g. 10" id="${prefix}_foamw" value="${state.foam.widthFt !== null ? state.foam.widthFt : ''}" onchange="setFoam('widthFt', this.value)"></div>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">Showroom-grade 3D foam panels. Materials included. Choose your style then enter the wall area.</p>`;
+        }
+        return '';
     }
-    return '';
-}
 
 /* helper: radio-style option cards */
 function optCard(group, label, options) {
@@ -1737,6 +1757,13 @@ function setMirrors(field, val) {
     calculateTotal();
     saveProgress();
 }
+function setFoam(field, val) {
+    if (field === 'style')    { state.foam.style = val; renderStep2(); }
+    if (field === 'heightFt') state.foam.heightFt = parseFloat(val) || null;
+    if (field === 'widthFt')  state.foam.widthFt  = parseFloat(val) || null;
+    calculateTotal();
+    saveProgress();
+}
 function toggleLed(choice) {
     if (state.ledChoices.includes(choice)) {
         state.ledChoices = state.ledChoices.filter(c => c !== choice);
@@ -1799,6 +1826,10 @@ function getInstantRange() {
                 min += cost; max += cost + 15;
             });
         }
+    if (active.has('foam') && state.foam.style && state.foam.heightFt && state.foam.widthFt) {
+        const cost = Math.round(FOAM[state.foam.style] * state.foam.heightFt * state.foam.widthFt);
+        min += cost; max += cost + Math.round(cost * 0.1);
+    }
     // Travel fee boundary
     if (state.travelDistance !== null) {
         if (state.travelDistance > 20) min += 25;
@@ -1832,6 +1863,9 @@ function calculateTotal() {
         state.ledChoices.forEach(c => {
             total += LED[c];
         });
+    }
+    if (active.has('foam') && state.foam.style && state.foam.heightFt && state.foam.widthFt) {
+        total += Math.round(FOAM[state.foam.style] * state.foam.heightFt * state.foam.widthFt);
     }
 
     // Apply promo discount
@@ -2188,12 +2222,12 @@ function submitBooking() {
     }
 
     const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
-    const primary = state.primary ? (state.primary === 'led'
+    const foamDesc = () => (state.foam.style ? `${FOAM_LABEL[state.foam.style]} — ${state.foam.heightFt || '?'}ft × ${state.foam.widthFt || '?'}ft` : '3D Foam Tile Accent Wall');
+    const svcLabel = k => k === 'led'
         ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
-        : SERVICES[state.primary].name) : '';
-    const addons = [...state.addons].map(k => k === 'led'
-        ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
-        : SERVICES[k].name);
+        : (k === 'foam' ? ('3D Foam Tile – ' + foamDesc()) : SERVICES[k].name);
+    const primary = state.primary ? svcLabel(state.primary) : '';
+    const addons = [...state.addons].map(svcLabel);
     const tvDetails = state.tvs.map(tv => ({
         mount: tv.mount, sizeLabel: tv.size ? TV.sizeLabel[tv.size] : '',
         surfaceLabel: tv.surface ? TV.surfaceLabel[tv.surface] : '',
