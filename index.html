@@ -766,7 +766,7 @@
         .mount-card { border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; cursor: pointer; transition: var(--transition); background: var(--glass); backdrop-filter: blur(10px); display: flex; flex-direction: column; }
         .mount-card:hover { border-color: var(--glass-border-strong); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
         .mount-card.selected { border-color: var(--gold); box-shadow: 0 8px 24px rgba(212,175,55,0.15); }
-        .mount-card img { width: 100%; height: 70px; object-fit: cover; }
+        .mount-card img { width: 100%; height: auto; max-height: 110px; object-fit: contain; object-position: center; background: rgba(0,0,0,0.2); }
         .mount-card-title { padding: 6px 10px; font-weight: 600; font-size: 0.8rem; color: var(--white); }
         .mount-card-price { padding: 0 10px 8px; font-weight: 700; color: var(--gold); font-size: 0.75rem; }
         .mount-name { padding: 6px 10px; font-weight: 600; font-size: 0.8rem; color: var(--white); display: block; }
@@ -1678,7 +1678,7 @@ function mountCards(group) {
             const title = MOUNT_TITLE[k] || k;
             const photo = MOUNT_PHOTO[k] || '';
             const imgHtml = photo
-                ? `<img src="${photo}" alt="${title}" style="width:100%; height:80px; object-fit:cover; border-radius:8px;">`
+                ? `<img src="${photo}" alt="${title}" style="width:100%; height:auto; max-height:110px; object-fit:contain; object-position:center; border-radius:8px; background:rgba(0,0,0,0.2);">`
                 : (MOUNT_SVG[k] || '');
             return `<div class="option-card mount-card" data-group="${group}" onclick="pickOption('${group}','${k}', this)">
                 ${imgHtml}
