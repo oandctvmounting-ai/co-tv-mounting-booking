@@ -1353,7 +1353,6 @@ const TV = {
     surface: { drywall: 0, brick: 50, tile: 85 },
     surfaceLabel: { drywall: 'Drywall', brick: 'Brick', tile: 'Tile / Metal / Stucco' },
     fireplaceSurcharge: 30,
-    largeTvSurcharge: 50,   // 85" and up
     wire:    { internal: 60, external: 35 },
     wireLabel: { internal: 'Internal (in-wall)', external: 'External (raceway)' }
 };
@@ -1859,8 +1858,6 @@ function tvUnitTotal(tv) {
     if (tv.size)    t += TV.size[tv.size] || 0;
     if (tv.surface) t += TV.surface[tv.surface] || 0;
     if (tv.overFireplace) t += TV.fireplaceSurcharge;
-    // Large-TV surcharge applies to 85" and up → size keys s86 and s96
-    if (tv.size && (tv.size === 's86' || tv.size === 's96')) t += TV.largeTvSurcharge;
     if (tv.wire)    t += TV.wire[tv.wire] || 0;
     return t;
 }
