@@ -788,7 +788,9 @@
                 }
         .addon-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px; border:1.5px solid rgba(255,255,255,0.1); border-radius:12px; cursor:pointer; transition:var(--transition); font-weight:600; font-size:1rem; background: var(--glass); backdrop-filter: blur(10px); }
         .addon-body { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; }
-        .addon-block.open .addon-body { max-height: 600px; padding: 14px 0; }
+                .addon-block.open .addon-body { max-height: 2000px; padding: 14px 0; }
+        .foam-price-live { margin-top:12px; padding:10px 14px; background:var(--glass); border:1px solid var(--glass-border); border-radius:10px; color:var(--white); font-weight:600; font-size:0.95rem; }
+        .foam-price-live strong { color:var(--gold); font-size:1.05rem; }
 
         /* Booking success overlay */
         .booking-success-overlay { position: fixed; inset: 0; background: rgba(10,10,10,0.9); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -1624,20 +1626,27 @@ function configHtml(key, prefix) {
                     <div class="option-card selected" style="pointer-events:none"><span>🔥 Base Installation</span><span class="price-tag">$150</span></div>`;
         }
         if (key === 'foam') {
-            const sel = state.foam.style;
-            const cards = Object.keys(FOAM).map(k => {
-                const on = sel === k ? ' selected' : '';
-                const src = FOAM_PHOTO[k] || '';
-                const img = src ? `<img src="${src}" alt="${FOAM_LABEL[k]}" style="width:100%; height:140px; object-fit:cover; border-radius:10px; margin-bottom:10px; display:block;">` : '';
-                return `<div class="option-card${on}" onclick="setFoam('style','${k}')">${img}<span>${FOAM_LABEL[k]}</span><span class="price-tag">$${FOAM[k]}/sq&nbsp;ft</span></div>`;
-            }).join('');
-            return `<div class="options-grid mount-grid">${cards}</div>
-                <div class="input-group" style="margin:14px 0 10px"><label>Wall Height (feet)</label>
-                <input type="number" min="1" step="0.5" placeholder="e.g. 8" id="${prefix}_foamh" value="${state.foam.heightFt !== null ? state.foam.heightFt : ''}" onchange="setFoam('heightFt', this.value)"></div>
-                <div class="input-group"><label>Wall Width (feet)</label>
-                <input type="number" min="1" step="0.5" placeholder="e.g. 10" id="${prefix}_foamw" value="${state.foam.widthFt !== null ? state.foam.widthFt : ''}" onchange="setFoam('widthFt', this.value)"></div>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">Showroom-grade 3D foam panels. Materials included. Choose your style then enter the wall area.</p>`;
-                        }
+                    const sel = state.foam.style;
+                    const cards = Object.keys(FOAM).map(k => {
+                        const on = sel === k ? ' selected' : '';
+                        const src = FOAM_PHOTO[k] || '';
+                        const img = src ? `<img src="${src}" alt="${FOAM_LABEL[k]}" style="width:100%; height:140px; object-fit:cover; border-radius:10px; margin-bottom:10px; display:block;">` : '';
+                        return `<div class="option-card${on}" onclick="setFoam('style','${k}')">${img}<span>${FOAM_LABEL[k]}</span><span class="price-tag">$${FOAM[k]}/sq&nbsp;ft</span></div>`;
+                    }).join('');
+                    // live price preview for the entered wall area
+                    const est = (state.foam.style && state.foam.heightFt && state.foam.widthFt)
+                        ? Math.round(FOAM[state.foam.style] * state.foam.heightFt * state.foam.widthFt) : null;
+                    const estLine = est !== null
+                        ? `<div class="foam-price-live" id="${prefix}_foamlive">Estimated foam wall install: <strong>$${est}</strong></div>`
+                        : `<div class="foam-price-live" id="${prefix}_foamlive" style="opacity:0.7">Pick a style + enter height and width to see the price</div>`;
+                    return `<div class="options-grid mount-grid">${cards}</div>
+                        <div class="input-group" style="margin:14px 0 10px"><label>Wall Height (feet)</label>
+                        <input type="number" min="1" step="0.5" placeholder="e.g. 8" id="${prefix}_foamh" value="${state.foam.heightFt !== null ? state.foam.heightFt : ''}" oninput="setFoam('heightFt', this.value)"></div>
+                        <div class="input-group"><label>Wall Width (feet)</label>
+                        <input type="number" min="1" step="0.5" placeholder="e.g. 10" id="${prefix}_foamw" value="${state.foam.widthFt !== null ? state.foam.widthFt : ''}" oninput="setFoam('widthFt', this.value)"></div>
+                        ${estLine}
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px">Showroom-grade 3D foam panels. Materials included. Choose your style then enter the wall area.</p>`;
+                                }
                         if (key === 'paint') {
                                                     const finishCards = Object.keys(PAINT).map(f => {
                                                         const on = state.paint.finish === f ? ' selected' : '';
@@ -1796,9 +1805,22 @@ function setMirrors(field, val) {
     saveProgress();
 }
 function setFoam(field, val) {
-    if (field === 'style')    { state.foam.style = val; renderStep2(); }
+    if (field === 'style')    { state.foam.style = val; renderStep2(); return; }
     if (field === 'heightFt') state.foam.heightFt = parseFloat(val) || null;
     if (field === 'widthFt')  state.foam.widthFt  = parseFloat(val) || null;
+    // Update the live price line in place (no full re-render, keeps focus on the input)
+    const el = document.querySelector(`[id$="_foamlive"]`);
+    if (el) {
+        const est = (state.foam.style && state.foam.heightFt && state.foam.widthFt)
+            ? Math.round(FOAM[state.foam.style] * state.foam.heightFt * state.foam.widthFt) : null;
+        if (est !== null) {
+            el.style.opacity = '1';
+            el.innerHTML = `Estimated foam wall install: <strong>$${est}</strong>`;
+        } else {
+            el.style.opacity = '0.7';
+            el.innerHTML = 'Pick a style + enter height and width to see the price';
+        }
+    }
     calculateTotal();
     saveProgress();
 }
@@ -1820,8 +1842,13 @@ function toggleLed(choice) {
 }
 function toggleAddon(key) {
     if (state.addons.has(key)) state.addons.delete(key);
-    else state.addons.add(key);
+    else {
+        state.addons.add(key);
+        // Default moviewall to a callback request when added as an add-on
+        if (key === 'moviewall') state.moviewall.wantsCallback = true;
+    }
     renderStep2();
+    calculateTotal();
     saveProgress();
 }
 
@@ -2275,8 +2302,8 @@ function submitBooking() {
     const needsDeposit = document.getElementById('submit-btn').innerText.includes('Deposit');
     const foamDesc = () => (state.foam.style ? `${FOAM_LABEL[state.foam.style]} — ${state.foam.heightFt || '?'}ft × ${state.foam.widthFt || '?'}ft` : '3D Foam Tile Accent Wall');
     const svcLabel = k => k === 'led'
-        ? ('LED – ' + (state.ledChoice === 'house' ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
-        : (k === 'foam' ? ('3D Foam Tile – ' + foamDesc()) : SERVICES[k].name);
+            ? ('LED – ' + (state.ledChoices && state.ledChoices.includes('house') ? 'Inside House LEDs (lights provided)' : 'TV Lights Installation'))
+            : (k === 'foam' ? ('3D Foam Tile – ' + foamDesc()) : SERVICES[k].name);
     const primary = state.primary ? svcLabel(state.primary) : '';
     const addons = [...state.addons].map(svcLabel);
     const tvDetails = state.tvs.map(tv => ({
