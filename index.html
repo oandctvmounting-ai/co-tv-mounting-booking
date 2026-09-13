@@ -2941,6 +2941,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 // Hero text rotator — adapted from 21st.dev Classy Hero
+
+
+/* Marquee — infinite scrolling DFW cities */
+(function() {
+    const DFW_CITIES = ["Dallas", "Fort Worth", "Plano", "Arlington", "Irving", "Richardson", "McKinney", "Frisco", "Garland", "Mesquite", "Allen", "Flower Mound", "Mansfield", "Carrollton", "Lewisville", "Euless", "Bedford", "DeSoto", "Cedar Hill", "Grand Prairie"];
+    const track = document.getElementById('marquee-track');
+    if (!track) return;
+    // Build the track content (duplicated for seamless loop)
+    DFW_CITIES.forEach(city => {
+        const span = document.createElement('span');
+        span.className = 'marquee-item';
+        span.textContent = city;
+        const dot = document.createElement('span');
+        dot.className = 'marquee-item::before';  // We'll handle this via CSS
+        span.appendChild(dot);
+        track.appendChild(span);
+    });
+    // Duplicate for seamless loop
+    DFW_CITIES.forEach(city => {
+        const span = track.firstChild.cloneNode(true);
+        span.textContent = city;
+        track.appendChild(span);
+    });
+})();
 (function() {
     var words = ['Premium Installations. Flawless Execution.', 'Trusted Across All of DFW.', '24-Month Workmanship Warranty.'];
     var idx = 0;
