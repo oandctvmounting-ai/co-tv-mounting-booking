@@ -590,15 +590,88 @@
 
         /* Service card grid layout */
         .service-card { flex-direction: column; align-items: flex-start; gap: 6px; }
-        .service-card__icon { display: flex; align-items: center; justify-content: center; width: 2.2em; font-size: 1.8rem; }
-        .service-card__name { font-weight: 700; font-size: 1.2rem; color: var(--white); }
-        .service-card__from { font-size: 0.85rem; color: var(--text-muted); }
-        .service-card__from strong { color: var(--gold); font-size: 1rem; }
-        .service-card__subtitle { font-size: 0.8rem; color: var(--text-dim); }
-        .service-card__service-area { font-size: 0.78rem; color: var(--text-dim); }
-        .service-card__cta { font-size: 0.85rem; color: var(--gold); font-weight: 600; margin-top: 4px; }
-        .service-card__min-note { font-size: 0.75rem; color: var(--gold-dark); margin-top: 4px; }
-        .popular-ribbon { position: absolute; top: -1px; right: -1px; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 0 14px 0 8px; }
+                .service-card__icon { display: flex; align-items: center; justify-content: center; width: 2.2em; font-size: 1.8rem; }
+                .service-card__name { font-weight: 700; font-size: 1.2rem; color: var(--white); }
+                .service-card__from { font-size: 0.85rem; color: var(--text-muted); }
+                .service-card__from strong { color: var(--gold); font-size: 1rem; }
+                .service-card__subtitle { font-size: 0.8rem; color: var(--text-dim); }
+                .service-card__service-area { font-size: 0.78rem; color: var(--text-dim); }
+                .service-card__cta { font-size: 0.85rem; color: var(--gold); font-weight: 600; margin-top: 4px; }
+                .service-card__min-note { font-size: 0.75rem; color: var(--gold-dark); margin-top: 4px; }
+                .popular-ribbon { position: absolute; top: -1px; right: -1px; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 0 14px 0 8px; }
+
+                /* TV Service Card - Make it look like a realistic television */
+                .service-card.tv {
+                    position: relative;
+                    overflow: hidden;
+                    border-radius: 14px;
+                    background: #000;
+                    border: 3px solid var(--gold);
+                    /* TV bezel */
+                }
+                .service-card.tv::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    border: 2px solid rgba(212,175,55,0.2);
+                    border-radius: 12px;
+                    background: rgba(0,0,0,0.6);
+                }
+                .service-card.tv .service-card__icon {
+                    font-size: 2.4rem;
+                    text-shadow: 0 0 8px var(--gold), 0 0 12px rgba(212,175,55,0.3);
+                    filter: drop-shadow(0 0 4px var(--gold));
+                    margin-bottom: 4px;
+                }
+                .service-card.tv .service-card__name {
+                    margin-top: 2px;
+                }
+                /* TV screen glow */
+                .service-card.tv .service-card__from,
+                .service-card.tv .service-card__subtitle,
+                .service-card.tv .service-card__service-area,
+                .service-card.tv .service-card__cta,
+                .service-card.tv .service-card__min-note {
+                    opacity: 0.9;
+                }
+                /* TV static animation when clicked */
+                .service-card.tv.tv-active {
+                    animation: tv-press 0.15s ease-in-out;
+                }
+                .service-card.tv.tv-active::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: 
+                        repeating-linear-gradient(
+                          45deg,
+                          rgba(255,255,255,0.05) 0%,
+                          rgba(255,255,255,0.05) 1px,
+                          transparent 1px,
+                          transparent 2px
+                        ),
+                        repeating-linear-gradient(
+                          -45deg,
+                          rgba(255,255,255,0.05) 0%,
+                          rgba(255,255,255,0.05) 1px,
+                          transparent 1px,
+                          transparent 2px
+                        );
+                    background-size: 100% 100%;
+                    animation: tv-static 0.8s steps(20) infinite;
+                    opacity: 0.85;
+                    pointer-events: none;
+                    z-index: 2;
+                }
+                @keyframes tv-static {
+                    0% { background-position: 0 0; }
+                    100% { background-position: 100% 100%; }
+                }
+                @keyframes tv-press {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(0.97); }
+                    100% { transform: scale(1); }
+                }
 
         .mount-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
                 @media (min-width: 600px) {
@@ -1614,6 +1687,12 @@ function renderStep1() {
             <div class="service-card__cta">Select <span aria-hidden="true">→</span></div>
         `;
         div.onclick = () => {
+                    if (key === 'tv') {
+                        div.classList.add('tv-active');
+                        setTimeout(() => {
+                            div.classList.remove('tv-active');
+                        }, 600);
+                    }
                     console.log('Option clicked:', key);
                     state.primary = key;
                     document.querySelectorAll('#service-options .option-card').forEach(c => c.classList.remove('selected'));
