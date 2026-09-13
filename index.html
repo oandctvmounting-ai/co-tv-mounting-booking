@@ -601,72 +601,7 @@
                 .popular-ribbon { position: absolute; top: -1px; right: -1px; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 0 14px 0 8px; }
 
                 /* TV Service Card - Make it look like a realistic television */
-                .service-card.tv {
-                    position: relative;
-                    overflow: hidden;
-                    border-radius: 14px;
-                    background: #000;
-                    border: 3px solid var(--gold);
-                    /* TV bezel */
-                }
-                .service-card.tv::before {
-                    content: "";
-                    position: absolute;
-                    inset: 0;
-                    border: 2px solid rgba(212,175,55,0.2);
-                    border-radius: 12px;
-                    background: rgba(0,0,0,0.6);
-                }
-                .service-card.tv .service-card__icon {
-                    font-size: 2.4rem;
-                    text-shadow: 0 0 8px var(--gold), 0 0 12px rgba(212,175,55,0.3);
-                    filter: drop-shadow(0 0 4px var(--gold));
-                    margin-bottom: 4px;
-                }
-                .service-card.tv .service-card__name {
-                    margin-top: 2px;
-                }
-                /* TV screen glow */
-                .service-card.tv .service-card__from,
-                .service-card.tv .service-card__subtitle,
-                .service-card.tv .service-card__service-area,
-                .service-card.tv .service-card__cta,
-                .service-card.tv .service-card__min-note {
-                    opacity: 0.9;
-                }
-                /* TV static animation when clicked */
-                .service-card.tv.tv-active {
-                    animation: tv-press 0.15s ease-in-out;
-                }
-                .service-card.tv.tv-active::after {
-                    content: "";
-                    position: absolute;
-                    inset: 0;
-                    background: 
-                        repeating-linear-gradient(
-                          45deg,
-                          rgba(255,255,255,0.05) 0%,
-                          rgba(255,255,255,0.05) 1px,
-                          transparent 1px,
-                          transparent 2px
-                        ),
-                        repeating-linear-gradient(
-                          -45deg,
-                          rgba(255,255,255,0.05) 0%,
-                          rgba(255,255,255,0.05) 1px,
-                          transparent 1px,
-                          transparent 2px
-                        );
-                    background-size: 100% 100%;
-                    animation: tv-static 0.8s steps(20) infinite;
-                    opacity: 0.85;
-                    pointer-events: none;
-                    z-index: 2;
-                }
-                @keyframes tv-static {
-                    0% { background-position: 0 0; }
-                    100% { background-position: 100% 100%; }
-                }
+/* TV Service Card - Realistic television with Magic UI glassmorphism */.service-card.tv {    position: relative;    overflow: hidden;    border-radius: 14px;    background: #000;    border: 3px solid var(--gold);    /* Glassmorphism overlay (Magic UI) */    background: var(--glass);    backdrop-filter: blur(12px);    border: 1px solid var(--glass-border);    transition: border-color 0.3s ease, box-shadow 0.3s ease;}/* TV bezel with glass effect cutout */.service-card.tv::before {    content: '';    position: absolute;    inset: 0;    border: 2px solid rgba(212,175,55,0.2);    border-radius: 12px;    background: rgba(0,0,0,0.6);    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);}/* TV screen - dual layer: glass reflection + scanlines */.service-card.tv::after {    content: '';    position: absolute;    inset: 0;    border-radius: 12px;    background:         radial-gradient(300px circle at 50% 30%, rgba(212,175,55,0.15) 0%, transparent 50%),        repeating-linear-gradient(          45deg,          rgba(255,255,255,0.04) 0%,          rgba(255,255,255,0.04) 1px,          transparent 1px,          transparent 2px        ),        rgba(0,0,0,0.5);    pointer-events: none;}/* TV static animation when clicked - overrides screen */.service-card.tv.tv-active::after {    background:         repeating-linear-gradient(          45deg,          rgba(255,255,255,0.08) 0%,          rgba(255,255,255,0.08) 1px,          transparent 1px,          transparent 2px        ),        repeating-linear-gradient(          -45deg,          rgba(255,255,255,0.08) 0%,          rgba(255,255,255,0.08) 1px,          transparent 1px,          transparent 2px        ),        rgba(0,0,0,0.6);    animation: tv-static 0.8s steps(20) infinite;    opacity: 0.9;}/* TV press animation - quick flicker when clicked */.service-card.tv.tv-active {    animation: tv-press 0.15s ease-in-out;    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);}/* TV icon with gold glow + Magic UI spotlight */.service-card.tv .service-card__icon {    font-size: 2.4rem;    text-shadow:         0 0 10px var(--gold),        0 0 20px rgba(212, 175, 55, 0.3);    filter: drop-shadow(0 0 5px var(--gold));    margin-bottom: 8px;    position: relative;    z-index: 2;}.service-card.tv .service-card__icon::after {    content: '';    position: absolute;    inset: 0;    border-radius: 14px;    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(212,175,55,0.25) 0%, transparent 50%);    opacity: 0;    transition: opacity 0.3s ease;    pointer-events: none;    z-index: 1;}.service-card.tv .service-card__icon:hover::after {    opacity: 0.4;}/* On selection (clicked/selected state) */.service-card.tv.selected {    border-color: var(--gold);    background: rgba(212, 175, 55, 0.15);    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 8px 24px rgba(212, 175, 55, 0.2);}.service-card.tv.selected::before {    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6), inset 0 0 50px rgba(212, 175, 55, 0.3);}.service-card.tv.selected .service-card__icon {    animation: tvPulse 2s ease-in-out infinite;}@keyframes tvPulse {    0%, 100% {         text-shadow:             0 0 10px var(--gold),            0 0 20px rgba(212, 175, 55, 0.3);        filter: drop-shadow(0 0 5px var(--gold));    }    50% {         text-shadow:             0 0 15px var(--gold),            0 0 25px rgba(212, 175, 55, 0.4);        filter: drop-shadow(0 0 8px var(--gold));    }}@keyframes tv-static {    0% { background-position: 0 0; }    100% { background-position: 100% 100%; }}@keyframes tv-press {    0% { transform: scale(1); }    50% { transform: scale(0.97); }    100% { transform: scale(1); }}                }
                 @keyframes tv-press {
                     0% { transform: scale(1); }
                     50% { transform: scale(0.97); }
@@ -1564,7 +1499,7 @@ function renderStep1() {
             const s = SERVICES[key];
             const d = SERVICE_DETAILS[key] || {};
             const div = document.createElement('div');
-            div.className = 'option-card service-card' + (d.popular ? ' service-card--popular' : '');
+            div.className = 'option-card service-card' + (d.popular ? ' service-card--popular' : '') + (key === 'tv' ? ' magic-card' : '');
             // Add bento grid area class for Magic UI Bento Grid layout
             if (s.bentoArea) div.classList.add(s.bentoArea);
             div.innerHTML = `
