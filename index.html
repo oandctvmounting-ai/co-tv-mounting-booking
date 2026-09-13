@@ -860,6 +860,64 @@
     .service-card__name { overflow-wrap: anywhere; white-space: normal; font-size: 1rem; }
     .option-card { padding: 14px 14px; }
 }
+
+
+/* TV Service Card - Make it look like an actual TV */
+.service-card.tv {
+    position: relative;
+    overflow: hidden;
+}
+
+/* TV screen effect */
+.service-card.tv::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 3px solid var(--gold);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+/* TV stand */
+.service-card.tv::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25%;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+
+/* Enhance the TV icon */
+.service-card.tv .service-card__icon {
+    font-size: 2.4rem;
+    text-shadow: 0 0 8px var(--gold);
+}
+
+/* Selected state enhancements */
+.service-card.tv.selected {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.2);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.service-card.tv.selected::before {
+    opacity: 1;
+}
+
+.service-card.tv.selected .service-card__icon {
+    animation: tvPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes tvPulse {
+    0%, 100% { text-shadow: 0 0 8px var(--gold); }
+    50% { text-shadow: 0 0 12px var(--gold); }
+}
 </style>
 </head>
 <body>
