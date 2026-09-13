@@ -774,13 +774,19 @@
         /* Addon blocks */
                 .addon-block { margin-bottom: 12px; }
                 .addon-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-@media (max-width: 699px) {
-    .addon-list { display: block; }
-}
+                    display: block;
+                }
+                
+                /* Desktop: lay add-on blocks out in a 3-column grid so all add-ons
+                   (incl. Mirrors & Portraits) sit at the same visual level. */
+                @media (min-width: 700px) {
+                    .addon-list {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 12px;
+                    }
+                    .addon-list .addon-block { margin-bottom: 0; }
+                }
         .addon-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px; border:1.5px solid rgba(255,255,255,0.1); border-radius:12px; cursor:pointer; transition:var(--transition); font-weight:600; font-size:1rem; background: var(--glass); backdrop-filter: blur(10px); }
         .addon-body { max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; }
                 .addon-block.open .addon-body { max-height: 2000px; padding: 14px 0; }
