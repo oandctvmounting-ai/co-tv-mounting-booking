@@ -127,7 +127,7 @@ function createCalendarEvent(data) {
       { description: descParts.join('\n') + '\n⚠️ No time given — assign a real slot.' });
   }
 
-  return { ok: true, eventId: ev.getId(), htmlLink: ev.getHtmlLink() || null, conflict: conflict };
+  return { ok: true, eventId: ev.getId(), htmlLink: (typeof ev.getHtmlLink === 'function') ? (ev.getHtmlLink() || null) : null, conflict: conflict };
 }
 
 function getReferralsSheet() {
