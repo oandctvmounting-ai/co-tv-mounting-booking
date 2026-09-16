@@ -2381,8 +2381,12 @@ function submitBooking() {
                         paintFinish: (state.primary === 'paint' || state.addons.has('paint')) ? state.paint.finish : null,
                         paintTotal: (state.primary === 'paint' || state.addons.has('paint')) && state.paint.sqft && state.paint.finish ? Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT[state.paint.finish]) : null,
             total: total,
-            deposit: needsDeposit ? 50 : 0,
-            promo: state.appliedPromo ? state.appliedPromo.code : '',
+                        deposit: needsDeposit ? 50 : 0,
+                        promo: state.appliedPromo ? state.appliedPromo.code : '',
+                        discountBreakdown: (window.__savings && (window.__savings.multi > 0 || (state.appliedPromo && window.__savings.promo > 0)))
+                            ? (window.__savings.multi > 0 ? `Multi-TV (${window.__savings.multiCount} TVs): -$${window.__savings.multi}` : '')
+                                + (state.appliedPromo ? `${window.__savings.multi > 0 ? ' + ' : ''}Promo ${state.appliedPromo.code}: -$${window.__savings.promo}` : '')
+                            : '',
             photo: PHOTO_DATA || '',
             source: 'booking-page',
             utm_source: LEAD_SOURCE.lead_source,

@@ -60,9 +60,74 @@ const SQUARE_VERSION = '2024-01-17';
 // Public booking page (used as the Square redirect after payment)
 const BOOKING_PAGE = 'https://oandctvmounting-ai.github.io/co-tv-mounting-booking/';
 
+// ===== Google Calendar config =====
+// The single source of truth for scheduling. All bookings (website + GV text
+// closer) write to this calendar. CALENDAR_ID = the owner's primary calendar.
+const CALENDAR_ID = 'oandctvmounting@gmail.com';
+const BOOKING_DURATION_MIN = 90;    // default booking block length in minutes
+
 // ===== Sheet helpers =====
 function getSheet() {
   return SpreadsheetApp.openById(BOOKINGS_SHEET_ID).getSheetByName('Bookings');
+}
+
+// ===== Google Calendar helper =====
+// Creates a Google Calendar event for a booking. Returns {ok, eventId, htmlLink,
+// conflict}. On conflict (slot already busy) it STILL creates the event but flags
+// conflict=true and prepends 'CONFLICT — REVIEW' so nothing is double-booked silently.
+function createCalendarEvent(data) {
+  const cal = CalendarApp.getCalendarById(CALENDAR_ID);
+  if (!cal) return { ok: false, error: 'Calendar not found: ' + CALENDAR_ID };
+
+  let title = '📺 TV Mount — ' + (data.name || 'Customer');
+  if (data.primary) title += ' (' + data.primary + ')';
+
+  let descParts = [];
+  if (data.phone)  descParts.push('Phone: ' + data.phone);
+  if (data.address) descParts.push('Address: ' + data.address);
+  if (data.service || data.primary) descParts.push('Service: ' + (data.service || data.primary));
+  if (data.tvDetails) descParts.push('Details: ' + data.tvDetails);
+  if (data.source) descParts.push('Source: ' + data.source);
+  descParts.push('Status: PENDING — confirm after deposit paid');
+
+  let start = null, end = null;
+  if (data.datetime) {
+    // Accept ISO-ish 'YYYY-MM-DDTHH:MM' or a straight JS date string.
+    const raw = String(data.datetime).trim();
+    const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{1,2}):(\d{2})/);
+    let s;
+    if (m) {
+      s = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]),
+                   Number(m[4]), Number(m[5]), 0, 0);
+    } else {
+      s = new Date(raw);
+    }
+    if (!isNaN(s.getTime())) {
+      start = s;
+      end = new Date(s.getTime() + BOOKING_DURATION_MIN * 60000);
+    }
+  }
+
+  // Conflict check against existing events overlapping the requested window.
+  let conflict = false;
+  if (start) {
+    const existing = cal.getEvents(start, end);
+    conflict = existing.length > 0;
+    if (conflict) title = '⚠️ CONFLICT — REVIEW · ' + title;
+  }
+
+  let ev;
+  if (start) {
+    ev = cal.createEvent(title, start, end, { description: descParts.join('\n') });
+  } else {
+    // No valid time provided — create an all-day "pending" placeholder so the lead
+    // is never lost, and Orion assigns a real slot.
+    const day = new Date();
+    ev = cal.createAllDayEvent(title + ' (schedule TBD)', day,
+      { description: descParts.join('\n') + '\n⚠️ No time given — assign a real slot.' });
+  }
+
+  return { ok: true, eventId: ev.getId(), htmlLink: ev.getHtmlLink() || null, conflict: conflict };
 }
 
 function getReferralsSheet() {
@@ -285,6 +350,16 @@ function doPost(e) {
         return jsonOut({ ok: true, checkout_url: result.url, booking_ref: result.ref });
       } catch (se) {
         return jsonOut({ ok: false, error: String(se).slice(0, 300) });
+      }
+    }
+
+    // ---- Branch 1b: create Google Calendar event (booking scheduling) ----
+    if (data.action === 'calendar') {
+      try {
+        const r = createCalendarEvent(data);
+        return jsonOut(r);
+      } catch (ce) {
+        return jsonOut({ ok: false, error: String(ce).slice(0, 300) });
       }
     }
 
@@ -526,6 +601,24 @@ function doPost(e) {
     ]);
 
     let tgStatus = bookingRef;
+    // Also create the Google Calendar event so the job is actually scheduled.
+    try {
+      const calResult = createCalendarEvent(data);
+      if (calResult.ok) {
+        tgStatus = bookingRef + ' | CAL:' + (calResult.conflict ? 'CONFLICT' : 'OK');
+        if (calResult.htmlLink) {
+          // stash calendar link in col 19 (S) if present
+          try {
+            getSheet().getRange(getSheet().getLastRow(), 19).setValue(calResult.htmlLink);
+          } catch (eS) { Logger.log('calendar link write failed: ' + eS); }
+        }
+      } else {
+        tgStatus = bookingRef + ' | CAL-ERR: ' + (calResult.error || '');
+      }
+    } catch (ce) {
+      tgStatus = bookingRef + ' | CAL-ERR: ' + String(ce).slice(0, 100);
+      Logger.log('calendar event failed: ' + ce);
+    }
     try {
       sendTelegramAlert(data, tvDetails);
     } catch (te) {
@@ -666,13 +759,14 @@ function sendTelegramAlert(data, tvDetails) {
   const total = (data.total != null ? '$' + data.total : '');
   const deposit = data.deposit ? ('\nDeposit: $' + data.deposit) : '';
   const promo = data.promo ? ('\nPromo: ' + data.promo) : '';
+  const discountInfo = data.discountBreakdown ? ('\nDiscounts: ' + data.discountBreakdown) : '';
   const msg = '📦 NEW BOOKING — C&O TV Mounting\n' +
     (data.name || '?') + '  ' + (data.phone || '?') + '\n' +
     (data.address || '?') + '\n' +
     (data.datetime || '?') + '\n' +
     (data.primary || '?') + ((data.addons && data.addons.length) ? ' + ' + data.addons.join(', ') : '') + '\n' +
     (tvDetails ? tvDetails + '\n' : '') +
-    'Est. Total: ' + total + deposit + promo;
+    'Est. Total: ' + total + deposit + promo + discountInfo;
   const url = 'https://api.telegram.org/bot' + token + '/sendMessage';
   UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json',
     payload: JSON.stringify({ chat_id: TELEGRAM_OWNER_CHAT, text: msg }) });
