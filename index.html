@@ -1029,6 +1029,10 @@
             <span class="total-amount" id="display-total">$0</span>
             <span class="total-note">Final price confirmed before work</span>
             <div id="promo-applied" style="margin-top:8px; font-weight:600; color:var(--gold)"></div>
+            <div id="multi-tv-discount" style="margin-top:8px; display:none; font-size:0.85rem; font-weight:600; color:var(--gold); background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); border-radius:8px; padding:8px 12px; text-align:left;">
+                <span style="display:block; font-weight:700; font-size:0.9rem;">🎉 Multi-TV Discount Applied</span>
+                <span id="multi-tv-discount-detail"></span>
+            </div>
             <div id="min-booking-hint" style="display:none; margin-top:14px; padding:12px 14px; background:rgba(212,175,55,0.15); border:1.5px solid var(--gold); border-radius:8px; font-size:0.92rem; font-weight:700; color:#fff; line-height:1.4;">
                 ⭐ Booking minimum is <strong style="color:var(--gold)">$90</strong> (equivalent of one entry TV mount). Add another service to qualify for booking.
             </div>
@@ -1962,13 +1966,31 @@ function calculateTotal() {
             total += Math.round(Math.max(state.paint.sqft, PAINT_MIN_SQFT) * PAINT[state.paint.finish]);
         }
 
-    // Apply promo discount
-    let discount = 0;
-    const p = state.appliedPromo;
+    // Apply Multi-TV Volume Discount (auto — no code needed)
+        // 2 TVs mounted => $25 off. 3+ TVs mounted => $55 off. Applied to the TV line.
+        let multiDiscount = 0;
+        const tvCount = (state.primary === 'tv' || state.addons.has('tv')) ? state.tvs.length : 0;
+        if (tvCount >= 3) {
+            multiDiscount = 55;
+        } else if (tvCount === 2) {
+            multiDiscount = 25;
+        }
+        if (multiDiscount > 0) {
+            // Cap by the TV subtotal so total never goes negative
+            multiDiscount = Math.min(multiDiscount, tvTotal());
+            total -= multiDiscount;
+        }
+
+        // Apply promo discount
+        let discount = 0;
+        const p = state.appliedPromo;
     if (p) {
-        discount = (p.type === 'percent') ? Math.round(total * p.value / 100) : Math.min(p.value, total);
-        total = Math.max(0, total - discount);
-    }
+            discount = (p.type === 'percent') ? Math.round(total * p.value / 100) : Math.min(p.value, total);
+            total = Math.max(0, total - discount);
+        }
+
+        // Share discount breakdown with other renderers (cheap module-level cache)
+        window.__savings = { multi: multiDiscount, multiCount: tvCount, promo: discount, promoCode: p ? p.code : null };
 
     const disp = document.getElementById('display-total');
     const finalDisp = document.getElementById('final-total');
@@ -2003,7 +2025,20 @@ function calculateTotal() {
             if (minHint0) minHint0.style.display = 'none';
         }
         const pa = document.getElementById('promo-applied');
-        if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
+                if (pa) pa.innerText = p ? `Saved $${discount} (${p.code})` : '';
+                // === Multi-TV Discount breakdown display ===
+                const mtd = document.getElementById('multi-tv-discount');
+                const mtdD = document.getElementById('multi-tv-discount-detail');
+                if (mtd && mtdD) {
+                    if (multiDiscount > 0) {
+                        mtd.style.display = 'block';
+                        const perTvLine = tvCount >= 3
+                            ? `${tvCount} TVs \u00d7 base \u2014 ` : `${tvCount} TVs \u00d7 base \u2014 `;
+                        mtdD.innerText = `${perTvLine}you save $${multiDiscount} on this order ($${multiDiscount} off ${tvCount > 3 ? 'your multi-TV bundle' : 'your 2nd TV'}). Applied automatically.`;
+                    } else {
+                        mtd.style.display = 'none';
+                    }
+                }
         // === Magic UI — Ripple effect on Book Now submit ===
     document.addEventListener('click', function (e) {
         const btn = e.target.closest('.btn-submit');
@@ -2207,10 +2242,17 @@ function renderFinalPricing() {
     }
 
     const fp = document.getElementById('final-promo');
-    if (fp) {
-        const p = state.appliedPromo;
-        fp.innerText = p ? `Promo ${p.code} applied` : '';
-    }
+        if (fp) {
+                    const s = window.__savings || { multi: 0, multiCount: 0, promo: 0, promoCode: null };
+                    const p = state.appliedPromo;
+                    let parts = [];
+                    if (s.multi > 0) parts.push(`Multi-TV (${s.multiCount} TVs): -$${s.multi}`);
+                    if (p) parts.push(`Promo ${p.code}: -$${s.promo}`);
+                    fp.innerHTML = parts.length
+                        ? `<span style="display:block; font-size:0.88rem; color:var(--gold);">${parts.join(' &nbsp;•&nbsp; ')}</span>
+                           <span style="display:block; font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Applied automatically to your total</span>`
+                        : '';
+                }
 }
 
 /* ---------- Deposit logic (distance from Irving, TX) ---------- */
